@@ -28,6 +28,14 @@ const PaymentsList: React.FC<Props> = (props: Props) => {
       setPaymentToDelete(undefined);
    }
 
+   const navigateToPaymentPage = (payment: Payment) => {
+      const params = {
+         onSave: props.onAddNew,
+         payment
+      }
+      navigation.navigate(PaymentsRoute.Payment, params);
+   }
+
    navigation.setOptions({
       headerRight: () => (
          <Icon
@@ -64,12 +72,9 @@ const PaymentsList: React.FC<Props> = (props: Props) => {
                description: x.dueDate && `${formatDate(x.dueDate)}`,
                rightSwipeContent: { color: colors.red, iconName: "delete" },
                onRightActionRelease: () => setPaymentToDelete(x),
+               onPressAction: () => navigateToPaymentPage(x)
             }))}
             onRefresh={async () => await paymentsContext.getPayments()}
-            onPressAction={(id) => navigation.navigate(PaymentsRoute.Payment, {
-               onSave: props.onAddNew,
-               payment: paymentsContext.payments.find(x => x.paymentId === id)
-            })}
          />
       </View>
    )
