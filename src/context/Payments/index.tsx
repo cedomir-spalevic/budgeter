@@ -84,7 +84,7 @@ const PaymentsContainer: React.FC<Props> = (props: Props) => {
    }, [])
 
    return (
-      <PaymentsContext.Provider value={{ payments, getPayments, paymentOnSave }}>
+      <PaymentsContext.Provider value={{ payments, getPayments, paymentOnSave, deletePayment }}>
          {props.children}
       </PaymentsContext.Provider>
    )
