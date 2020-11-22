@@ -9,6 +9,7 @@ import { PaymentsContext } from "context/Payments";
 import { Payment, Budget } from "services/api/models";
 import { formatDate } from "services/utils/datetime";
 import Toast from "react-native-root-toast";
+import { ConfirmDialog } from "react-native-simple-dialogs";
 
 export interface BudgetPaymentParams {
    budget: Budget;
@@ -26,6 +27,7 @@ const BudgetPaymentsScreen: React.FC = () => {
    const navigation = useNavigation();
    const route = useRoute<RouteProps>();
    const [payments, setPayments] = useState<Payment[]>([]);
+   const [paymentToRemove, setPaymentToRemove] = useState<Payment>();
 
    useEffect(() => {
       getPayments();
@@ -76,16 +78,17 @@ const BudgetPaymentsScreen: React.FC = () => {
       )
    })
 
-   const removePayment = async (paymentId: string) => {
+   const removePayment = async () => {
       try {
-         const removed = await budgetsContext.removePayment(route.params.budget, paymentId);
+         const removed = await budgetsContext.removePayment(route.params.budget, paymentToRemove.paymentId);
          if(!removed)
             throw new Error();
          const newBudget = route.params.budget;
-         newBudget.payments = newBudget.payments.filter(x => x.paymentId !== paymentId);
-         let nPayments = paymentsContext.payments.filter(x => x.paymentId !== paymentId);
+         newBudget.payments = newBudget.payments.filter(x => x.paymentId !== paymentToRemove.paymentId);
+         let nPayments = paymentsContext.payments.filter(x => x.paymentId !== paymentToRemove.paymentId);
+         setPaymentToRemove(undefined);
          setPayments([...nPayments]);
-         navigation.setParams({ budget: newBudget })
+         navigation.setParams({ budget: newBudget });
       }
       catch (error) {
          Toast.show("Unable to remove Payment from Budget");
@@ -109,6 +112,21 @@ const BudgetPaymentsScreen: React.FC = () => {
 
    return (
       <View style={globalStyles.listContainer}>
+         {paymentToRemove &&
+            <ConfirmDialog
+               visible={true}
+               title={`Delete ${paymentToRemove.name}`}
+               onTouchOutside={() => setPaymentToRemove(undefined)}
+               message="Are you sure you want to continue? This payment will be removed from this budget."
+               positiveButton={{
+                  title: "Yes",
+                  onPress: () => removePayment()
+               }}
+               negativeButton={{
+                  title: "No",
+                  onPress: () => setPaymentToRemove(undefined)
+               }}
+            />}
          <List
             items={payments.map(x => {
                let rightContainerColor = colors.green, rightIconName = "check";
@@ -128,7 +146,7 @@ const BudgetPaymentsScreen: React.FC = () => {
                   icon: icon,
                   leftSwipeContent: { color: colors.red, iconName: "delete" },
                   rightSwipeContent: { color: colors.green, iconName: "check" },
-                  onLeftActionRelease: () => removePayment(x.paymentId),
+                  onLeftActionRelease: () => setPaymentToRemove(x),
                   onRightActionRelease: () => finishPayment(x.paymentId)
                })
             })} 

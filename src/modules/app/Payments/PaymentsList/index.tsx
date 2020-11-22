@@ -70,8 +70,8 @@ const PaymentsList: React.FC<Props> = (props: Props) => {
                id: x.paymentId,
                name: x.name,
                description: x.dueDate && `${formatDate(x.dueDate)}`,
-               rightSwipeContent: { color: colors.red, iconName: "delete" },
-               onRightActionRelease: () => setPaymentToDelete(x),
+               leftSwipeContent: { color: colors.red, iconName: "delete" },
+               onLeftActionRelease: () => setPaymentToDelete(x),
                onPressAction: () => navigateToPaymentPage(x)
             }))}
             onRefresh={async () => await paymentsContext.getPayments()}
