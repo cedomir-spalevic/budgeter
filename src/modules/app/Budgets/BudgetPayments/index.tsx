@@ -126,22 +126,12 @@ const BudgetPaymentsScreen: React.FC = () => {
                   name: x.name,
                   description: x.dueDate && formatDate(x.dueDate),
                   icon: icon,
-                  leftSwipeContent: {
-                     color: colors.red,
-                     iconName: "trash"
-                  },
+                  leftSwipeContent: { color: colors.red, iconName: "delete" },
+                  rightSwipeContent: { color: colors.green, iconName: "check" },
                   onLeftActionRelease: () => removePayment(x.paymentId),
-                  // rightSwipeContent: (
-                  //    <SwipeContainer
-                  //       activated={false}
-                  //       side="right"
-                  //       color={rightContainerColor}
-                  //       icon={<Icon name={rightIconName} color={colors.white} size={28} />}
-                  //    />
-                  // ),
                   onRightActionRelease: () => finishPayment(x.paymentId)
                })
-            })}
+            })} 
             onRefresh={() => getPayments()}
          />
       </View>
