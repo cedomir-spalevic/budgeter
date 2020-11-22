@@ -87,11 +87,11 @@ const BudgetsTab: React.FC = () => {
                      rightSwipeContent: { color: colors.green, iconName: "check" },
                      onLeftActionRelease: () => setBudgetToDelete(x),
                      onRightActionRelease: () => completeBudget(x),
+                     onPressAction: () => navigateToPaymentPage(budgets, x.budgetId),
                      icon: (type === BudgetType.Completed ? 
                         <Icon name="check-circle" color={colors.green} /> : null)
                   }))}
                   onRefresh={() => getBudgets()}
-                  onPressAction={(id: string) => navigateToPaymentPage(budgets, id)}
                />
             </View>
          )

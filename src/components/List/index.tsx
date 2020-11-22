@@ -8,7 +8,6 @@ import ListItem, { Item } from "../ListItem";
 interface Props {
    items: Item[];
    onRefresh: () => void;
-   onPressAction: (id: string) => void;
 }
 
 interface SwipeActivation {
