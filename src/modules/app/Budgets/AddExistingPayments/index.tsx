@@ -94,13 +94,13 @@ const AddExistingPayments: React.FC = () => {
                         size={24}
                         style={{ color: color, position: "absolute", top: "50%", right: "5%" }}
                      />
-                  )
+                  ),
+                  onPressAction: () => togglePayment(x.paymentId)
                })
             })}
             scrollEnabled={false}
             renderItem={({ item }) => (
                <ListItem
-                  //onPressAction={() => togglePayment(item.id)}
                   item={item}
                />
             )}
