@@ -1,0 +1,16 @@
+{
+   "name": "budgeter",
+   "displayName": "Budgeter",
+   "version": "1.0.0",
+   "splash": {
+      "image": "./assets/tree_swing.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fff"
+   },
+   "ios": {
+      "bundleIdentifier": "com.cedomirspalevic.budgeter",
+      "buildNumber": "1.0.0",
+      "supportsTablet": true,
+      "infoPlist": {}
+   }
+}

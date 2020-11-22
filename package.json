@@ -1,0 +1,68 @@
+{
+  "name": "budgeter",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "fix-black-screen": "watchman watch-del-all && rm -rf node_modules && yarn cache clean && yarn install --ignore-engines && yarn start --reset-cache"
+  },
+  "dependencies": {
+    "@react-native-community/datetimepicker": "^3.0.1",
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-native-community/toolbar-android": "0.1.0-rc.2",
+    "@react-navigation/bottom-tabs": "^5.5.0",
+    "@react-navigation/native": "^5.4.3",
+    "@react-navigation/stack": "^5.4.0",
+    "expo-local-authentication": "^9.3.0",
+    "react": "16.11.0",
+    "react-native": "^0.63.2",
+    "react-native-gesture-handler": "^1.7.0",
+    "react-native-modal-datetime-picker": "^8.7.0",
+    "react-native-reanimated": "^1.13.0",
+    "react-native-root-toast": "^3.2.1",
+    "react-native-safe-area-context": "^3.1.4",
+    "react-native-screens": "^2.10.1",
+    "react-native-secure-storage": "^0.1.2",
+    "react-native-simple-dialogs": "^1.3.0",
+    "react-native-svg": "^12.1.0",
+    "react-native-swipeable": "^0.6.0",
+    "react-native-tab-view": "^2.14.2",
+    "react-native-unimodules": "^0.11.0",
+    "react-native-vector-icons": "^6.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.11.2",
+    "@bam.tech/react-native-make": "^3.0.0",
+    "@react-native-community/eslint-config": "^1.0.0",
+    "@types/jest": "^24.0.24",
+    "@types/react-native": "^0.62.0",
+    "@types/react-test-renderer": "16.9.2",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "babel-jest": "^24.9.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "babel-plugin-root-import": "^6.5.0",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.58.0",
+    "prettier": "^2.0.4",
+    "react-test-renderer": "16.11.0",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
+}
