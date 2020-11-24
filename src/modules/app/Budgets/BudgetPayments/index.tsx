@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { globalStyles, colors } from "styles";
-import { View } from "react-native";
-import { List, Empty, SwipeContainer, Icon } from "components";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { List, Empty, Icon } from "components";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
 import { BudgetsContext } from "context/Budgets";
@@ -10,6 +10,24 @@ import { Payment, Budget } from "services/api/models";
 import { formatDate } from "services/utils/datetime";
 import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";
+import { toCurrency } from "services/utils/currency";
+
+const styles = StyleSheet.create({
+   container: {
+      height: "100%",
+      justifyContent: "space-between"
+   },
+   totalContainer: {
+      paddingVertical: 20,
+      paddingHorizontal: 10,
+      backgroundColor: colors.white,
+      width: "100%"
+   },
+   totalText: {
+      fontSize: 24,
+      color: colors.primary
+   }
+});
 
 export interface BudgetPaymentParams {
    budget: Budget;
@@ -26,6 +44,7 @@ const BudgetPaymentsScreen: React.FC = () => {
    const budgetsContext = useContext(BudgetsContext);
    const navigation = useNavigation();
    const route = useRoute<RouteProps>();
+   const [total, setTotal] = useState<string>()
    const [payments, setPayments] = useState<Payment[]>([]);
    const [paymentToRemove, setPaymentToRemove] = useState<Payment>();
 
@@ -44,6 +63,12 @@ const BudgetPaymentsScreen: React.FC = () => {
       navigation.setParams({ budget })
       getPayments();
    }
+
+   useEffect(() => {
+      const totalAmount = payments.map(x => x.amount).reduce((acc, value) => Number(acc) + Number(value), 0);
+      const total = toCurrency(totalAmount);
+      setTotal(total);
+   }, [payments])
 
    if (!payments || payments.length === 0) {
       navigation.setOptions({
@@ -111,47 +136,54 @@ const BudgetPaymentsScreen: React.FC = () => {
    }
 
    return (
-      <View style={globalStyles.listContainer}>
-         {paymentToRemove &&
-            <ConfirmDialog
-               visible={true}
-               title={`Delete ${paymentToRemove.name}`}
-               onTouchOutside={() => setPaymentToRemove(undefined)}
-               message="Are you sure you want to continue? This payment will be removed from this budget."
-               positiveButton={{
-                  title: "Yes",
-                  onPress: () => removePayment()
-               }}
-               negativeButton={{
-                  title: "No",
-                  onPress: () => setPaymentToRemove(undefined)
-               }}
-            />}
-         <List
-            items={payments.map(x => {
-               let rightContainerColor = colors.green, rightIconName = "check";
-               const payment = route.params.budget.payments.find(y => y.paymentId === x.paymentId);
-               if (payment && payment.completed) {
-                  rightContainerColor = colors.red;
-                  rightIconName = "ban";
-               }
-               let icon = null;
-               let found = route.params.budget.payments.find(y => y.paymentId === x.paymentId);
-               if (found && found.completed)
-                  icon = <Icon name="check" color={colors.green} />;
-               return ({
-                  id: x.paymentId,
-                  name: x.name,
-                  description: x.dueDate && formatDate(x.dueDate),
-                  icon: icon,
-                  leftSwipeContent: { color: colors.red, iconName: "delete" },
-                  rightSwipeContent: { color: colors.green, iconName: "check" },
-                  onLeftActionRelease: () => setPaymentToRemove(x),
-                  onRightActionRelease: () => finishPayment(x.paymentId)
-               })
-            })} 
-            onRefresh={() => getPayments()}
-         />
+      <View style={styles.container}>
+         <View style={globalStyles.listContainer}>
+            {paymentToRemove &&
+               <ConfirmDialog
+                  visible={true}
+                  title={`Delete ${paymentToRemove.name}`}
+                  onTouchOutside={() => setPaymentToRemove(undefined)}
+                  message="Are you sure you want to continue? This payment will be removed from this budget."
+                  positiveButton={{
+                     title: "Yes",
+                     onPress: () => removePayment()
+                  }}
+                  negativeButton={{
+                     title: "No",
+                     onPress: () => setPaymentToRemove(undefined)
+                  }}
+               />}
+            <List
+               items={payments.map(x => {
+                  let rightContainerColor = colors.green, rightIconName = "check";
+                  const payment = route.params.budget.payments.find(y => y.paymentId === x.paymentId);
+                  if (payment && payment.completed) {
+                     rightContainerColor = colors.red;
+                     rightIconName = "ban";
+                  }
+                  let icon = null;
+                  let found = route.params.budget.payments.find(y => y.paymentId === x.paymentId);
+                  if (found && found.completed)
+                     icon = <Icon name="check" color={colors.green} />;
+                  return ({
+                     id: x.paymentId,
+                     name: x.name,
+                     description: x.dueDate && formatDate(x.dueDate),
+                     icon: icon,
+                     leftSwipeContent: { color: colors.red, iconName: "delete" },
+                     rightSwipeContent: { color: colors.green, iconName: "check" },
+                     onLeftActionRelease: () => setPaymentToRemove(x),
+                     onRightActionRelease: () => finishPayment(x.paymentId)
+                  })
+               })} 
+               onRefresh={() => getPayments()}
+            />
+         </View>
+         <View style={[styles.totalContainer, globalStyles.shadow]}>
+            <Text style={styles.totalText}>
+               Total: {total}
+            </Text>
+         </View>
       </View>
    )
 }
