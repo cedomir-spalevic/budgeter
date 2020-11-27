@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
-import { AuthContext, AuthState } from "context/Auth";
+import React from "react";
 import AuthNavigator from "modules/auth";
 import AppNavigator from "modules/app";
+import { AuthState, useAuth } from "context/Auth/context";
 
 const Entry: React.FC = () => {
-    const authContext = useContext(AuthContext);
+    const auth = useAuth();
 
-    switch(authContext.authState) {
+    switch(auth.authState) {
         case AuthState.SignedOut:
             return <AuthNavigator />
         case AuthState.SigningIn:

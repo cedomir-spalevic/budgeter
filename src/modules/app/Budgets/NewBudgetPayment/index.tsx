@@ -1,12 +1,12 @@
-import React, { useContext } from "react";
+import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { globalStyles, colors } from "styles";
 import { Label, Icon } from "components";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
 import { Payment, Budget } from "services/external/api/models";
-import { PaymentsContext } from "context/Payments";
-import { BudgetsContext } from "context/Budgets";
+import { usePayments } from "context/Payments/context";
+import { useBudgets } from "context/Budgets/context";
 
 const styles = StyleSheet.create({
    decisionContainer: {
@@ -41,13 +41,13 @@ type RouteProps = RouteProp<ParamList, "Budget">;
 const NewBudgetPaymentScreen: React.FC = () => {
    const navigation = useNavigation();
    const route = useRoute<RouteProps>();
-   const paymentsContext = useContext(PaymentsContext);
-   const budgetsContext = useContext(BudgetsContext);
+   const payments = usePayments();
+   const budgets = useBudgets();
 
    const onCreateNewPaymentSave = async (payment: Payment) => {
-      const newPayment = await paymentsContext.paymentOnSave(payment);
+      const newPayment = await payments.paymentOnSave(payment);
       if (newPayment.paymentId) {
-         const budgetPaymentSaved = await budgetsContext.addPayment(route.params.budget, newPayment.paymentId);
+         const budgetPaymentSaved = await budgets.addPayment(route.params.budget, newPayment.paymentId);
          navigation.goBack();
          navigation.goBack();
       }
@@ -55,7 +55,7 @@ const NewBudgetPaymentScreen: React.FC = () => {
    }
 
    const onAddExistingPaymentsSave = async (payments: Payment[]) => {
-      await Promise.all(payments.map(async x => await budgetsContext.addPayment(route.params.budget, x.paymentId)));
+      await Promise.all(payments.map(async x => await budgets.addPayment(route.params.budget, x.paymentId)));
       navigation.goBack();
       navigation.goBack();
    }

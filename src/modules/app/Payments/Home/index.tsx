@@ -1,27 +1,27 @@
 import React, { useContext, useEffect } from "react";
-import { PaymentsContext } from "context/Payments";
 import PaymentsList from "../PaymentsList";
 import { Empty } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { Payment, PaymentResponse } from "services/external/api/models";
 import { PaymentsRoute } from "../routes";
+import { usePayments } from "context/Payments/context";
 
 const PaymentsHomeScreen: React.FC = () => {
    const navigation = useNavigation();
-   const paymentsContext = useContext(PaymentsContext);
+   const payments = usePayments();
 
    const onSave = async (payment: Payment): Promise<PaymentResponse> => {
-      const response = await paymentsContext.paymentOnSave(payment);
+      const response = await payments.paymentOnSave(payment);
       if (response && response.valid)
          navigation.goBack();
       return response;
    }
 
    useEffect(() => {
-      paymentsContext.getPayments();
+      payments.getPayments();
    }, []);
 
-   if (paymentsContext.payments.length === 0) {
+   if (payments.payments.length === 0) {
       navigation.setOptions({
          headerRight: () => null
       })

@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect } from "react";
-import { AuthContext } from "context/Auth";
 import {
    StyleSheet,
    View,
@@ -10,6 +9,7 @@ import { TextFieldSecret, TextField, Button, FormError } from "components";
 import { colors, globalStyles } from "styles";
 import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
+import { useAuth } from "context/Auth/context";
 
 const styles = StyleSheet.create({
    passwordRequirement: {
@@ -31,7 +31,7 @@ const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const specialCharacters = "!#$%&()*+,-./:;<=>?@_";
 
 const RegisterForm: React.FC = () => {
-   const authContext = useContext(AuthContext);
+   const auth = useAuth();
    const [email, setEmail] = useState<string>();
    const [emailError, setEmailError] = useState<string>();
    const [containsUpperCase, setContainsUpperCase] = useState<boolean>();
@@ -126,7 +126,7 @@ const RegisterForm: React.FC = () => {
       }
       (async () => {
          setSendingRequest(true);
-         const response = await authContext.signup(email, btoa(password));
+         const response = await auth.signup(email, btoa(password));
          if (response === undefined) {
             setFormError("Unable to sign up");
             setSendingRequest(false);

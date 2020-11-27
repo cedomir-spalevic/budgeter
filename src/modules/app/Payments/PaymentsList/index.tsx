@@ -3,7 +3,6 @@ import {
    View
 } from "react-native";
 import { globalStyles, colors } from "styles";
-import { PaymentsContext } from "context/Payments";
 import { formatDate } from "services/internal/datetime";
 import { List, Icon } from "components";
 import { useNavigation } from "@react-navigation/native";
@@ -11,18 +10,19 @@ import { Payment, PaymentResponse } from "services/external/api/models";
 import { PaymentsRoute } from "../routes";
 import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";
+import { usePayments } from "context/Payments/context";
 
 interface Props {
    onAddNew: (payment: Payment) => Promise<PaymentResponse>;
 }
 
 const PaymentsList: React.FC<Props> = (props: Props) => {
-   const paymentsContext = useContext(PaymentsContext);
+   const payments = usePayments();
    const navigation = useNavigation();
    const [paymentToDelete, setPaymentToDelete] = useState<Payment>();
 
    const deletePayment = async () => {
-      const deleted = await paymentsContext.deletePayment(paymentToDelete);
+      const deleted = await payments.deletePayment(paymentToDelete);
       if (!deleted)
          Toast.show("Unable to delete payment");
       setPaymentToDelete(undefined);
@@ -66,7 +66,7 @@ const PaymentsList: React.FC<Props> = (props: Props) => {
                }}
             />}
          <List
-            items={paymentsContext.payments.map(x => ({
+            items={payments.payments.map(x => ({
                id: x.paymentId,
                name: x.name,
                description: x.dueDate && `${formatDate(x.dueDate)}`,
@@ -74,7 +74,7 @@ const PaymentsList: React.FC<Props> = (props: Props) => {
                onLeftActionRelease: () => setPaymentToDelete(x),
                onPressAction: () => navigateToPaymentPage(x)
             }))}
-            onRefresh={async () => await paymentsContext.getPayments()}
+            onRefresh={async () => await payments.getPayments()}
          />
       </View>
    )
