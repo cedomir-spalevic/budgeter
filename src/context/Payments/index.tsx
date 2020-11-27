@@ -1,9 +1,6 @@
 import React, { useState, createContext, useEffect } from "react";
-import SecureStorage from "react-native-secure-storage";
-import { SecureStorageKeys } from "../Auth";
-import PaymentsService from "services/api/payments";
-import { Payment, PaymentResponse } from "services/api/models";
-
+import PaymentsService from "services/external/api/payments";
+import { Payment, PaymentResponse } from "services/external/api/models";
 
 interface Props {
    children: React.ReactNode;
@@ -27,8 +24,7 @@ const PaymentsContainer: React.FC<Props> = (props: Props) => {
 
    const getPayments = async () => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const paymentsService = new PaymentsService(token);
+         const paymentsService = PaymentsService.getInstance();
          const payments = await paymentsService.getPayments();
          setPayments([...payments]);
       }
@@ -39,8 +35,7 @@ const PaymentsContainer: React.FC<Props> = (props: Props) => {
 
    const deletePayment = async (payment: Payment) => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const paymentsService = new PaymentsService(token);
+         const paymentsService = PaymentsService.getInstance();
          await paymentsService.deletePayment(payment.paymentId);
          const index = payments.findIndex(x => x.paymentId === payment.paymentId);
          payments.splice(index, 1);
@@ -54,8 +49,7 @@ const PaymentsContainer: React.FC<Props> = (props: Props) => {
 
    const paymentOnSave = async (payment: Payment): Promise<PaymentResponse> => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const paymentsService = new PaymentsService(token);
+         const paymentsService = PaymentsService.getInstance();
          let paymentResponse: PaymentResponse;
          if (!payment.paymentId) {
             paymentResponse = await paymentsService.createPayment(payment);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Budget } from "services/api/models";
+import { Budget } from "services/external/api/models";
 import { globalStyles, colors } from "styles";
 import {
    View,

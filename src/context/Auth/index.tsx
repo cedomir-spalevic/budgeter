@@ -1,7 +1,8 @@
 import React, { useState, createContext, useEffect } from "react";
-import AuthenticationService, { AuthenticationResponse } from "services/api/auth";
+import AuthenticationService from "services/external/api/auth";
 import SecureStorage from "react-native-secure-storage";
 import * as LocalAuthentication from "expo-local-authentication";
+import { AuthenticationResponse } from "services/external/api/models";
 
 export enum SecureStorageKeys {
    BudgeterKey = "BudgeterAPIKey"
@@ -46,7 +47,7 @@ const AuthContainer: React.FC<Props> = (props: Props) => {
 
    const signin = async (email: string, password: string): Promise<AuthenticationResponse | undefined> => {
       try {
-         const authenticationService = new AuthenticationService();
+         const authenticationService = AuthenticationService.getInstance();
          const response = await authenticationService.signin(email, password);
          if (response.valid) {
             await SecureStorage.setItem(SecureStorageKeys.BudgeterKey, response.token);
@@ -61,7 +62,7 @@ const AuthContainer: React.FC<Props> = (props: Props) => {
 
    const signup = async (email: string, password: string): Promise<AuthenticationResponse | undefined> => {
       try {
-         const authenticationService = new AuthenticationService();
+         const authenticationService = AuthenticationService.getInstance();
          const response = await authenticationService.register(email, password);
          if (response.valid) {
             await SecureStorage.setItem(SecureStorageKeys.BudgeterKey, response.token);
@@ -81,16 +82,14 @@ const AuthContainer: React.FC<Props> = (props: Props) => {
 
    const verify = async () => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const authenticationService = new AuthenticationService();
-         const valid = await authenticationService.verify(token);
+         const authenticationService = AuthenticationService.getInstance();
+         const valid = await authenticationService.verify();
          if(!valid)
             throw new Error();
          const localAuthResponse = await LocalAuthentication.authenticateAsync();
          setAuthState(localAuthResponse.success ? AuthState.SignedIn : AuthState.SignedOut);
       }
       catch (error) {
-         console.log(error);
          setAuthState(AuthState.SignedOut);
       }
    }

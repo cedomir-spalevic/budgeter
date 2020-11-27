@@ -1,8 +1,6 @@
 import React, { useState, createContext } from "react";
-import SecureStorage from "react-native-secure-storage";
-import { Budget, BudgetResponse } from "services/api/models";
-import { SecureStorageKeys } from "context/Auth";
-import BudgetsService from "services/api/budgets";
+import { Budget, BudgetResponse } from "services/external/api/models";
+import BudgetsService from "services/external/api/budgets";
 
 
 interface Props {
@@ -31,8 +29,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const getBudgets = async () => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
+         const budgetsService = BudgetsService.getInstance();
          const budgets = await budgetsService.getBudgets();
          setBudgets([...budgets]);
       }
@@ -43,9 +40,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const deleteBudget = async (budgetId: string): Promise<boolean> => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
-         await budgetsService.deleteBudget(budgetId);
+         const budgetsService = BudgetsService.getInstance();
          const budgetIndex = budgets.findIndex(x => x.budgetId === budgetId);
          budgets.splice(budgetIndex, 1);
          setBudgets([...budgets]);
@@ -58,8 +53,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const budgetOnSave = async (budget: Budget): Promise<BudgetResponse> => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
+         const budgetsService = BudgetsService.getInstance();
          let budgetResponse: BudgetResponse;
          if (!budget.budgetId) {
             budgetResponse = await budgetsService.createBudget(budget);
@@ -85,8 +79,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const addPayment = async (budget: Budget, paymentId: string) => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
+         const budgetsService = BudgetsService.getInstance();
          await budgetsService.addPayment(budget.budgetId, paymentId);
          if (budget.payments === undefined)
             budget.payments = [];
@@ -104,8 +97,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const removePayment = async (budget: Budget, paymentId: string) => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
+         const budgetsService = BudgetsService.getInstance();
          await budgetsService.removePayment(budget.budgetId, paymentId);
          let index = budget.payments.findIndex(x => x.paymentId === paymentId);
          budget.payments.splice(index, 1);
@@ -121,8 +113,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const getPayments = async (budget: Budget) => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
+         const budgetsService = BudgetsService.getInstance();
          const budgetPayments = await budgetsService.getBudgetPayments(budget.budgetId);
          if (budget.payments === undefined)
             budget.payments = [];
@@ -139,8 +130,7 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
 
    const completePayment = async (budget: Budget, paymentId: string, value: boolean) => {
       try {
-         const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
-         const budgetsService = new BudgetsService(token);
+         const budgetsService = BudgetsService.getInstance();
          if (value) await budgetsService.completePayment(budget.budgetId, paymentId);
          else await budgetsService.uncompletePayment(budget.budgetId, paymentId);
          let index = budget.payments.findIndex(x => x.paymentId === paymentId);

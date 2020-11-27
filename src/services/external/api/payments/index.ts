@@ -1,22 +1,23 @@
 import { Payment, PaymentResponse } from "../models";
-import config from "../";
+import ApiConfig from "../config";
 
-export default class PaymentsService {
+class PaymentsService {
    private resource: string;
-   private token: string;
-   constructor(token) {
+   static instance: PaymentsService;
+
+   constructor() {
       this.resource = "payments";
-      this.token = token;
+   }
+
+   static getInstance(): PaymentsService {
+      if(!PaymentsService.instance)
+         PaymentsService.instance = new PaymentsService();
+      return PaymentsService.instance;
    }
 
    public async getPayments(): Promise<Payment[]> {
-      const url = `${config.budgeterApiUrl}${this.resource}`;
-      const options: RequestInit = {
-         headers: {
-            "Authorization": `Bearer ${this.token}`
-         }
-      };
-      const response = await fetch(url, options);
+      const apiConfig = ApiConfig.getInstance();
+      const response = await apiConfig.callApiProtected(this.resource);
       if (response.status !== 200)
          throw "Unable to get Payments";
 
@@ -30,45 +31,44 @@ export default class PaymentsService {
    }
 
    public async createPayment(payment: Payment): Promise<PaymentResponse> {
-      const url = `${config.budgeterApiUrl}${this.resource}`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          },
          body: JSON.stringify(payment)
       };
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(this.resource, options);
       return await response.json() as PaymentResponse;
    }
 
    public async updatePayment(payment: Payment): Promise<PaymentResponse> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${payment.paymentId}`;
+      const apiConfig = ApiConfig.getInstance();
       let updatedPayment = { ...payment };
       updatedPayment.paymentId = undefined;
       const options: RequestInit = {
          method: "PATCH",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          },
          body: JSON.stringify(updatedPayment)
       };
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${payment.paymentId}`, options);
       return await response.json() as PaymentResponse;
    }
 
    public async deletePayment(paymentId: string): Promise<void> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${paymentId}`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
-         method: "DELETE",
-         headers: {
-            "Authorization": `Bearer ${this.token}`
-         }
+         method: "DELETE"
       };
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${paymentId}`, options);
       if (response.status !== 200)
          throw "Unable to delete Payment";
    }
+}
+
+export default {
+   getInstance: () => PaymentsService.getInstance()
 }

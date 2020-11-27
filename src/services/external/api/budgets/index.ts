@@ -1,22 +1,23 @@
 import { Budget, BudgetPayment, BudgetResponse } from "../models";
-import config from "../";
+import ApiConfig from "../config";
 
-export default class BudgetsService {
+class BudgetsService {
    private resource: string;
-   private token: string;
-   constructor(token) {
+   static instance: BudgetsService;
+
+   constructor() {
       this.resource = "budgets";
-      this.token = token;
+   }
+
+   static getInstance(): BudgetsService {
+      if(!BudgetsService.instance)
+         BudgetsService.instance = new BudgetsService();
+      return BudgetsService.instance;
    }
 
    public async getBudgets(): Promise<Budget[]> {
-      const url = `${config.budgeterApiUrl}${this.resource}`;
-      const options: RequestInit = {
-         headers: {
-            "Authorization": `Bearer ${this.token}`
-         }
-      };
-      const response = await fetch(url, options);
+      const apiConfig = ApiConfig.getInstance();
+      const response = await apiConfig.callApiProtected(this.resource);
       if (response.status !== 200)
          throw "Unable to get Budgets";
 
@@ -32,88 +33,80 @@ export default class BudgetsService {
    }
 
    public async deleteBudget(budgetId: string): Promise<void> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budgetId}`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
-         method: "DELETE",
-         headers: {
-            "Authorization": `Bearer ${this.token}`
-         }
+         method: "DELETE"
       };
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}`, options);
       if (response.status !== 200)
          throw "Unable to delete Budget";
    }
 
    public async createBudget(budget: Budget): Promise<BudgetResponse> {
-      const url = `${config.budgeterApiUrl}${this.resource}`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          },
          body: JSON.stringify(budget)
       };
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(this.resource, options);
       return await response.json() as BudgetResponse;
    }
 
    public async updateBudget(budget: Budget): Promise<BudgetResponse> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budget.budgetId}`;
+      const apiConfig = ApiConfig.getInstance();
       let updatedBudget = { ...budget };
       updatedBudget.budgetId = undefined;
       const options: RequestInit = {
          method: "PATCH",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          },
          body: JSON.stringify(updatedBudget)
       };
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budget.budgetId}`, options);
       return await response.json() as BudgetResponse;
    }
 
    public async addPayment(budgetId: string, paymentId: string): Promise<void> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budgetId}/payments`;
+      const apiConfig = ApiConfig.getInstance();
       let body = { paymentId };
       const options: RequestInit = {
          method: "POST",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          },
          body: JSON.stringify(body)
       }
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments`, options);
       if (response.status !== 201)
          throw "Error adding payment to budget";
    }
 
    public async removePayment(budgetId: string, paymentId: string): Promise<void> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budgetId}/payments/${paymentId}`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "DELETE",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          }
       }
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}`, options);
       if (response.status !== 200)
          throw "Unable to delete payment";
    }
 
    public async getBudgetPayments(budgetId: string): Promise<BudgetPayment[]> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budgetId}/payments`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "GET",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          }
       }
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments`, options);
       if (response.status !== 200)
          throw "Unable to get Budget Payments";
 
@@ -125,30 +118,32 @@ export default class BudgetsService {
    }
 
    public async completePayment(budgetId: string, paymentId: string): Promise<void> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budgetId}/payments/${paymentId}/complete`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          }
       }
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}/complete`, options);
       if (response.status !== 200)
          throw "Unable to complete payment";
    }
 
    public async uncompletePayment(budgetId: string, paymentId: string): Promise<void> {
-      const url = `${config.budgeterApiUrl}${this.resource}/${budgetId}/payments/${paymentId}/uncomplete`;
+      const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${this.token}`
+            "Content-Type": "application/json"
          }
       }
-      const response = await fetch(url, options);
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}/uncomplete`, options);
       if (response.status !== 200)
          throw "Unable to uncomplete payment";
    }
+}
+
+export default {
+   getInstance: () => BudgetsService.getInstance()
 }

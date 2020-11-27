@@ -64,5 +64,8 @@
       "json",
       "node"
     ]
+  },
+  "config": {
+    "environment": "dev"
   }
 }

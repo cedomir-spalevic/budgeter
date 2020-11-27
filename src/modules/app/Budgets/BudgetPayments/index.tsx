@@ -6,11 +6,11 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
 import { BudgetsContext } from "context/Budgets";
 import { PaymentsContext } from "context/Payments";
-import { Payment, Budget } from "services/api/models";
-import { formatDate } from "services/utils/datetime";
+import { Payment, Budget } from "services/external/api/models";
+import { formatDate } from "services/internal/datetime";
 import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";
-import { toCurrency } from "services/utils/currency";
+import { toCurrency } from "services/internal/currency";
 
 const styles = StyleSheet.create({
    container: {

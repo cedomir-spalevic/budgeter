@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toCurrency, toNumber } from "services/utils/currency";
+import { toCurrency, toNumber } from "services/internal/currency";
 import { View, TextInput, Text } from "react-native";
 import { globalStyles } from "styles";
 import { Icon } from "components";

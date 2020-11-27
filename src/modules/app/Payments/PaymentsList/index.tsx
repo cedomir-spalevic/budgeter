@@ -4,10 +4,10 @@ import {
 } from "react-native";
 import { globalStyles, colors } from "styles";
 import { PaymentsContext } from "context/Payments";
-import { formatDate } from "services/utils/datetime";
+import { formatDate } from "services/internal/datetime";
 import { List, Icon } from "components";
 import { useNavigation } from "@react-navigation/native";
-import { Payment, PaymentResponse } from "services/api/models";
+import { Payment, PaymentResponse } from "services/external/api/models";
 import { PaymentsRoute } from "../routes";
 import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";

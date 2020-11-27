@@ -36,3 +36,10 @@ export interface PaymentResponse {
    dueDateError?: string;
    totalError?: string;
 }
+
+export interface AuthenticationResponse {
+   valid: boolean;
+   token?: string;
+   emailError?: string;
+   passwordError?: string;
+}

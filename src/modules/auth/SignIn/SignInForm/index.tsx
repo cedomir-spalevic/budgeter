@@ -15,7 +15,7 @@ import {
    Button, FormError
 } from "components";
 import { AuthRoutes } from "modules/auth/routes";
-import { btoa } from "services/utils/security";
+import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
 
 const styles = StyleSheet.create({

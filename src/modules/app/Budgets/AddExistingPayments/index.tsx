@@ -3,9 +3,9 @@ import { PaymentsContext } from "context/Payments";
 import { globalStyles, colors } from "styles";
 import { ListItem, Icon, Empty } from "components";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
-import { formatDate } from "services/utils/datetime";
+import { formatDate } from "services/internal/datetime";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
-import { Payment, Budget } from "services/api/models";
+import { Payment, Budget } from "services/external/api/models";
 import { BudgetsContext } from "context/Budgets";
 
 export interface AddExistingPaymentParams {

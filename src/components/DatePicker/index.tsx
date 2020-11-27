@@ -6,7 +6,7 @@ import {
 } from "react-native";
 import { globalStyles } from "styles";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { formatDate } from "services/utils/datetime";
+import { formatDate } from "services/internal/datetime";
 import { Icon } from "components";
 
 interface Props {

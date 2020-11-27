@@ -3,7 +3,7 @@ import { PaymentsContext } from "context/Payments";
 import PaymentsList from "../PaymentsList";
 import { Empty } from "components";
 import { useNavigation } from "@react-navigation/native";
-import { Payment, PaymentResponse } from "services/api/models";
+import { Payment, PaymentResponse } from "services/external/api/models";
 import { PaymentsRoute } from "../routes";
 
 const PaymentsHomeScreen: React.FC = () => {

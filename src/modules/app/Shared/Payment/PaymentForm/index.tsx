@@ -8,7 +8,7 @@ import {
    Icon
 } from "components";
 import { globalStyles, colors } from "styles";
-import { Payment } from "services/api/models";
+import { Payment } from "services/external/api/models";
 import { View, ActivityIndicator } from "react-native";
 
 export interface PaymentParams {

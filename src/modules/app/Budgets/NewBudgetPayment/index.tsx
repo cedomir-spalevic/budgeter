@@ -4,7 +4,7 @@ import { globalStyles, colors } from "styles";
 import { Label, Icon } from "components";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
-import { Payment, Budget } from "services/api/models";
+import { Payment, Budget } from "services/external/api/models";
 import { PaymentsContext } from "context/Payments";
 import { BudgetsContext } from "context/Budgets";
 

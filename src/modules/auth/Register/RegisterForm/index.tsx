@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { TextFieldSecret, TextField, Button, FormError } from "components";
 import { colors, globalStyles } from "styles";
-import { btoa } from "services/utils/security";
+import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
 
 const styles = StyleSheet.create({
