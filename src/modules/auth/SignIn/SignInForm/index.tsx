@@ -1,6 +1,5 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "context/Auth";
 import {
    View,
    ActivityIndicator,
@@ -17,6 +16,7 @@ import {
 import { AuthRoutes } from "modules/auth/routes";
 import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
+import { useAuth } from "context/Auth";
 
 const styles = StyleSheet.create({
    textStyles: {
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
 })
 
 const SignInForm: React.FC = () => {
-   const authContext = useContext(AuthContext);
+   const auth = useAuth();
    const navigation = useNavigation();
    const [email, setEmail] = useState<string>();
    const [emailError, setEmailError] = useState<string>();
@@ -86,8 +86,7 @@ const SignInForm: React.FC = () => {
       }
       (async () => {
          setSendingRequest(true);
-         const response = await authContext.signin(email, btoa(password));
-         
+         const response = await auth.signin(email, btoa(password));
          if (response === undefined) {
             setFormError("Unable to sign in");
             setSendingRequest(false);

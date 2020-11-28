@@ -1,8 +1,7 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SceneMap, Route, TabBar, TabView } from "react-native-tab-view";
-import { BudgetsContext } from "context/Budgets";
-import { List, Empty, Icon, SwipeContainer } from "components";
+import { List, Empty, Icon } from "components";
 import { colors, globalStyles } from "styles";
 import { Budget } from "services/external/api/models";
 import { View } from "react-native";
@@ -10,6 +9,7 @@ import { formatDate } from "services/internal/datetime";
 import { BudgetsRoute } from "../routes";
 import { ConfirmDialog } from "react-native-simple-dialogs";
 import Toast from "react-native-root-toast";
+import { useBudgets } from "context/Budgets";
 
 enum BudgetType {
    Active = "Active",
@@ -18,7 +18,7 @@ enum BudgetType {
 
 const BudgetsTab: React.FC = () => {
    const navigation = useNavigation();
-   const budgetsContext = useContext(BudgetsContext);
+   const budgets = useBudgets();
    const [index, setIndex] = useState<number>(0);
    const [routes] = useState<Route[]>([
       { key: "active", title: BudgetType.Active },
@@ -27,19 +27,19 @@ const BudgetsTab: React.FC = () => {
    const [budgetToDelete, setBudgetToDelete] = useState<Budget>();
 
    const getBudgets = async () => {
-      await budgetsContext.getBudgets();
+      await budgets.getBudgets();
    }
 
-   const navigateToPaymentPage = async (budgets: Budget[], id: string) => {
-      let budget = budgets.find(x => x.budgetId === id);
-      budget = await budgetsContext.getPayments(budget);
+   const navigateToPaymentPage = async (list: Budget[], id: string) => {
+      let budget = list.find(x => x.budgetId === id);
+      budget = await budgets.getPayments(budget);
       navigation.navigate(BudgetsRoute.BudgetPayments, { budget });
    }
 
    const deleteBudget = async () => {
       if(!budgetToDelete)
          return;
-      const deleted = await budgetsContext.deleteBudget(budgetToDelete.budgetId!);
+      const deleted = await budgets.deleteBudget(budgetToDelete.budgetId!);
       if(!deleted)
          Toast.show(`Unable to delete ${budgetToDelete.name}`);
       setBudgetToDelete(undefined);
@@ -47,7 +47,7 @@ const BudgetsTab: React.FC = () => {
 
    const completeBudget = async (budget: Budget) => {
       budget.completed = true;
-      const budgetResponse = await budgetsContext.budgetOnSave(budget);
+      const budgetResponse = await budgets.budgetOnSave(budget);
       if(!budgetResponse || !budgetResponse.valid)
          Toast.show(`Unable to complete ${budget.name}`);
    }
@@ -98,8 +98,8 @@ const BudgetsTab: React.FC = () => {
    }
 
    const renderScene = SceneMap({
-      active: () => renderBudgetList(budgetsContext.budgets.filter(x => !x.completed), BudgetType.Active),
-      completed: () => renderBudgetList(budgetsContext.budgets.filter(x => x.completed), BudgetType.Completed)
+      active: () => renderBudgetList(budgets.budgets.filter(x => !x.completed), BudgetType.Active),
+      completed: () => renderBudgetList(budgets.budgets.filter(x => x.completed), BudgetType.Completed)
    })
 
    const renderTabBar = (props) => (

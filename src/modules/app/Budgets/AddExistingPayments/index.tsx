@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
-import { PaymentsContext } from "context/Payments";
 import { globalStyles, colors } from "styles";
 import { ListItem, Icon, Empty } from "components";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { formatDate } from "services/internal/datetime";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { Payment, Budget } from "services/external/api/models";
-import { BudgetsContext } from "context/Budgets";
+import { useBudgets } from "context/Budgets";
+import { usePayments } from "context/Payments";
 
 export interface AddExistingPaymentParams {
    budget: Budget;
@@ -22,13 +22,13 @@ type RouteProps = RouteProp<ParamList, "AddExistingPaymentParams">;
 const AddExistingPayments: React.FC = () => {
    const navigation = useNavigation();
    const route = useRoute<RouteProps>();
-   const budgetsContext = useContext(BudgetsContext);
-   const paymentsContext = useContext(PaymentsContext);
+   const budgets = useBudgets();
+   const payments = usePayments();
    const [paymentsAllowedToAdd, setPaymentsAllowedToAdd] = useState<Payment[]>([]);
    const [paymentsToAdd, setPaymentsToAdd] = useState<Payment[]>([]);
 
    useEffect(() => {
-      let nPaymentsAllowedToAdd = paymentsContext.payments;
+      let nPaymentsAllowedToAdd = payments.payments;
       if (route.params.budget.payments) {
          const paymentIds = route.params.budget.payments.map(x => x.paymentId);
          nPaymentsAllowedToAdd = nPaymentsAllowedToAdd.filter(x => !paymentIds.includes(x.paymentId));
@@ -39,7 +39,7 @@ const AddExistingPayments: React.FC = () => {
    const togglePayment = (id) => {
       let index = paymentsToAdd.findIndex(x => x.paymentId === id);
       if (index === -1)
-         paymentsToAdd.push(paymentsContext.payments.find(x => x.paymentId === id))
+         paymentsToAdd.push(payments.payments.find(x => x.paymentId === id))
       else
          paymentsToAdd.splice(index, 1);
       setPaymentsToAdd([...paymentsToAdd])

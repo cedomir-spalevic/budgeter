@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext, useEffect, useContext } from "react";
 import AuthenticationService from "services/external/api/auth";
 import SecureStorage from "react-native-secure-storage";
 import * as LocalAuthentication from "expo-local-authentication";
@@ -34,15 +34,7 @@ const defaultValue: Context = {
 
 export const AuthContext = createContext<Context>(defaultValue);
 
-const storageConfig = {
-   accessControl: "",
-   accessible: "",
-   authenticationPrompt: "",
-   service: "",
-   authenticateType: ""
-}
-
-const AuthContainer: React.FC<Props> = (props: Props) => {
+const AuthProvider: React.FC<Props> = (props: Props) => {
    const [authState, setAuthState] = useState<AuthState>(AuthState.SigningIn);
 
    const signin = async (email: string, password: string): Promise<AuthenticationResponse | undefined> => {
@@ -105,4 +97,9 @@ const AuthContainer: React.FC<Props> = (props: Props) => {
    )
 };
 
-export default AuthContainer;
+export const useAuth = (): Context => {
+   const auth = useContext<Context>(AuthContext);
+   return auth;
+}
+
+export default AuthProvider;

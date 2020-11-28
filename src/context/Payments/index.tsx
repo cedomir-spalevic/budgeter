@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext, useEffect, useContext } from "react";
 import PaymentsService from "services/external/api/payments";
 import { Payment, PaymentResponse } from "services/external/api/models";
 
@@ -19,7 +19,7 @@ const defaultValue: Context = {
 
 export const PaymentsContext = createContext<Context>(defaultValue);
 
-const PaymentsContainer: React.FC<Props> = (props: Props) => {
+const PaymentsProvider: React.FC<Props> = (props: Props) => {
    const [payments, setPayments] = useState<Payment[]>([]);
 
    const getPayments = async () => {
@@ -84,4 +84,10 @@ const PaymentsContainer: React.FC<Props> = (props: Props) => {
    )
 };
 
-export default PaymentsContainer;
+export const usePayments = (): Context => {
+   const payments = useContext<Context>(PaymentsContext);
+
+   return payments;
+}
+
+export default PaymentsProvider;

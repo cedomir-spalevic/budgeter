@@ -24,7 +24,7 @@ class AuthenticationService {
          },
          body: JSON.stringify({ email, password })
       };
-      const response = await apiConfig.callApi(`${this.resource}/signing`, options);
+      const response = await apiConfig.callApi(`${this.resource}/signin`, options);
       const authResponse = await response.json();
       return authResponse as AuthenticationResponse;
    }

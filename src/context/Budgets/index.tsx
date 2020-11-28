@@ -1,4 +1,4 @@
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useContext } from "react";
 import { Budget, BudgetResponse } from "services/external/api/models";
 import BudgetsService from "services/external/api/budgets";
 
@@ -24,7 +24,7 @@ const defaultValue: Context = {
 
 export const BudgetsContext = createContext<Context>(defaultValue);
 
-const BudgetsContainer: React.FC<Props> = (props: Props) => {
+const BudgetsProvider: React.FC<Props> = (props: Props) => {
    const [budgets, setBudgets] = useState<Budget[]>([]);
 
    const getBudgets = async () => {
@@ -152,4 +152,10 @@ const BudgetsContainer: React.FC<Props> = (props: Props) => {
    )
 };
 
-export default BudgetsContainer;
+export const useBudgets = (): Context => {
+   const budgets = useContext<Context>(BudgetsContext);
+
+   return budgets;
+}
+
+export default BudgetsProvider;

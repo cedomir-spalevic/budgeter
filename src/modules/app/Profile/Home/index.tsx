@@ -1,17 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
    View,
    Text
 } from "react-native";
 import { colors, globalStyles } from "styles";
-import { AuthContext } from "context/Auth";
-import Button from "components/Button";
 import { MovingForward } from "styles/images";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "components";
+import { useAuth } from "context/Auth";
 
 const ProfileScreen: React.FC = () => {
-   const authContext = useContext(AuthContext);
+   const auth = useAuth();
    const navigation = useNavigation();
 
    navigation.setOptions({
@@ -19,7 +18,7 @@ const ProfileScreen: React.FC = () => {
          <Icon
             name="exit-to-app"
             style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
-            onPress={() => authContext.signout && authContext.signout()}
+            onPress={() => auth.signout()}
          />
       )
    })
