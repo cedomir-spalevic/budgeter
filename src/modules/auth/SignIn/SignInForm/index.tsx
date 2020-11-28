@@ -16,11 +16,7 @@ import {
 import { AuthRoutes } from "modules/auth/routes";
 import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
-<<<<<<< HEAD
 import { useAuth } from "context/Auth";
-=======
-import { useAuth } from "context/Auth/context";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 const styles = StyleSheet.create({
    textStyles: {
@@ -91,10 +87,6 @@ const SignInForm: React.FC = () => {
       (async () => {
          setSendingRequest(true);
          const response = await auth.signin(email, btoa(password));
-<<<<<<< HEAD
-=======
-         
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
          if (response === undefined) {
             setFormError("Unable to sign in");
             setSendingRequest(false);

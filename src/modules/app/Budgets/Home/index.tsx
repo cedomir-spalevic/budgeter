@@ -1,19 +1,11 @@
-<<<<<<< HEAD
 import React, { useEffect } from "react";
-=======
-import React, { useContext, useEffect } from "react";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 import BudgetsTab from "../BudgetsTab";
 import { Empty, Icon } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
 import { Budget } from "services/external/api/models";
 import { colors } from "styles";
-<<<<<<< HEAD
 import { useBudgets } from "context/Budgets";
-=======
-import { useBudgets } from "context/Budgets/context";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 const HomeScreen: React.FC = () => {
    const budgets = useBudgets();

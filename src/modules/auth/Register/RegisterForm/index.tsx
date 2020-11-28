@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
-=======
-import React, { useContext, useState, useEffect } from "react";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 import {
    StyleSheet,
    View,
@@ -13,11 +9,7 @@ import { TextFieldSecret, TextField, Button, FormError } from "components";
 import { colors, globalStyles } from "styles";
 import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
-<<<<<<< HEAD
 import { useAuth } from "context/Auth";
-=======
-import { useAuth } from "context/Auth/context";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 const styles = StyleSheet.create({
    passwordRequirement: {

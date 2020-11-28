@@ -7,11 +7,7 @@ import { colors, globalStyles } from "styles";
 import { MovingForward } from "styles/images";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "components";
-<<<<<<< HEAD
 import { useAuth } from "context/Auth";
-=======
-import { useAuth } from "context/Auth/context";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 const ProfileScreen: React.FC = () => {
    const auth = useAuth();
