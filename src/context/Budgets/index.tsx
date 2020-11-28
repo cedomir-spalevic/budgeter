@@ -2,7 +2,6 @@ import React, { useState, createContext, useContext } from "react";
 import { Budget, BudgetResponse } from "services/external/api/models";
 import BudgetsService from "services/external/api/budgets";
 
-
 interface Props {
    children: React.ReactNode;
 }
@@ -145,8 +144,19 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
       }
    }
 
+   const state = {
+      budgets,
+      getBudgets,
+      budgetOnSave,
+      deleteBudget,
+      addPayment,
+      removePayment,
+      completePayment,
+      getPayments
+   }
+
    return (
-      <BudgetsContext.Provider value={{ budgets, getBudgets, budgetOnSave, deleteBudget, addPayment, removePayment, completePayment, getPayments }}>
+      <BudgetsContext.Provider value={state}>
          {props.children}
       </BudgetsContext.Provider>
    )

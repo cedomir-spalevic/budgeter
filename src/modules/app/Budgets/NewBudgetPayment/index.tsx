@@ -5,8 +5,13 @@ import { Label, Icon } from "components";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
 import { Payment, Budget } from "services/external/api/models";
+<<<<<<< HEAD
 import { usePayments } from "context/Payments";
 import { useBudgets } from "context/Budgets";
+=======
+import { usePayments } from "context/Payments/context";
+import { useBudgets } from "context/Budgets/context";
+>>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 const styles = StyleSheet.create({
    decisionContainer: {

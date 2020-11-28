@@ -10,7 +10,11 @@ import { Payment, PaymentResponse } from "services/external/api/models";
 import { PaymentsRoute } from "../routes";
 import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";
+<<<<<<< HEAD
 import { usePayments } from "context/Payments";
+=======
+import { usePayments } from "context/Payments/context";
+>>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 interface Props {
    onAddNew: (payment: Payment) => Promise<PaymentResponse>;

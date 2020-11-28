@@ -5,8 +5,13 @@ import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { formatDate } from "services/internal/datetime";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { Payment, Budget } from "services/external/api/models";
+<<<<<<< HEAD
 import { useBudgets } from "context/Budgets";
 import { usePayments } from "context/Payments";
+=======
+import { useBudgets } from "context/Budgets/context";
+import { usePayments } from "context/Payments/context";
+>>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 export interface AddExistingPaymentParams {
    budget: Budget;

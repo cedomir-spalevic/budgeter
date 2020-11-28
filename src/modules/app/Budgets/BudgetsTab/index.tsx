@@ -9,7 +9,11 @@ import { formatDate } from "services/internal/datetime";
 import { BudgetsRoute } from "../routes";
 import { ConfirmDialog } from "react-native-simple-dialogs";
 import Toast from "react-native-root-toast";
+<<<<<<< HEAD
 import { useBudgets } from "context/Budgets";
+=======
+import { useBudgets } from "context/Budgets/context";
+>>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 enum BudgetType {
    Active = "Active",

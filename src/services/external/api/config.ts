@@ -1,6 +1,10 @@
 import EnvironmentService, { Environment } from "services/internal/environment";
 import SecureStorage from "react-native-secure-storage";
+<<<<<<< HEAD
 import { SecureStorageKeys } from "context/Auth";
+=======
+import { SecureStorageKeys } from "context/Auth/context";
+>>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
 
 class ApiConfig {
    static instance: ApiConfig;

@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect, useContext } from "react";
+import React, { useState, createContext, useContext } from "react";
 import AuthenticationService from "services/external/api/auth";
 import SecureStorage from "react-native-secure-storage";
 import * as LocalAuthentication from "expo-local-authentication";
@@ -86,12 +86,8 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    }
 
-   useEffect(() => {
-      verify();
-   }, []);
-
    return (
-      <AuthContext.Provider value={{ authState, signin, signup, signout }}>
+      <AuthContext.Provider value={{ authState, signin, signout, signup }}>
          {props.children}
       </AuthContext.Provider>
    )
