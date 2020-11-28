@@ -1,12 +1,8 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
-import SecureStorage from "react-native-secure-storage";
 import * as LocalAuthentication from "expo-local-authentication";
 import { AuthenticationResponse } from "services/external/api/models";
-
-export enum SecureStorageKeys {
-   BudgeterKey = "BudgeterAPIKey"
-}
+import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
 
 export enum AuthState {
    SignedOut,
@@ -42,7 +38,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
          const authenticationService = AuthenticationService.getInstance();
          const response = await authenticationService.signin(email, password);
          if (response.valid) {
-            await SecureStorage.setItem(SecureStorageKeys.BudgeterKey, response.token);
+            setItem(StorageKeys.AccessToken, response.token);
             setAuthState(AuthState.SignedIn);
          }
          return response;
@@ -57,7 +53,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
          const authenticationService = AuthenticationService.getInstance();
          const response = await authenticationService.register(email, password);
          if (response.valid) {
-            await SecureStorage.setItem(SecureStorageKeys.BudgeterKey, response.token);
+            setItem(StorageKeys.AccessToken, response.token);
             setAuthState(AuthState.SignedIn);
          }
          return response;
@@ -68,7 +64,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    }
 
    const signout = async () => {
-      await SecureStorage.setItem(SecureStorageKeys.BudgeterKey, "");
+      deleteItem(StorageKeys.AccessToken);
       setAuthState(AuthState.SignedOut)
    }
 
@@ -85,6 +81,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
          setAuthState(AuthState.SignedOut);
       }
    }
+
+   useEffect(() => {
+      verify();
+   }, [])
 
    return (
       <AuthContext.Provider value={{ authState, signin, signout, signup }}>

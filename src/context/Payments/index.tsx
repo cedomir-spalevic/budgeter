@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect, useContext } from "react";
+import React, { useState, createContext, useContext } from "react";
 import PaymentsService from "services/external/api/payments";
 import { Payment, PaymentResponse } from "services/external/api/models";
 

@@ -1,10 +1,5 @@
 import EnvironmentService, { Environment } from "services/internal/environment";
-import SecureStorage from "react-native-secure-storage";
-<<<<<<< HEAD
-import { SecureStorageKeys } from "context/Auth";
-=======
-import { SecureStorageKeys } from "context/Auth/context";
->>>>>>> 642410ae8d16e7c8e15ddad31d785a746db0a912
+import { getItem, StorageKeys } from "services/internal/storage";
 
 class ApiConfig {
    static instance: ApiConfig;
@@ -39,7 +34,7 @@ class ApiConfig {
 
    public async callApiProtected(endpoint: string, init?: RequestInit): Promise<Response> {
       const url = `${this.baseUrl}${endpoint}`;
-      const token = await SecureStorage.getItem(SecureStorageKeys.BudgeterKey);
+      const token = await getItem(StorageKeys.AccessToken);
       const options = {
          ...init,
          headers: {
