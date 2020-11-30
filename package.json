@@ -8,7 +8,7 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "fix-black-screen": "watchman watch-del-all && rm -rf node_modules && yarn cache clean && yarn install --ignore-engines && yarn start --reset-cache"
+    "clean": "watchman watch-del-all && rm -rf node_modules && npm install --ignore-engines && npm start --reset-cache"
   },
   "dependencies": {
     "@react-native-community/datetimepicker": "^3.0.1",
@@ -22,6 +22,7 @@
     "react-native": "^0.63.2",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-modal-datetime-picker": "^8.7.0",
+    "react-native-notifications": "^3.4.1",
     "react-native-reanimated": "^1.13.0",
     "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "^3.1.4",

@@ -2,6 +2,9 @@ import React from "react";
 import AuthNavigator from "modules/auth";
 import AppNavigator from "modules/app";
 import { AuthState, useAuth } from "context/Auth";
+import BudgetsProvider from "context/Budgets";
+import PaymentsProvider from "context/Payments";
+import NotificationsProvider from "context/Notifications";
 
 const Entry: React.FC = () => {
     const auth = useAuth();
@@ -12,10 +15,17 @@ const Entry: React.FC = () => {
         case AuthState.SigningIn:
             return null;
         case AuthState.SignedIn:
-            return <AppNavigator />;
+            return (
+                <BudgetsProvider>
+                    <PaymentsProvider>
+                        <NotificationsProvider>
+                            <AppNavigator />
+                        </NotificationsProvider>
+                    </PaymentsProvider>
+                </BudgetsProvider>
+            );
         default:
             return null;
     }
 }
-
 export default Entry;

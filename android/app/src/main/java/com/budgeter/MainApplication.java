@@ -1,5 +1,7 @@
 package com.budgeter;
 
+import com.wix.reactnativenotifications.RNNotificationsPackage;
+
 import com.budgeter.generated.BasePackageList;
 import android.app.Application;
 import android.content.Context;
