@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
    View,
    Text
@@ -13,15 +13,18 @@ const ProfileScreen: React.FC = () => {
    const auth = useAuth();
    const navigation = useNavigation();
 
-   navigation.setOptions({
-      headerRight: () => (
-         <Icon
-            name="exit-to-app"
-            style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
-            onPress={() => auth.signout()}
-         />
-      )
+   useEffect(() => {
+      navigation.setOptions({
+         headerRight: () => (
+            <Icon
+               name="exit-to-app"
+               style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
+               onPress={() => auth.signout()}
+            />
+         )
+      });
    })
+   
    return (
       <View style={globalStyles.centeredScreen}>
          <Text>This page is a work in progress</Text>
