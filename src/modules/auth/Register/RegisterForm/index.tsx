@@ -117,6 +117,22 @@ const RegisterForm: React.FC = () => {
       setSubmit(true);
    }
 
+   const submitForm = async () => {
+      setSendingRequest(true);
+      const response = await auth.signup(email, btoa(password));
+      if (response === undefined) {
+         setFormError("Unable to sign up");
+         setSendingRequest(false);
+         setSubmit(false);
+      }
+      else if (!response.valid) {
+         setEmailError(response.emailError);
+         setPasswordError(response.passwordError);
+         setSendingRequest(false);
+         setSubmit(false);
+      }
+   }
+
    useEffect(() => {
       if (!submit)
          return;
@@ -124,21 +140,7 @@ const RegisterForm: React.FC = () => {
          setSubmit(false);
          return;
       }
-      (async () => {
-         setSendingRequest(true);
-         const response = await auth.signup(email, btoa(password));
-         if (response === undefined) {
-            setFormError("Unable to sign up");
-            setSendingRequest(false);
-            setSubmit(false);
-         }
-         else if (!response.valid) {
-            setEmailError(response.emailError);
-            setPasswordError(response.passwordError);
-            setSendingRequest(false);
-            setSubmit(false);
-         }
-      })();
+      submitForm();
    }, [submit])
 
    const miniminumLengthStyles = (containsMinimumLength ? styles.valid : styles.invalid)

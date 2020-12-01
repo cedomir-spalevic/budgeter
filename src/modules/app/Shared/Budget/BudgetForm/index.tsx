@@ -12,10 +12,10 @@ import {
    Icon, FormError
 } from "components";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useBudgets } from "context/Budgets";
 
 export interface BudgetParams {
    budget?: Budget;
-   onSave: (budget: Budget) => Promise<boolean>;
 }
 
 type ParamList = {
@@ -25,6 +25,7 @@ type ParamList = {
 type RouteProps = RouteProp<ParamList, "Budget">;
 
 const BudgetForm: React.FC = () => {
+   const budgets = useBudgets();
    const navigation = useNavigation();
    const route = useRoute<RouteProps>();
    const [name, setName] = useState<string>();
@@ -75,11 +76,29 @@ const BudgetForm: React.FC = () => {
       validateEndDate(newValue);
    }
 
-   const submitBudget = () => {
+   const onBudgetSave = () => {
       validateName(name);
       validateStartDate(startDate);
       validateEndDate(endDate);
       setSubmit(true);
+   }
+
+   const submitForm = async () => {
+      setSendingRequest(true);
+      const budget: Budget = {
+         budgetId: (route.params.budget && route.params.budget.budgetId ? route.params.budget.budgetId : undefined),
+         name,
+         startDate,
+         endDate,
+         completed: (route.params.budget ? route.params.budget.completed : false)
+      };
+      const saved = await budgets.budgetOnSave(budget);
+      setSendingRequest(false);
+      setSubmit(false);
+      if (!saved)
+         setFormError("Unable to create Budget");
+      else
+         navigation.goBack();
    }
 
    useEffect(() => {
@@ -89,22 +108,7 @@ const BudgetForm: React.FC = () => {
          setSubmit(false);
          return;
       }
-      (async () => {
-         setSendingRequest(true);
-         const budget: Budget = {
-            budgetId: (route.params.budget && route.params.budget.budgetId ? route.params.budget.budgetId : undefined),
-            name,
-            startDate,
-            endDate,
-            completed: (route.params.budget ? route.params.budget.completed : false)
-         };
-         const response = await route.params.onSave(budget);
-         if (!response) {
-            setFormError("Unable to create Budget")
-            setSendingRequest(false);
-            setSubmit(false);
-         }
-      })();
+      submitForm();
    }, [submit])
 
    useEffect(() => {
@@ -147,7 +151,7 @@ const BudgetForm: React.FC = () => {
          </View>
          <View style={globalStyles.inputContainer}>
             <Button
-               onPress={() => submitBudget()}
+               onPress={() => onBudgetSave()}
                children={sendingRequest ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
                text={sendingRequest ? undefined : `${route.params.budget && route.params.budget.budgetId ? "Update" : "Create"} Budget`}
             />

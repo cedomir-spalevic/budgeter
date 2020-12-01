@@ -5,15 +5,16 @@ import {
    DatePicker,
    NumberPad,
    Button,
-   Icon
+   Icon,
+   FormError
 } from "components";
 import { globalStyles, colors } from "styles";
 import { Payment } from "services/external/api/models";
 import { View, ActivityIndicator } from "react-native";
+import { usePayments } from "context/Payments";
 
 export interface PaymentParams {
    payment?: Payment;
-   onSave: (payment: Payment) => Promise<boolean>;
 }
 
 type ParamList = {
@@ -23,6 +24,7 @@ type ParamList = {
 type RouteProps = RouteProp<ParamList, "Payment">;
 
 const PaymentForm: React.FC = () => {
+   const payments = usePayments();
    const navigation = useNavigation();
    const route = useRoute<RouteProps>();
    const [name, setName] = useState<string>();
@@ -32,6 +34,7 @@ const PaymentForm: React.FC = () => {
    const [dueDate, setDueDate] = useState<Date>();
    const [sendingRequest, setSendingRequest] = useState<boolean>(false);
    const [submit, setSubmit] = useState<boolean>(false);
+   const [formError, setFormError] = useState<string>();
 
    const validateName = (value) => {
       let error = undefined;
@@ -61,10 +64,27 @@ const PaymentForm: React.FC = () => {
       setDueDate(newValue);
    }
 
-   const submitPayment = () => {
+   const onPaymentSave = () => {
       validateName(name);
       validateAmount(amount);
       setSubmit(true);
+   }
+
+   const submitForm = async () => {
+      setSendingRequest(true);
+      const payment: Payment = {
+         paymentId: (route.params.payment ? route.params.payment.paymentId : undefined),
+         name: name,
+         amount: amount,
+         dueDate: dueDate
+      }
+      const saved = await payments.paymentOnSave(payment);
+      setSendingRequest(false);
+      setSubmit(false);
+      if (!saved)
+         setFormError("Unable to create Payment");
+      else
+         navigation.goBack();
    }
 
    useEffect(() => {
@@ -74,20 +94,7 @@ const PaymentForm: React.FC = () => {
          setSubmit(false);
          return;
       }
-      (async () => {
-         setSendingRequest(true);
-         const payment: Payment = {
-            paymentId: (route.params.payment ? route.params.payment.paymentId : undefined),
-            name: name,
-            amount: amount,
-            dueDate: dueDate
-         }
-         const response = await route.params.onSave(payment);
-         if (!response) {
-            setSendingRequest(false);
-            setSubmit(false);
-         }
-      })();
+      submitForm();
    }, [submit])
 
    useEffect(() => {
@@ -129,11 +136,15 @@ const PaymentForm: React.FC = () => {
          </View>
          <View style={globalStyles.inputContainer}>
             <Button
-               onPress={() => submitPayment()}
+               onPress={() => onPaymentSave()}
                children={sendingRequest ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
                text={sendingRequest ? undefined : `${route.params.payment && route.params.payment.paymentId ? "Update" : "Create"} Payment`}
             />
          </View>
+         <FormError
+            visible={formError !== undefined}
+            message={formError}
+         />
       </React.Fragment>
    )
 }
