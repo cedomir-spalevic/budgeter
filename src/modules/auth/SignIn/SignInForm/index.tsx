@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
 })
 
 const SignInForm: React.FC = () => {
-   const auth = useAuth();
    const navigation = useNavigation();
+   const auth = useAuth();
    const [email, setEmail] = useState<string>();
    const [emailError, setEmailError] = useState<string>();
    const [password, setPassword] = useState<string>();
@@ -42,10 +42,6 @@ const SignInForm: React.FC = () => {
    const [formError, setFormError] = useState<string>();
    const [sendingRequest, setSendingRequest] = useState<boolean>(false);
    const [submit, setSubmit] = useState<boolean>(false);
-
-   navigation.setOptions({
-      header: () => null
-   })
 
    const validateEmail = (value) => {
       let error = undefined;
@@ -77,6 +73,22 @@ const SignInForm: React.FC = () => {
       setSubmit(true);
    }
 
+   const submitForm = async () => {
+      setSendingRequest(true);
+      const response = await auth.signin(email, btoa(password));
+      if (response === undefined) {
+         setFormError("Unable to sign in");
+         setSendingRequest(false);
+         setSubmit(false);
+      }
+      else if (!response.valid) {
+         setEmailError(response.emailError);
+         setPasswordError(response.passwordError);
+         setSendingRequest(false);
+         setSubmit(false);
+      }
+   }
+
    useEffect(() => {
       if (!submit)
          return;
@@ -84,21 +96,7 @@ const SignInForm: React.FC = () => {
          setSubmit(false);
          return;
       }
-      (async () => {
-         setSendingRequest(true);
-         const response = await auth.signin(email, btoa(password));
-         if (response === undefined) {
-            setFormError("Unable to sign in");
-            setSendingRequest(false);
-            setSubmit(false);
-         }
-         else if (!response.valid) {
-            setEmailError(response.emailError);
-            setPasswordError(response.passwordError);
-            setSendingRequest(false);
-            setSubmit(false);
-         }
-      })();
+      submitForm();
    }, [submit])
 
    return (

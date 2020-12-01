@@ -15,6 +15,7 @@ const AuthNavigator: React.FC = () => (
       <Stack.Screen
          name={AuthRoutes.SignIn}
          component={SigninScreen}
+         options={{ headerShown: false }}
       />
       <Stack.Screen
          name={AuthRoutes.Register}
