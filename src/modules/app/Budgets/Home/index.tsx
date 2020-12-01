@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import BudgetsTab from "../BudgetsTab";
+import BudgetsTab from "./BudgetsTab";
 import { Empty, Icon } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
