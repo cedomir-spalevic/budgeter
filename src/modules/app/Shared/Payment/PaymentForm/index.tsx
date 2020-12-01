@@ -98,7 +98,7 @@ const PaymentForm: React.FC = () => {
    }, [submit])
 
    useEffect(() => {
-      const payment: Payment = route.params.payment;
+      const payment: Payment = route.params?.payment;
       if (payment) {
          onNameChange(payment.name);
          onAmountChange(payment.amount);
@@ -138,7 +138,7 @@ const PaymentForm: React.FC = () => {
             <Button
                onPress={() => onPaymentSave()}
                children={sendingRequest ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
-               text={sendingRequest ? undefined : `${route.params.payment && route.params.payment.paymentId ? "Update" : "Create"} Payment`}
+               text={sendingRequest ? undefined : `${route.params?.payment?.paymentId ? "Update" : "Create"} Payment`}
             />
          </View>
          <FormError

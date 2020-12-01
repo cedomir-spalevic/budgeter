@@ -112,8 +112,8 @@ const BudgetForm: React.FC = () => {
    }, [submit])
 
    useEffect(() => {
-      const budget: Budget = route.params.budget;
-      if (budget !== undefined) {
+      const budget: Budget = route.params?.budget;
+      if (budget) {
          onNameChange(budget.name);
          onStartDateChange(budget.startDate);
          onEndDateChange(budget.endDate);
@@ -153,7 +153,7 @@ const BudgetForm: React.FC = () => {
             <Button
                onPress={() => onBudgetSave()}
                children={sendingRequest ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
-               text={sendingRequest ? undefined : `${route.params.budget && route.params.budget.budgetId ? "Update" : "Create"} Budget`}
+               text={sendingRequest ? undefined : `${route.params?.budget?.budgetId ? "Update" : "Create"} Budget`}
             />
          </View>
          <FormError
