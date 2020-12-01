@@ -11,12 +11,7 @@ const HomeScreen: React.FC = () => {
    const budgets = useBudgets();
    const navigation = useNavigation();
 
-   const onSave = async (budget: Budget) => {
-      const saved = await budgets.budgetOnSave(budget);
-      if (saved)
-         navigation.goBack();
-      return saved;
-   }
+   const createNewBudget = () => navigation.navigate(BudgetsRoute.Budget);
 
    useEffect(() => {
       if(budgets.budgets.length > 0)
@@ -25,7 +20,7 @@ const HomeScreen: React.FC = () => {
                <Icon
                   name="add"
                   style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
-                  onPress={() => navigation.navigate(BudgetsRoute.Budget, { onSave })}
+                  onPress={() => createNewBudget()}
                />
             )
          })
@@ -36,7 +31,7 @@ const HomeScreen: React.FC = () => {
          <Empty 
             message="You don't have any Budgets yet!" 
             addCreateNew={true}
-            onCreateNewClick={() => navigation.navigate(BudgetsRoute.Budget, { onSave })}
+            onCreateNewClick={() => createNewBudget()}
          />
       )
 

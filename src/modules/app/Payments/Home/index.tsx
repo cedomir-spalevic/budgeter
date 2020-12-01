@@ -1,39 +1,40 @@
 import React, { useEffect } from "react";
-import PaymentsList from "../PaymentsList";
-import { Empty } from "components";
+import PaymentsList from "./PaymentsList";
+import { Empty, Icon } from "components";
 import { useNavigation } from "@react-navigation/native";
-import { Payment, PaymentResponse } from "services/external/api/models";
 import { PaymentsRoute } from "../routes";
 import { usePayments } from "context/Payments";
+import { colors } from "styles";
 
 const PaymentsHomeScreen: React.FC = () => {
    const navigation = useNavigation();
    const payments = usePayments();
 
-   const onSave = async (payment: Payment): Promise<PaymentResponse> => {
-      const response = await payments.paymentOnSave(payment);
-      if (response && response.valid)
-         navigation.goBack();
-      return response;
-   }
+   const createNewPayment = () => navigation.navigate(PaymentsRoute.Payment)
 
    useEffect(() => {
-      payments.getPayments();
-   }, []);
+      if(payments.payments.length > 0)
+         navigation.setOptions({
+            headerRight: () => (
+               <Icon
+                  name="add"
+                  style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
+                  onPress={() => createNewPayment()}
+               />
+            )
+         })
+   })
 
-   if (payments.payments.length === 0) {
-      navigation.setOptions({
-         headerRight: () => null
-      })
+   if (payments.payments.length === 0) 
       return (
          <Empty
             message="You don't have any Payments yet!"
             addCreateNew={true}
-            onCreateNewClick={() => navigation.navigate(PaymentsRoute.Payment, { onSave })}
+            onCreateNewClick={() => createNewPayment()}
          />
       )
-   }
-   return <PaymentsList onAddNew={onSave} />
+
+   return <PaymentsList />
 }
 
 export default PaymentsHomeScreen;
