@@ -6,7 +6,6 @@ import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
 
 export enum AuthState {
    SignedOut,
-   SigningIn,
    SignedIn
 }
 
@@ -31,7 +30,7 @@ const defaultValue: Context = {
 export const AuthContext = createContext<Context>(defaultValue);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
-   const [authState, setAuthState] = useState<AuthState>(AuthState.SigningIn);
+   const [authState, setAuthState] = useState<AuthState>(AuthState.SignedOut);
 
    const signin = async (email: string, password: string): Promise<AuthenticationResponse | undefined> => {
       try {

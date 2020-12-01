@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "components/Icon";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { colors } from "styles";
 import BudgetsNavigator from "./Budgets";
 import PaymentsNavigator from "./Payments";
 import SavingsNavigator from "./Savings";
 import ProfileNavigator from "./Profile";
+import { useBudgets } from "context/Budgets";
+import { usePayments } from "context/Payments";
 
 enum TabRoutes {
    Budgets = "Budgets",
@@ -23,6 +25,12 @@ const styles = StyleSheet.create({
    },
    regularIcon: {
       color: colors.secondary
+   },
+   loader: {
+      height: "100%",
+      width: "100%",
+      justifyContent: "center",
+      alignItems: "center"
    }
 })
 
@@ -35,7 +43,7 @@ const getOptions = (name: string) => ({
    )
 })
 
-const TabNavigator: React.FC = () => (
+const AppNavigator: React.FC = () => (
    <Tab.Navigator tabBarOptions={tabBarOptions}>
       <Tab.Screen
          name={TabRoutes.Budgets}
@@ -60,4 +68,24 @@ const TabNavigator: React.FC = () => (
    </Tab.Navigator>
 );
 
-export default TabNavigator;
+const AppLoader: React.FC = () => {
+   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+   const budgets = useBudgets();
+   const payments = usePayments();
+
+   const load = async () => {
+      await budgets.getBudgets();
+      await payments.getPayments();
+      setDataLoaded(true);;
+   }
+
+   useEffect(() => {
+      load();
+   }, [])
+
+   if(!dataLoaded)
+      return <View style={styles.loader}><ActivityIndicator size="large" /></View>;
+   return <AppNavigator />
+}
+
+export default AppLoader;
