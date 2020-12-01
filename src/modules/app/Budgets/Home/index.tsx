@@ -19,8 +19,17 @@ const HomeScreen: React.FC = () => {
    }
 
    useEffect(() => {
-      budgets.getBudgets();
-   }, [])
+      if(budgets.budgets.length > 0)
+         navigation.setOptions({
+            headerRight: () => (
+               <Icon
+                  name="add"
+                  style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
+                  onPress={() => navigation.navigate(BudgetsRoute.Budget, { onSave })}
+               />
+            )
+         })
+   })
 
    if (budgets.budgets.length === 0)
       return (
@@ -30,16 +39,6 @@ const HomeScreen: React.FC = () => {
             onCreateNewClick={() => navigation.navigate(BudgetsRoute.Budget, { onSave })}
          />
       )
-
-   navigation.setOptions({
-      headerRight: () => (
-         <Icon
-            name="add"
-            style={{ paddingRight: 20, color: colors.primary, fontSize: 32 }}
-            onPress={() => navigation.navigate(BudgetsRoute.Budget, { onSave })}
-         />
-      )
-   })
 
    return <BudgetsTab />
 };
