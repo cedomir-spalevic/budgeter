@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { globalStyles, colors } from "styles";
 import { Label, Icon } from "components";
@@ -43,16 +43,7 @@ const NewBudgetPaymentScreen: React.FC = () => {
    const route = useRoute<RouteProps>();
    const payments = usePayments();
    const budgets = useBudgets();
-
-   const onCreateNewPaymentSave = async (payment: Payment) => {
-      const newPayment = await payments.paymentOnSave(payment);
-      if (newPayment.paymentId) {
-         const budgetPaymentSaved = await budgets.addPayment(route.params.budget, newPayment.paymentId);
-         navigation.goBack();
-         navigation.goBack();
-      }
-      return newPayment;
-   }
+   const [creatingNew, setCreatingNew] = useState<boolean>(false);
 
    const onAddExistingPaymentsSave = async (payments: Payment[]) => {
       await Promise.all(payments.map(async x => await budgets.addPayment(route.params.budget, x.paymentId)));
@@ -61,15 +52,23 @@ const NewBudgetPaymentScreen: React.FC = () => {
    }
 
    const createNewPayment = () => {
-      navigation.navigate(BudgetsRoute.NewPayment, { onSave: onCreateNewPaymentSave });
+      setCreatingNew(true);
+      navigation.navigate(BudgetsRoute.Payment, { payment: { budgetId: route.params.budget.budgetId } });
    }
 
    const addExistingPayment = () => {
+      setCreatingNew(true);
       navigation.navigate(BudgetsRoute.AddExistingPayments, { 
          budget: route.params.budget, 
          onSave: onAddExistingPaymentsSave 
       });
    }
+
+   useEffect(() => {
+      // If we detect a change and we were trying to create a new one - lets assume we can go back
+      if(creatingNew)
+         navigation.goBack();
+   }, [budgets.budgets, payments.payments])
 
    return (
       <View style={[globalStyles.container, globalStyles.verticallyCentered]}>
@@ -77,7 +76,7 @@ const NewBudgetPaymentScreen: React.FC = () => {
             <Icon name="list" style={styles.icons} />
             <Label text="Add Existing Payment" size={18} color={colors.primary} />
          </TouchableOpacity>
-         <TouchableOpacity style={styles.decisionContainer} onPress={createNewPayment}>
+         <TouchableOpacity style={styles.decisionContainer} onPress={() => createNewPayment()}>
             <Icon name="add-circle-outline" style={styles.icons} />
             <Label text="Create New Payment" size={18} color={colors.primary} />
          </TouchableOpacity>

@@ -48,9 +48,9 @@ const BudgetPaymentsScreen: React.FC = () => {
    const [paymentsList, setPaymentsList] = useState<Payment[]>([]);
    const [paymentToRemove, setPaymentToRemove] = useState<Payment>();
 
-   useEffect(() => {
-      getPayments();
-   }, [])
+   const viewPayment = (payment) => navigation.navigate(BudgetsRoute.Payment, { payment });
+
+   const addNewPayment = () => navigation.navigate(BudgetsRoute.AddPayment, { budget: route.params.budget })
 
    const getPayments = () => {
       let p = route.params.budget.payments.map(x => x.paymentId);
@@ -63,45 +63,6 @@ const BudgetPaymentsScreen: React.FC = () => {
       navigation.setParams({ budget })
       getPayments();
    }
-
-   useEffect(() => {
-      const totalAmount = paymentsList.map(x => x.amount).reduce((acc, value) => Number(acc) + Number(value), 0);
-      const total = toCurrency(totalAmount);
-      setTotal(total);
-   }, [payments])
-
-   if (!payments || paymentsList.length === 0) {
-      navigation.setOptions({
-         headerTintColor: colors.primary,
-         headerTitleStyle: { color: colors.black }
-      })
-      return (
-         <View style={globalStyles.container}>
-            <Empty
-               message="There are no Payments in this Budget yet!"
-               addCreateNew={true}
-               onCreateNewClick={() => {
-                  navigation.navigate(BudgetsRoute.AddPayment, { budget: route.params.budget, onSave: syncBudget });
-               }}
-            />
-         </View>
-      )
-   }
-
-   navigation.setOptions({
-      title: route.params.budget.name,
-      headerRight: () => (
-         <Icon
-            name="add"
-            color={colors.primary}
-            size={32}
-            style={{ paddingRight: 20 }}
-            onPress={() => {
-               navigation.navigate(BudgetsRoute.AddPayment, { budget: route.params.budget, onSave: syncBudget });
-            }}
-         />
-      )
-   })
 
    const removePayment = async () => {
       try {
@@ -133,6 +94,54 @@ const BudgetPaymentsScreen: React.FC = () => {
       catch (error) {
          Toast.show(`Unable to ${budgetPayment.completed ? "complete" : "uncomplete"} Payment`);
       }
+   }
+
+   useEffect(() => {
+      const totalAmount = paymentsList.map(x => x.amount).reduce((acc, value) => Number(acc) + Number(value), 0);
+      const total = toCurrency(totalAmount);
+      setTotal(total);
+   }, [paymentsList])
+
+   useEffect(() => {
+      getPayments();
+   }, [payments.payments])
+
+   useEffect(() => {
+      syncBudget();
+   }, [budgets.budgets])   
+
+   useEffect(() => {
+      if (!payments || paymentsList.length === 0) {
+         navigation.setOptions({
+            headerTintColor: colors.primary,
+            headerTitleStyle: { color: colors.black }
+         });
+         return;
+      }
+      navigation.setOptions({
+         title: route.params.budget.name,
+         headerRight: () => (
+            <Icon
+               name="add"
+               color={colors.primary}
+               size={32}
+               style={{ paddingRight: 20 }}
+               onPress={() => addNewPayment()}
+            />
+         )
+      })
+   });
+
+   if (!payments || paymentsList.length === 0) {
+      return (
+         <View style={globalStyles.container}>
+            <Empty
+               message="There are no Payments in this Budget yet!"
+               addCreateNew={true}
+               onCreateNewClick={() => addNewPayment()}
+            />
+         </View>
+      )
    }
 
    return (
@@ -173,7 +182,8 @@ const BudgetPaymentsScreen: React.FC = () => {
                      leftSwipeContent: { color: colors.red, iconName: "delete" },
                      rightSwipeContent: { color: colors.green, iconName: "check" },
                      onLeftActionRelease: () => setPaymentToRemove(x),
-                     onRightActionRelease: () => finishPayment(x.paymentId)
+                     onRightActionRelease: () => finishPayment(x.paymentId),
+                     onPressAction: () => viewPayment(x)
                   })
                })} 
                onRefresh={() => getPayments()}

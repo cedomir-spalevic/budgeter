@@ -8,16 +8,27 @@ import { AuthRoutes } from "./routes";
 import { defaultScreenOptions } from "modules";
 import { Icon } from "components";
 
-const Stack = createStackNavigator();
+const RootStack = createStackNavigator();
+const MainStack = createStackNavigator();
 
-const AuthNavigator: React.FC = () => (
-   <Stack.Navigator initialRouteName={AuthRoutes.SignIn} mode="modal" screenOptions={defaultScreenOptions}>
-      <Stack.Screen
+const MainNavigator: React.FC = () => (
+   <MainStack.Navigator initialRouteName={AuthRoutes.SignIn} screenOptions={defaultScreenOptions}>
+      <MainStack.Screen
          name={AuthRoutes.SignIn}
          component={SigninScreen}
          options={{ headerShown: false }}
       />
-      <Stack.Screen
+   </MainStack.Navigator>
+)
+
+const RootNavigator: React.FC = () => (
+   <RootStack.Navigator initialRouteName={AuthRoutes.SignIn} mode="modal" screenOptions={defaultScreenOptions}>
+      <RootStack.Screen
+         name={AuthRoutes.SignIn}
+         component={MainNavigator}
+         options={{ headerShown: false }}
+      />
+      <RootStack.Screen
          name={AuthRoutes.Register}
          component={RegisterScreen}
          options={{
@@ -30,7 +41,7 @@ const AuthNavigator: React.FC = () => (
             )
          }}
       />
-   </Stack.Navigator>
+   </RootStack.Navigator>
 );
 
-export default AuthNavigator;
+export default RootNavigator;

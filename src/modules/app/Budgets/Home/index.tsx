@@ -3,7 +3,6 @@ import BudgetsTab from "./BudgetsTab";
 import { Empty, Icon } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
-import { Budget } from "services/external/api/models";
 import { colors } from "styles";
 import { useBudgets } from "context/Budgets";
 

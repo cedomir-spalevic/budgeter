@@ -3,6 +3,6 @@ export enum BudgetsRoute {
    Budget = "Budget",
    BudgetPayments = "Budget Payments",
    AddPayment = "Add Payment",
-   NewPayment = "Payment",
+   Payment = "Payment",
    AddExistingPayments = "Add Existing Payments"
 }

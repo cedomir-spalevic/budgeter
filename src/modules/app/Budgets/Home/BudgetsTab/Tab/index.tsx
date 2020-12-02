@@ -36,7 +36,7 @@ const Tab: React.FC<Props> = (props: Props) => {
    }
 
    const completeBudget = async (budget: Budget) => {
-      budget.completed = true;
+      budget.completed = !budget.completed;
       const budgetResponse = await budgets.budgetOnSave(budget);
       if(!budgetResponse || !budgetResponse.valid)
          Toast.show(`Unable to complete ${budget.name}`);
@@ -45,8 +45,8 @@ const Tab: React.FC<Props> = (props: Props) => {
    if(props.items.length === 0)
         return (
             <Empty
-            message={`No ${props.type} Budgets!`}
-            addCreateNew={false}
+                message={`No ${props.type} Budgets!`}
+                addCreateNew={false}
             />
         )
    

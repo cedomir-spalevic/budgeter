@@ -23,6 +23,7 @@ export interface BudgetResponse {
 
 export interface Payment {
    paymentId?: string;
+   budgetId?: string;
    name: string;
    amount: number;
    dueDate?: Date;

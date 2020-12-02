@@ -17,7 +17,7 @@ const BudgetsNavigator: React.FC = () => (
       <Stack.Screen name={BudgetsRoute.Budget} component={BudgetScreen} />
       <Stack.Screen name={BudgetsRoute.BudgetPayments} component={BudgetPaymentsScreen} />
       <Stack.Screen name={BudgetsRoute.AddPayment} component={NewBudgetPaymentScreen} />
-      <Stack.Screen name={BudgetsRoute.NewPayment} component={PaymentScreen} />
+      <Stack.Screen name={BudgetsRoute.Payment} component={PaymentScreen} />
       <Stack.Screen name={BudgetsRoute.AddExistingPayments} component={AddExistingPayments} />
    </Stack.Navigator>
 )

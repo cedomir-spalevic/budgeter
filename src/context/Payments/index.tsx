@@ -1,6 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
 import PaymentsService from "services/external/api/payments";
 import { Payment, PaymentResponse } from "services/external/api/models";
+import { useBudgets } from "context/Budgets";
 
 interface Props {
    children: React.ReactNode;
@@ -20,6 +21,7 @@ const defaultValue: Context = {
 export const PaymentsContext = createContext<Context>(defaultValue);
 
 const PaymentsProvider: React.FC<Props> = (props: Props) => {
+   const budgets = useBudgets();
    const [payments, setPayments] = useState<Payment[]>([]);
 
    const getPayments = async () => {
@@ -52,9 +54,15 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
          const paymentsService = PaymentsService.getInstance();
          let paymentResponse: PaymentResponse;
          if (!payment.paymentId) {
+            const budgetId = payment.budgetId;
             paymentResponse = await paymentsService.createPayment(payment);
             if (!paymentResponse.valid)
                return paymentResponse;
+            if(budgetId) {
+               const index = budgets.budgets.findIndex(x => x.budgetId === budgetId);
+               if(index !== -1)
+                  budgets.addPayment(budgets.budgets[index], paymentResponse.paymentId);
+            }
             payment.paymentId = paymentResponse.paymentId;
             payments.push(payment);
          }

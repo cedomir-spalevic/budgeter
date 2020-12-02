@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { globalStyles, colors } from "styles";
 import { ListItem, Icon, Empty } from "components";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
@@ -10,7 +10,6 @@ import { usePayments } from "context/Payments";
 
 export interface AddExistingPaymentParams {
    budget: Budget;
-   onSave: (payments: Payment[]) => Promise<void>;
 }
 
 type ParamList = {
@@ -26,6 +25,30 @@ const AddExistingPayments: React.FC = () => {
    const payments = usePayments();
    const [paymentsAllowedToAdd, setPaymentsAllowedToAdd] = useState<Payment[]>([]);
    const [paymentsToAdd, setPaymentsToAdd] = useState<Payment[]>([]);
+   const [submit, setSubmit] = useState<boolean>(false);
+
+   const togglePayment = (id) => {
+      let index = paymentsToAdd.findIndex(x => x.paymentId === id);
+      if (index === -1)
+         paymentsToAdd.push(payments.payments.find(x => x.paymentId === id))
+      else
+         paymentsToAdd.splice(index, 1);
+      setPaymentsToAdd([...paymentsToAdd])
+   }
+   
+   const addPayments = async () => {
+      await Promise.all(paymentsToAdd.map(async x => await budgets.addPayment(route.params.budget, x.paymentId)));
+      navigation.goBack();
+   }
+
+   useEffect(() => {
+      if(!submit)
+         return;
+      navigation.setOptions({
+         headerRight: () => <ActivityIndicator size="small" color={colors.primary} style={{ paddingRight: 20 }} />
+      });
+      addPayments();
+   }, [submit])
 
    useEffect(() => {
       let nPaymentsAllowedToAdd = payments.payments;
@@ -36,36 +59,22 @@ const AddExistingPayments: React.FC = () => {
       setPaymentsAllowedToAdd([...nPaymentsAllowedToAdd])
    }, [])
 
-   const togglePayment = (id) => {
-      let index = paymentsToAdd.findIndex(x => x.paymentId === id);
-      if (index === -1)
-         paymentsToAdd.push(payments.payments.find(x => x.paymentId === id))
-      else
-         paymentsToAdd.splice(index, 1);
-      setPaymentsToAdd([...paymentsToAdd])
-   }
-
-   const save = () => {
+   useEffect(() => {
       navigation.setOptions({
-         headerRight: () => <ActivityIndicator size="small" color={colors.primary} style={{ paddingRight: 20 }} />
+         headerRight: () => {
+            if (paymentsToAdd.length === 0)
+               return null;
+            return (
+               <Text
+                  onPress={() => setSubmit(true)}
+                  style={{ paddingRight: 20, color: colors.primary, fontSize: 18 }}
+               >
+                  Save
+               </Text>
+            )
+         }
       })
-      route.params.onSave(paymentsToAdd);
-   }
-
-   navigation.setOptions({
-      headerRight: () => {
-         if (paymentsToAdd.length === 0)
-            return null;
-         return (
-            <Text
-               onPress={() => save()}
-               style={{ paddingRight: 20, color: colors.primary, fontSize: 18 }}
-            >
-               Save
-            </Text>
-         )
-      }
-   })
+   }, [paymentsToAdd])
 
    if (paymentsAllowedToAdd.length === 0)
       return (
