@@ -19,7 +19,7 @@ class ApiConfig {
       const environmentService = EnvironmentService.getInstance();
       switch(environmentService.environment) {
          case Environment.Local:
-            return "http://192.168.1.108:3000/api/";
+            return "http://localhost:4000/prod/";
          case Environment.Dev:
             return "https://4hdyvf9voi.execute-api.us-east-1.amazonaws.com/prod/";
          case Environment.Prod:

@@ -6,11 +6,14 @@ import {
 } from "react-native";
 import { globalStyles } from "styles";
 import { Icon } from "components";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface Props {
    value?: string;
    preRenderIcon?: JSX.Element;
+   onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
+   onPostRenderIconClick?: () => void;
    placeholder?: string;
    hidden?: boolean;
    errorMessage?: string;
@@ -35,8 +38,11 @@ const TextField: React.FC<Props> = (props: Props) => {
    return (
       <View>
          <View style={globalStyles.textInputContainer}>
-            {props.preRenderIcon &&
-               React.cloneElement(props.preRenderIcon, { style: globalStyles.textInputIconStyles })}
+            {props.preRenderIcon && (
+               <TouchableOpacity onPress={props.onPreRenderIconClick}>
+                  {React.cloneElement(props.preRenderIcon, { style: globalStyles.textInputIconStyles })}
+               </TouchableOpacity>
+            )}
             <TextInput
                placeholder={props.placeholder}
                secureTextEntry={props.hidden}
@@ -44,9 +50,13 @@ const TextField: React.FC<Props> = (props: Props) => {
                style={globalStyles.textInput}
                value={value}
                onChangeText={onChange}
+               onBlur={() => onChange(value)}
             />
-            {props.postRenderIcon &&
-               React.cloneElement(props.postRenderIcon, { style: globalStyles.textInputIconStyles })}
+            {props.postRenderIcon && (
+               <TouchableOpacity onPress={props.onPostRenderIconClick}>
+                  {React.cloneElement(props.postRenderIcon, { style: globalStyles.textInputIconStyles })}
+               </TouchableOpacity>
+            )}
             {props.errorMessage &&
                <Icon name="error" style={globalStyles.errorIcon} />}
          </View>

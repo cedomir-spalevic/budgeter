@@ -9,16 +9,12 @@ interface Props {
 
 interface Context {
    payments: Payment[];
-   getPayments?: () => Promise<void>;
-   paymentOnSave?: (payment: Payment) => Promise<PaymentResponse | undefined>;
-   deletePayment?: (payment: Payment) => Promise<boolean>;
+   getPayments: () => Promise<void>;
+   paymentOnSave: (payment: Payment) => Promise<PaymentResponse | undefined>;
+   deletePayment: (payment: Payment) => Promise<boolean>;
 }
 
-const defaultValue: Context = {
-   payments: []
-}
-
-export const PaymentsContext = createContext<Context>(defaultValue);
+export const PaymentsContext = createContext<Context>(undefined!);
 
 const PaymentsProvider: React.FC<Props> = (props: Props) => {
    const budgets = useBudgets();

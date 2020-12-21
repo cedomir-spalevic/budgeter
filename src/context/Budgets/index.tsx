@@ -8,20 +8,16 @@ interface Props {
 
 interface Context {
    budgets: Budget[];
-   getBudgets?: () => Promise<void>;
-   budgetOnSave?: (budget: Budget) => Promise<BudgetResponse | undefined>;
-   deleteBudget?: (budgetId: string) => Promise<boolean>;
-   addPayment?: (budget: Budget, paymentId: string) => Promise<boolean>;
-   removePayment?: (budget: Budget, paymentId: string) => Promise<boolean>;
-   completePayment?: (budget: Budget, paymentId: string, value: Boolean) => Promise<Budget>;
-   getPayments?: (budget: Budget) => Promise<Budget>;
+   getBudgets: () => Promise<void>;
+   budgetOnSave: (budget: Budget) => Promise<BudgetResponse | undefined>;
+   deleteBudget: (budgetId: string) => Promise<boolean>;
+   addPayment: (budget: Budget, paymentId: string) => Promise<boolean>;
+   removePayment: (budget: Budget, paymentId: string) => Promise<boolean>;
+   completePayment: (budget: Budget, paymentId: string, value: Boolean) => Promise<Budget>;
+   getPayments: (budget: Budget) => Promise<Budget>;
 }
 
-const defaultValue: Context = {
-   budgets: []
-}
-
-export const BudgetsContext = createContext<Context>(defaultValue);
+export const BudgetsContext = createContext<Context>(undefined!);
 
 const BudgetsProvider: React.FC<Props> = (props: Props) => {
    const [budgets, setBudgets] = useState<Budget[]>([]);

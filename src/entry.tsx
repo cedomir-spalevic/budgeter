@@ -10,7 +10,7 @@ import AppLoader from "modules/app";
 const Entry: React.FC = () => {
     const auth = useAuth();
 
-    if(auth.authState === AuthState.SignedOut)
+    if(auth.authState !== AuthState.SignedIn)
         return <AuthNavigator />;
     return (
         <BudgetsProvider>

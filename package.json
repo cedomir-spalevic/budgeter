@@ -18,6 +18,7 @@
     "@react-navigation/native": "^5.4.3",
     "@react-navigation/stack": "^5.4.0",
     "expo-local-authentication": "^9.3.0",
+    "formik": "^2.2.6",
     "react": "16.11.0",
     "react-native": "^0.63.2",
     "react-native-gesture-handler": "^1.7.0",
@@ -33,7 +34,8 @@
     "react-native-swipeable": "^0.6.0",
     "react-native-tab-view": "^2.14.2",
     "react-native-unimodules": "^0.11.0",
-    "react-native-vector-icons": "^6.7.0"
+    "react-native-vector-icons": "^6.7.0",
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
@@ -67,6 +69,6 @@
     ]
   },
   "config": {
-    "environment": "dev"
+    "environment": "local"
   }
 }

@@ -53,7 +53,8 @@ export const globalStyles = StyleSheet.create({
    textInputIconStyles: {
       fontSize: 18,
       width: 25,
-      color: colors.secondaryDarker
+      color: colors.secondaryDarker,
+      resizeMode: "contain"
    },
    textInput: {
       flex: 1,
@@ -84,7 +85,8 @@ export const globalStyles = StyleSheet.create({
       justifyContent: "center"
    },
    formErrorText: {
-      fontSize: 16
+      fontSize: 16,
+      color: colors.red
    }
 })
 
