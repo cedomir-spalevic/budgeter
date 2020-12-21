@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef } from "react";
 import {
    StyleSheet,
    View,
@@ -10,6 +10,8 @@ import { colors, globalStyles } from "styles";
 import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
 import { useAuth } from "context/Auth";
+import { FormikBag, FormikProps, withFormik } from "formik";
+import * as Yup from "yup";
 
 const styles = StyleSheet.create({
    passwordRequirement: {
@@ -23,192 +25,150 @@ const styles = StyleSheet.create({
       color: colors.red
    },
    valid: {
-      color: colors.primary
+      color: colors.green
    }
 })
+
+interface FormValues {
+   email: string;
+   password: string;
+   confirmPassword: string;
+   formError: string;
+}
+
+interface PasswordRequirements {
+   containsMinimumLength: boolean;
+   containsUpperCase: boolean;
+   containsSpecialCharacters: boolean;
+}
+
+interface Props {
+   checkForPasswordRequirements: () => PasswordRequirements;
+}
 
 const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const specialCharacters = "!#$%&()*+,-./:;<=>?@_";
 
-const RegisterForm: React.FC = () => {
-   const auth = useAuth();
-   const [email, setEmail] = useState<string>();
-   const [emailError, setEmailError] = useState<string>();
-   const [containsUpperCase, setContainsUpperCase] = useState<boolean>();
-   const [containsSpecialCharacters, setContainsSpecialCharacters] = useState<boolean>();
-   const [containsMinimumLength, setContainsMinimumLength] = useState<boolean>();
-   const [password, setPassword] = useState<string>();
-   const [passwordError, setPasswordError] = useState<string>();
-   const [reEnteredPassword, setReEnteredPassword] = useState<string>();
-   const [reEnteredPasswordError, setReEnteredPasswordError] = useState<string>();
-   const [formError, setFormError] = useState<string>();
-   const [sendingRequest, setSendingRequest] = useState<boolean>(false);
-   const [submit, setSubmit] = useState<boolean>(false);
-
-   const validateEmail = (value: string) => {
-      let error = undefined;
-      if (value === undefined || value.length === 0)
-         error = "Email cannot be blank";
-      if (error === undefined && !value.includes("@"))
-         error = "Not a valid Email";
-      setEmailError(error);
-   }
-
-   const onEmailChange = (newValue) => {
-      setEmail(newValue);
-      validateEmail(newValue);
-   }
-
-   const validatePassword = (value) => {
-      let hasError = false;
-      let hasMinimumLength = false;
-      if (value !== undefined && value.length >= 8) {
-         hasMinimumLength = true;
-         hasError = true;
-      }
-      setContainsMinimumLength(hasMinimumLength);
-
-      let hasUpperCase = false;
-      if (value !== undefined) {
-         Array.from(upperChars).forEach(c => {
-            if (value.includes(c)) {
-               hasUpperCase = true;
-               hasError = true;
-            }
-         });
-      }
-      setContainsUpperCase(hasUpperCase);
-
-      let hasSpecialCharacters = false;
-      if (value !== undefined) {
-         Array.from(specialCharacters).forEach(c => {
-            if (value.includes(c)) {
-               hasSpecialCharacters = true;
-               hasError = true;
-            }
-         });
-      }
-      setContainsSpecialCharacters(hasSpecialCharacters);
-      if (!hasError)
-         setPasswordError(undefined);
-   }
-
-   const onPasswordChange = (newValue) => {
-      setPassword(newValue);
-      validatePassword(newValue);
-   }
-
-   const validateReEnteredPassword = (value) => {
-      let error = undefined;
-      if (value !== undefined && value !== password)
-         error = "Does not match entered password";
-      setReEnteredPasswordError(error);
-   }
-
-   const onReEnteredPasswordChange = (newValue) => {
-      setReEnteredPassword(newValue);
-      validateReEnteredPassword(newValue);
-   }
-
-   const signup = async () => {
-      validateEmail(email);
-      validatePassword(password);
-      validateReEnteredPassword(reEnteredPassword);
-      setSubmit(true);
-   }
-
-   const submitForm = async () => {
-      setSendingRequest(true);
-      const response = await auth.signup(email, btoa(password));
-      if (response === undefined) {
-         setFormError("Unable to sign up");
-         setSendingRequest(false);
-         setSubmit(false);
-      }
-      else if (!response.valid) {
-         setEmailError(response.emailError);
-         setPasswordError(response.passwordError);
-         setSendingRequest(false);
-         setSubmit(false);
-      }
-   }
-
-   useEffect(() => {
-      if (!submit)
-         return;
-      if (emailError || !containsUpperCase || !containsSpecialCharacters || !containsMinimumLength || reEnteredPasswordError) {
-         setSubmit(false);
-         return;
-      }
-      submitForm();
-   }, [submit])
-
-   const miniminumLengthStyles = (containsMinimumLength ? styles.valid : styles.invalid)
-   const upperCaseStyles = (containsUpperCase ? styles.valid : styles.invalid)
-   const specialCharactersStyles = (containsSpecialCharacters ? styles.valid : styles.invalid)
+const RegisterForm = (props: Props & FormikProps<FormValues>) => {
+   const passwordRequirements = props.checkForPasswordRequirements();
    return (
-      <React.Fragment>
+      <>
          <View style={globalStyles.inputContainer}>
             <TextField
                preRenderIcon={<Icon name="email" />}
                placeholder="Enter your email"
-               errorMessage={emailError}
-               onChange={(nt) => onEmailChange(nt)}
+               errorMessage={props.touched.email && props.errors.email}
+               onChange={props.handleChange("email")}
             />
          </View>
          <View style={globalStyles.inputContainer}>
-            <TextFieldSecret
+             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={passwordError}
-               onChange={nt => onPasswordChange(nt)}
+               errorMessage={props.touched.password && props.errors.password}
+               onChange={props.handleChange("password")}
             />
          </View>
          <View style={globalStyles.inputContainer}>
             <TextFieldSecret
-               placeholder="Re-enter your password"
-               errorMessage={reEnteredPasswordError}
-               onChange={nt => onReEnteredPasswordChange(nt)}
+               placeholder="Confirm your password"
+               errorMessage={props.touched.confirmPassword && props.errors.confirmPassword}
+               onChange={props.handleChange("confirmPassword")}
             />
          </View>
          <View style={globalStyles.inputContainer}>
             <View style={styles.passwordRequirement}>
-               {containsMinimumLength ?
-                  <Icon name="check_circle" style={[styles.iconStyles, styles.valid]} />
-                  : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
-               <Text style={miniminumLengthStyles}>
+               {passwordRequirements.containsMinimumLength ?
+                  <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
+                     : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
+               <Text style={passwordRequirements.containsMinimumLength ? styles.valid : styles.invalid}>
                   Have at least 8 characters
                </Text>
             </View>
             <View style={styles.passwordRequirement}>
-               {containsUpperCase ?
-                  <Icon name="check_circle" style={[styles.iconStyles, styles.valid]} />
-                  : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
-               <Text style={upperCaseStyles}>
+               {passwordRequirements.containsUpperCase ?
+                  <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
+                     : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
+               <Text style={passwordRequirements.containsUpperCase ? styles.valid : styles.invalid}>
                   Have at least one upper case character
                   </Text>
             </View>
             <View style={styles.passwordRequirement}>
-               {containsSpecialCharacters ?
-                  <Icon name="check_circle" style={[styles.iconStyles, styles.valid]} />
-                  : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
-               <Text style={specialCharactersStyles}>
+               {passwordRequirements.containsSpecialCharacters ?
+                  <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
+                     : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
+               <Text style={passwordRequirements.containsSpecialCharacters ? styles.valid : styles.invalid}>
                   Have at least one special character: {specialCharacters}
                </Text>
             </View>
          </View>
          <View style={globalStyles.inputContainer}>
             <Button
-               onPress={() => signup()}
-               children={sendingRequest ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
-               text={sendingRequest ? undefined : "Create Account"}
+               onPress={props.handleSubmit}
+               children={props.isSubmitting ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
+               text={props.isSubmitting ? undefined : "Create Account"}
             />
          </View>
          <FormError
-            visible={formError !== undefined}
-            message={formError}
+            visible={Boolean(props.errors.formError)}
+            message={props.errors.formError}
          />
-      </React.Fragment>
+      </>
    )
 }
 
-export default RegisterForm;
+const Register: React.FC = () => {
+   const auth = useAuth();
+   const passwordRequirements = useRef<PasswordRequirements>({ 
+      containsUpperCase: false, 
+      containsMinimumLength: false, 
+      containsSpecialCharacters: false
+   });
+
+   const testForMinimumRequirements = (value: string): boolean => {
+      let hasMinimumLength = false, hasUpperCase = false, hasSpecialCharacters = false;
+      if(value && value.length >= 8)
+         hasMinimumLength = true;
+      Array.from(upperChars).forEach(c => {
+         if (value && value.includes(c)) hasUpperCase = true;
+      });
+      Array.from(specialCharacters).forEach(c => {
+         if (value && value.includes(c)) hasSpecialCharacters = true;
+      });
+      passwordRequirements.current = {
+         containsSpecialCharacters: hasSpecialCharacters,
+         containsMinimumLength: hasMinimumLength,
+         containsUpperCase: hasUpperCase
+      }
+      return hasMinimumLength && hasUpperCase && hasSpecialCharacters;
+   }
+
+   const Form = withFormik<Props, FormValues>({
+      mapPropsToValues: (props: Props) => ({
+         email: "",
+         password: "",
+         confirmPassword: "",
+         formError: ""
+      }),
+      validationSchema: Yup.object().shape({
+         email: Yup.string().email("Not a valid email").required("Email cannot be blank"),
+         password: Yup.string().required("Password cannot be blank")
+            .test("minimumRequirements", "Password must meet minimum requirements", testForMinimumRequirements),
+         confirmPassword: Yup.string().required("Confirm your password")
+            .oneOf([Yup.ref("password"), null], "Does not match password")
+      }),
+      handleSubmit: async (values: FormValues, formikBag: FormikBag<Props, FormValues>)  => {
+         const response = await auth.signup(values.email, values.password);
+         if(response) {
+            formikBag.setErrors({
+               email: response.emailError,
+               password: response.passwordError,
+               formError: response.formError
+            })
+         }
+      }
+   })(RegisterForm);
+
+   return <Form checkForPasswordRequirements={() => passwordRequirements.current} />
+}
+
+export default Register;

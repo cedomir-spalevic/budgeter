@@ -1,6 +1,6 @@
 import ApiConfig from "../config";
 import { AuthenticationResponse } from "../models";
-import { GeneralError, InternalServerError, NoUserFoundError, UnauthorizedError } from "../models/errors";
+import { AlreadyExistsError, GeneralError, InternalServerError, NoUserFoundError, UnauthorizedError } from "../models/errors";
 import { AuthResponse } from "../models/responses";
 
 class AuthenticationService {
@@ -27,7 +27,6 @@ class AuthenticationService {
          body: JSON.stringify({ email, password })
       };
       const response = await apiConfig.callApi(`${this.resource}/signin`, options);
-      console.log(response)
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);
@@ -65,7 +64,7 @@ class AuthenticationService {
       return response.status === 200;
    }
 
-   async register(email: string, password: string): Promise<AuthenticationResponse> {
+   async register(email: string, password: string): Promise<AuthResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -75,8 +74,29 @@ class AuthenticationService {
          body: JSON.stringify({ email, password })
       };
       const response = await apiConfig.callApi(`${this.resource}/register`, options);
-      const authResponse = await response.json();
-      return authResponse as AuthenticationResponse;
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 409) {
+         throw new AlreadyExistsError();
+      }
+      if(response.status === 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      return {
+         token: body.token,
+         user: {
+            _id: body.user._id,
+            email: body.user.email,
+            isAdmin: body.user.isAdmin,
+            isService: body.user.isService,
+            createdOn: new Date(body.user.createdOn),
+            modifiedOn: new Date(body.user.modifiedOn)
+         }
+      }
    }
 }
 

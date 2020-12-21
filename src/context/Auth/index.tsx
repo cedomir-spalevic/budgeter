@@ -1,9 +1,8 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import * as LocalAuthentication from "expo-local-authentication";
-import { AuthenticationResponse } from "services/external/api/models";
 import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
-import { NoUserFoundError, UnauthorizedError } from "services/external/api/models/errors";
+import { AlreadyExistsError, NoUserFoundError, UnauthorizedError } from "services/external/api/models/errors";
 
 export interface Response {
    emailError?: string;
@@ -24,7 +23,7 @@ interface Props {
 interface Context {
    authState: AuthState;
    signin: (email: string, password: string) => Promise<Response | undefined>;
-   signup: (email: string, password: string) => Promise<AuthenticationResponse | undefined>;
+   signup: (email: string, password: string) => Promise<Response | undefined>;
    signout: () => void;
    useLocalAuthentication: () => Promise<void>;
 }
@@ -56,18 +55,23 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    }
 
-   const signup = async (email: string, password: string): Promise<AuthenticationResponse | undefined> => {
+   const signup = async (email: string, password: string): Promise<Response | undefined> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
          const response = await authenticationService.register(email, password);
-         if (response.valid) {
-            setItem(StorageKeys.AccessToken, response.token);
-            setAuthState(AuthState.SignedIn);
-         }
-         return response;
+         setItem(StorageKeys.AccessToken, response.token);
+         setItem(StorageKeys.UserEmail, email);
+         setAuthState(AuthState.SignedIn);
+         return undefined;
       }
       catch (error) {
-         return undefined;
+         if(error instanceof AlreadyExistsError) 
+            return { emailError: "A user already exists with this email" }
+         else {
+            console.error("Error occurred during sign in");
+            console.error(error);
+            return { formError: error.message }
+         }
       }
    }
 
