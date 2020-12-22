@@ -120,7 +120,7 @@ const SignInForm: React.FC = () => {
          password: Yup.string().required("Password cannot be blank")
       }),
       handleSubmit: async (values: FormValues, formikBag: FormikBag<Props, FormValues>)  => {
-         const response = await auth.signin(values.email, values.password);
+         const response = await auth.signin(values.email, btoa(values.password));
          if(response) {
             formikBag.setErrors({
                email: response.emailError,
