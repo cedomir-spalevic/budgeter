@@ -4,7 +4,7 @@ import { ListItem, Icon, Empty } from "components";
 import { View, Text, FlatList, ActivityIndicator } from "react-native";
 import { formatDate } from "services/internal/datetime";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
-import { Payment, Budget } from "services/external/api/models";
+import { Payment, Budget } from "services/external/api/models/data";
 import { useBudgets } from "context/Budgets";
 import { usePayments } from "context/Payments";
 
@@ -28,16 +28,16 @@ const AddExistingPayments: React.FC = () => {
    const [submit, setSubmit] = useState<boolean>(false);
 
    const togglePayment = (id) => {
-      let index = paymentsToAdd.findIndex(x => x.paymentId === id);
+      let index = paymentsToAdd.findIndex(x => x._id === id);
       if (index === -1)
-         paymentsToAdd.push(payments.payments.find(x => x.paymentId === id))
+         paymentsToAdd.push(payments.values.find(x => x._id === id))
       else
          paymentsToAdd.splice(index, 1);
       setPaymentsToAdd([...paymentsToAdd])
    }
    
    const addPayments = async () => {
-      await Promise.all(paymentsToAdd.map(async x => await budgets.addPayment(route.params.budget, x.paymentId)));
+      await Promise.all(paymentsToAdd.map(async x => await budgets.addPayment(route.params.budget._id, x._id)));
       navigation.goBack();
    }
 
@@ -51,10 +51,10 @@ const AddExistingPayments: React.FC = () => {
    }, [submit])
 
    useEffect(() => {
-      let nPaymentsAllowedToAdd = payments.payments;
+      let nPaymentsAllowedToAdd = payments.values;
       if (route.params.budget.payments) {
          const paymentIds = route.params.budget.payments.map(x => x.paymentId);
-         nPaymentsAllowedToAdd = nPaymentsAllowedToAdd.filter(x => !paymentIds.includes(x.paymentId));
+         nPaymentsAllowedToAdd = nPaymentsAllowedToAdd.filter(x => !paymentIds.includes(x._id));
       }
       setPaymentsAllowedToAdd([...nPaymentsAllowedToAdd])
    }, [])
@@ -94,7 +94,7 @@ const AddExistingPayments: React.FC = () => {
                   color = colors.green;
                }
                return ({
-                  id: x.paymentId,
+                  id: x._id,
                   name: x.name,
                   description: x.dueDate && `${formatDate(x.dueDate)}`,
                   icon: (
@@ -104,7 +104,7 @@ const AddExistingPayments: React.FC = () => {
                         style={{ color: color, position: "absolute", top: "50%", right: "5%" }}
                      />
                   ),
-                  onPressAction: () => togglePayment(x.paymentId)
+                  onPressAction: () => togglePayment(x._id)
                })
             })}
             scrollEnabled={false}

@@ -4,7 +4,7 @@ import {
    StyleSheet
 } from "react-native";
 import { globalStyles } from "styles";
-import Welcome from "styles/images/Welcome";
+import Welcome from "assets/svg/Welcome";
 import SignInForm from "./SignInForm";
 import { Label, TypingView } from "components";
 

@@ -1,7 +1,8 @@
 import SecureStorage from "react-native-secure-storage";
 
 export enum StorageKeys {
-    AccessToken = "BudgeterAPIKey"
+    AccessToken = "BudgeterAPIKey",
+    UserEmail = "BudgeterUserEmail"
 }
 
 export const getItem = async (key: string) => await SecureStorage.getItem(key);

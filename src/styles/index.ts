@@ -8,7 +8,7 @@ export const colors = {
    white: "#fff",
    red: "#bb0000",
    blue: "#1883c4",
-   green: "#21ce99",
+   green: "#00ad56",
    darkerBlue: "#6D7787",
    darkBlue: "#B3BBC6"
 }
@@ -53,7 +53,8 @@ export const globalStyles = StyleSheet.create({
    textInputIconStyles: {
       fontSize: 18,
       width: 25,
-      color: colors.secondaryDarker
+      color: colors.secondaryDarker,
+      resizeMode: "contain"
    },
    textInput: {
       flex: 1,
@@ -84,7 +85,8 @@ export const globalStyles = StyleSheet.create({
       justifyContent: "center"
    },
    formErrorText: {
-      fontSize: 16
+      fontSize: 16,
+      color: colors.red
    }
 })
 

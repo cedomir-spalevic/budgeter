@@ -4,7 +4,7 @@ import {
    Text
 } from "react-native";
 import { colors, globalStyles } from "styles";
-import { MovingForward } from "styles/images";
+import { MovingForward } from "assets/svg";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "components";
 import { useAuth } from "context/Auth";

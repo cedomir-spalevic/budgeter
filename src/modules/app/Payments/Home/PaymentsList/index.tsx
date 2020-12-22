@@ -6,7 +6,7 @@ import { globalStyles, colors } from "styles";
 import { formatDate } from "services/internal/datetime";
 import { List } from "components";
 import { useNavigation } from "@react-navigation/native";
-import { Payment } from "services/external/api/models";
+import { Payment } from "services/external/api/models/data";
 import { PaymentsRoute } from "../../routes";
 import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";
@@ -18,9 +18,7 @@ const PaymentsList: React.FC = () => {
    const [paymentToDelete, setPaymentToDelete] = useState<Payment>();
 
    const deletePayment = async () => {
-      const deleted = await payments.deletePayment(paymentToDelete);
-      if (!deleted)
-         Toast.show("Unable to delete payment");
+      await payments.deletePayment(paymentToDelete._id);
       setPaymentToDelete(undefined);
    }
 
@@ -44,8 +42,8 @@ const PaymentsList: React.FC = () => {
                }}
             />}
          <List
-            items={payments.payments.map(x => ({
-               id: x.paymentId,
+            items={payments.values.map(x => ({
+               id: x._id,
                name: x.name,
                description: x.dueDate && `${formatDate(x.dueDate)}`,
                leftSwipeContent: { color: colors.red, iconName: "delete" },

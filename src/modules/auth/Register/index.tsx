@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { globalStyles } from "styles";
 import RegisterForm from "./RegisterForm";
-import PressPlay from "styles/images/PressPlay";
+import PressPlay from "assets/svg/PressPlay";
 import { TypingView } from "components";
 import { useHeaderHeight } from "@react-navigation/stack";
 

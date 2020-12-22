@@ -13,7 +13,7 @@ const PaymentsHomeScreen: React.FC = () => {
    const createNewPayment = () => navigation.navigate(PaymentsRoute.Payment)
 
    useEffect(() => {
-      if(payments.payments.length > 0)
+      if(payments.values.length > 0)
          navigation.setOptions({
             headerRight: () => (
                <Icon
@@ -25,7 +25,7 @@ const PaymentsHomeScreen: React.FC = () => {
          })
    })
 
-   if (payments.payments.length === 0) 
+   if (payments.values.length === 0) 
       return (
          <Empty
             message="You don't have any Payments yet!"

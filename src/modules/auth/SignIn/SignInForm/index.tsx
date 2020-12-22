@@ -5,7 +5,8 @@ import {
    ActivityIndicator,
    TouchableOpacity,
    Text,
-   StyleSheet
+   StyleSheet,
+   Image
 } from "react-native";
 import { colors, globalStyles } from "styles";
 import {
@@ -16,7 +17,11 @@ import {
 import { AuthRoutes } from "modules/auth/routes";
 import { btoa } from "services/internal/security";
 import Icon from "components/Icon";
-import { useAuth } from "context/Auth";
+import { AuthState, useAuth } from "context/Auth";
+import { FormikBag, FormikProps, withFormik } from "formik";
+import * as Yup from "yup";
+import { getItem, StorageKeys } from "services/internal/storage";
+const faceIdIcon = require("assets/images/faceid.png");
 
 const styles = StyleSheet.create({
    textStyles: {
@@ -32,112 +37,105 @@ const styles = StyleSheet.create({
    }
 })
 
-const SignInForm: React.FC = () => {
-   const navigation = useNavigation();
-   const auth = useAuth();
-   const [email, setEmail] = useState<string>();
-   const [emailError, setEmailError] = useState<string>();
-   const [password, setPassword] = useState<string>();
-   const [passwordError, setPasswordError] = useState<string>();
-   const [formError, setFormError] = useState<string>();
-   const [sendingRequest, setSendingRequest] = useState<boolean>(false);
-   const [submit, setSubmit] = useState<boolean>(false);
+interface FormValues {
+   email: string;
+   password: string;
+   formError: string;
+}
 
-   const validateEmail = (value) => {
-      let error = undefined;
-      if (value === undefined || value.length === 0)
-         error = "Email cannot be blank";
-      setEmailError(error);
-   }
+interface Props {
+   onRegisterClick: () => void;
+   onFaceIdClick: () => void;
+}
 
-   const onEmailChange = (newValue) => {
-      setEmail(newValue);
-      validateEmail(newValue);
-   }
-
-   const validatePassword = (value) => {
-      let error = undefined;
-      if (value === undefined || value.length === 0)
-         error = "Password cannot be blank";
-      setPasswordError(error);
-   }
-
-   const onPasswordChange = (newValue) => {
-      setPassword(newValue);
-      validatePassword(newValue);
-   }
-
-   const signin = async () => {
-      validateEmail(email);
-      validatePassword(password);
-      setSubmit(true);
-   }
-
-   const submitForm = async () => {
-      setSendingRequest(true);
-      const response = await auth.signin(email, btoa(password));
-      if (response === undefined) {
-         setFormError("Unable to sign in");
-         setSendingRequest(false);
-         setSubmit(false);
-      }
-      else if (!response.valid) {
-         setEmailError(response.emailError);
-         setPasswordError(response.passwordError);
-         setSendingRequest(false);
-         setSubmit(false);
-      }
-   }
-
-   useEffect(() => {
-      if (!submit)
-         return;
-      if (emailError || passwordError) {
-         setSubmit(false);
-         return;
-      }
-      submitForm();
-   }, [submit])
-
+const SignInFormView = (props: Props & FormikProps<FormValues>) => {
    return (
-      <React.Fragment>
+      <>
          <View style={globalStyles.inputContainer}>
             <TextField
                preRenderIcon={<Icon name="email" />}
                placeholder="Enter your email"
-               errorMessage={emailError}
-               onChange={nt => onEmailChange(nt)}
+               errorMessage={props.touched.email && props.errors.email}
+               onChange={props.handleChange("email")}
+               value={props.values.email}
+               postRenderIcon={props.onFaceIdClick && <Image source={faceIdIcon} />}
+               onPostRenderIconClick={props.onFaceIdClick}
             />
          </View>
          <View style={globalStyles.inputContainer}>
             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={passwordError}
-               onChange={nt => onPasswordChange(nt)}
+               errorMessage={props.touched.password && props.errors.password}
+               onChange={props.handleChange("password")}
             />
          </View>
          <View style={globalStyles.inputContainer}>
             <Button
-               onPress={() => signin()}
-               children={sendingRequest ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
-               text={sendingRequest ? undefined : "Sign in"}
+               onPress={props.handleSubmit}
+               children={props.isSubmitting ? <ActivityIndicator size="small" color={colors.white} /> : undefined}
+               text={props.isSubmitting ? undefined : "Sign in"}
             />
          </View>
          <FormError
-            visible={formError !== undefined}
-            message={formError}
+            visible={Boolean(props.errors.formError)}
+            message={props.errors.formError}
          />
          <View style={[globalStyles.inputContainer, styles.registerContainer]}>
             <Text style={styles.textStyles}>
                Don't have an account?
-               </Text>
-            <TouchableOpacity onPress={() => navigation.navigate(AuthRoutes.Register)}>
+            </Text>
+            <TouchableOpacity onPress={props.onRegisterClick}>
                <Text style={[styles.linkStyles, styles.textStyles]}>
                   Register here
                </Text>
             </TouchableOpacity>
          </View>
-      </React.Fragment>
+      </>
+   )
+}
+
+const SignInForm: React.FC = () => {
+   const navigation = useNavigation();
+   const auth = useAuth();
+   const [foundEmail, setFoundEmail] = useState<string>();
+
+   useEffect(() => {
+      if(auth.authState === AuthState.Verified) {
+         (async () => {
+            const email = await getItem(StorageKeys.UserEmail);
+            if(email)
+               setFoundEmail(email);
+         })();
+      }
+   }, [auth.authState])
+
+   const Form = withFormik<Props, FormValues>({
+      mapPropsToValues: (props: Props) => ({
+         email: foundEmail ?? "",
+         password: "",
+         formError: ""
+      }),
+      validationSchema: Yup.object().shape({
+         email: Yup.string().required("Email cannot be blank"),
+         password: Yup.string().required("Password cannot be blank")
+      }),
+      handleSubmit: async (values: FormValues, formikBag: FormikBag<Props, FormValues>)  => {
+         const response = await auth.signin(values.email, values.password);
+         if(response) {
+            formikBag.setErrors({
+               email: response.emailError,
+               password: response.passwordError,
+               formError: response.formError
+            })
+         }
+      }
+   })(SignInFormView);
+
+   return (
+      <Form 
+         onRegisterClick={() => navigation.navigate(AuthRoutes.Register)}
+         onFaceIdClick={Boolean(foundEmail) && auth.useLocalAuthentication}
+      />
    )
 }
 

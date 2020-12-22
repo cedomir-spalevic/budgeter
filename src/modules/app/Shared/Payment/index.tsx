@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { globalStyles } from "styles";
 import PaymentForm from "./PaymentForm";
 import { TypingView } from "components";
-import { CreditCardPayment } from "styles/images";
+import { CreditCardPayment } from "assets/svg";
 import { useHeaderHeight } from "@react-navigation/stack";
 
 const styles = StyleSheet.create({

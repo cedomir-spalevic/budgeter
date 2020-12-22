@@ -1,88 +1,115 @@
 import React, { useState, createContext, useContext } from "react";
 import PaymentsService from "services/external/api/payments";
-import { Payment, PaymentResponse } from "services/external/api/models";
+import { Payment } from "services/external/api/models/data";
 import { useBudgets } from "context/Budgets";
+
+interface Response {
+   formError?: string;
+}
 
 interface Props {
    children: React.ReactNode;
 }
 
 interface Context {
-   payments: Payment[];
-   getPayments?: () => Promise<void>;
-   paymentOnSave?: (payment: Payment) => Promise<PaymentResponse | undefined>;
-   deletePayment?: (payment: Payment) => Promise<boolean>;
+   values: Payment[];
+   getPayments: () => Promise<void>;
+   createPayment: (payment: Partial<Payment>, budgetId?: string) => Promise<Response | undefined>;
+   updatePayment: (paymentId: string, payment: Partial<Payment>) => Promise<Response | undefined>;
+   deletePayment: (paymentId: string) => Promise<void>;
 }
 
-const defaultValue: Context = {
-   payments: []
-}
-
-export const PaymentsContext = createContext<Context>(defaultValue);
+export const PaymentsContext = createContext<Context>(undefined!);
 
 const PaymentsProvider: React.FC<Props> = (props: Props) => {
    const budgets = useBudgets();
+   const [count, setCount] = useState<number>(0);
    const [payments, setPayments] = useState<Payment[]>([]);
 
    const getPayments = async () => {
       try {
          const paymentsService = PaymentsService.getInstance();
-         const payments = await paymentsService.getPayments();
+         const response = await paymentsService.getPayments(5, payments.length);
+         setCount(response.count);
+         payments.push(...response.values);
          setPayments([...payments]);
       }
       catch (error) {
-
+         console.error("Error occurred while getting payments");
+         console.error(error);
       }
    }
 
-   const deletePayment = async (payment: Payment) => {
+   const deletePayment = async (paymentId: string) => {
       try {
+         const index = payments.findIndex(x => x._id === paymentId);
+         if(index === -1)
+            return;
          const paymentsService = PaymentsService.getInstance();
-         await paymentsService.deletePayment(payment.paymentId);
-         const index = payments.findIndex(x => x.paymentId === payment.paymentId);
+         await paymentsService.deletePayment(paymentId);
          payments.splice(index, 1);
+         setCount(count-1);
          setPayments([...payments]);
-         return true;
+         const budgetsThatContainsPayment = budgets.values
+            .filter(x => x.payments.filter(y => y.paymentId === paymentId).length > 0);
+         await Promise.all(budgetsThatContainsPayment.map(x => {
+            return new Promise(async (resolve, reject) => {
+               await budgets.removePayment(x._id, paymentId);
+               resolve();
+            })
+         }))
       }
       catch (error) {
-         return false;
+         console.error(`Error occurred while deleting payment ${paymentId}`);
+         console.error(error);
       }
    }
 
-   const paymentOnSave = async (payment: Payment): Promise<PaymentResponse> => {
+   const createPayment = async (payment: Partial<Payment>, budgetId: string) => {
       try {
          const paymentsService = PaymentsService.getInstance();
-         let paymentResponse: PaymentResponse;
-         if (!payment.paymentId) {
-            const budgetId = payment.budgetId;
-            paymentResponse = await paymentsService.createPayment(payment);
-            if (!paymentResponse.valid)
-               return paymentResponse;
-            if(budgetId) {
-               const index = budgets.budgets.findIndex(x => x.budgetId === budgetId);
-               if(index !== -1)
-                  budgets.addPayment(budgets.budgets[index], paymentResponse.paymentId);
-            }
-            payment.paymentId = paymentResponse.paymentId;
-            payments.push(payment);
-         }
-         else {
-            paymentResponse = await paymentsService.updatePayment(payment);
-            if (!paymentResponse.valid)
-               return paymentResponse;
-            const index = payments.findIndex(x => x.paymentId === payment.paymentId);
-            payments[index] = payment;
-         }
+         const newPayment = await paymentsService.createPayment(payment);
+         payments.push(newPayment);
          setPayments([...payments]);
-         return paymentResponse;
-      }
-      catch (error) {
+         if(budgetId)
+            await budgets.addPayment(budgetId, newPayment._id);
          return undefined;
       }
+      catch(error) {
+         console.error("Error occurred while creating budget");
+         console.error(error);
+         return { formError: error.message }
+      }
+   }
+
+   const updatePayment = async (paymentId: string, payment: Partial<Payment>) => {
+      try {
+         const index = payments.findIndex(x => x._id === paymentId);
+         if(index === -1)
+            return;
+         const paymentsService = PaymentsService.getInstance();
+         const updatedPayment = await paymentsService.updatePayment(paymentId, payment);
+         payments[index] = updatedPayment;
+         setPayments([...payments]);
+         return undefined;
+      }
+      catch(error) {
+         console.error(`Error occurred while updating payment ${paymentId}`);
+         console.error(error);
+         return { formError: error.message }
+      }
+   }
+
+   const state = {
+      values: payments,
+      createPayment,
+      updatePayment,
+      getPayments,
+      deletePayment
    }
 
    return (
-      <PaymentsContext.Provider value={{ payments, paymentOnSave, getPayments, deletePayment }}>
+      <PaymentsContext.Provider value={state}>
          {props.children}
       </PaymentsContext.Provider>
    )

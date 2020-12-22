@@ -9,10 +9,7 @@ interface Props {
 interface Context {
 }
 
-const defaultValue: Context = {
-}
-
-const NotificationsContext = createContext<Context>(defaultValue);
+const NotificationsContext = createContext<Context>(undefined!);
 
 const NotificationsProvider: React.FC<Props> = (props: Props) => {
 

@@ -4,7 +4,7 @@ import { globalStyles, colors } from "styles";
 import { Label, Icon } from "components";
 import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
-import { Payment, Budget } from "services/external/api/models";
+import { Payment, Budget } from "services/external/api/models/data";
 import { usePayments } from "context/Payments";
 import { useBudgets } from "context/Budgets";
 
@@ -46,14 +46,14 @@ const NewBudgetPaymentScreen: React.FC = () => {
    const [creatingNew, setCreatingNew] = useState<boolean>(false);
 
    const onAddExistingPaymentsSave = async (payments: Payment[]) => {
-      await Promise.all(payments.map(async x => await budgets.addPayment(route.params.budget, x.paymentId)));
+      await Promise.all(payments.map(async x => await budgets.addPayment(route.params.budget._id, x._id)));
       navigation.goBack();
       navigation.goBack();
    }
 
    const createNewPayment = () => {
       setCreatingNew(true);
-      navigation.navigate(BudgetsRoute.Payment, { payment: { budgetId: route.params.budget.budgetId } });
+      //navigation.navigate(BudgetsRoute.Payment, { payment: { budgetId: route.params.budget._id } });
    }
 
    const addExistingPayment = () => {
@@ -68,7 +68,7 @@ const NewBudgetPaymentScreen: React.FC = () => {
       // If we detect a change and we were trying to create a new one - lets assume we can go back
       if(creatingNew)
          navigation.goBack();
-   }, [budgets.budgets, payments.payments])
+   }, [budgets.values, payments.values])
 
    return (
       <View style={[globalStyles.container, globalStyles.verticallyCentered]}>
