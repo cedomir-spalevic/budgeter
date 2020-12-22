@@ -70,6 +70,6 @@
     ]
   },
   "config": {
-    "environment": "local"
+    "environment": "dev"
   }
 }
