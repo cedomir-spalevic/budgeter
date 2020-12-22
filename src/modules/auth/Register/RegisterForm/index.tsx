@@ -49,7 +49,7 @@ interface Props {
 const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const specialCharacters = "!#$%&()*+,-./:;<=>?@_";
 
-const RegisterForm = (props: Props & FormikProps<FormValues>) => {
+const RegisterFormView = (props: Props & FormikProps<FormValues>) => {
    const passwordRequirements = props.checkForPasswordRequirements();
    return (
       <>
@@ -116,7 +116,7 @@ const RegisterForm = (props: Props & FormikProps<FormValues>) => {
    )
 }
 
-const Register: React.FC = () => {
+const RegisterForm: React.FC = () => {
    const auth = useAuth();
    const passwordRequirements = useRef<PasswordRequirements>({ 
       containsUpperCase: false, 
@@ -166,9 +166,9 @@ const Register: React.FC = () => {
             })
          }
       }
-   })(RegisterForm);
+   })(RegisterFormView);
 
    return <Form checkForPasswordRequirements={() => passwordRequirements.current} />
 }
 
-export default Register;
+export default RegisterForm;

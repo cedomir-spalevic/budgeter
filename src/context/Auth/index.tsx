@@ -2,7 +2,7 @@ import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import * as LocalAuthentication from "expo-local-authentication";
 import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
-import { AlreadyExistsError, NoUserFoundError, UnauthorizedError } from "services/external/api/models/errors";
+import { AlreadyExistsError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
 
 export interface Response {
    emailError?: string;
@@ -45,7 +45,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       catch (error) {
          if(error instanceof UnauthorizedError) 
             return { passwordError: "Incorrect password" }
-         else if(error instanceof NoUserFoundError) 
+         else if(error instanceof NotFoundError) 
             return { emailError: "No user found with this email" }
          else {
             console.error("Error occurred during sign in");

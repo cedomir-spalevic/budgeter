@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { List, Empty, Icon } from "components";
 import { colors, globalStyles } from "styles";
-import { Budget } from "services/external/api/models";
+import { Budget } from "services/external/api/models/data";
 import { View } from "react-native";
 import { formatDate } from "services/internal/datetime";
 import { ConfirmDialog } from "react-native-simple-dialogs";
-import Toast from "react-native-root-toast";
 import { useBudgets } from "context/Budgets";
 import { BudgetsRoute } from "modules/app/Budgets/routes";
 
@@ -20,26 +19,20 @@ const Tab: React.FC<Props> = (props: Props) => {
    const budgets = useBudgets();
    const [budgetToDelete, setBudgetToDelete] = useState<Budget>();
 
-   const navigateToPaymentPage = async (id: string) => {
-      let budget = props.items.find(x => x.budgetId === id);
-      budget = await budgets.getPayments(budget);
+   const navigateToPaymentPage = async (budget: Budget) => {
       navigation.navigate(BudgetsRoute.BudgetPayments, { budget });
    }
 
    const deleteBudget = async () => {
-      if(!budgetToDelete)
-         return;
-      const deleted = await budgets.deleteBudget(budgetToDelete.budgetId!);
-      if(!deleted)
-         Toast.show(`Unable to delete ${budgetToDelete.name}`);
-      setBudgetToDelete(undefined);
+        if(!budgetToDelete)
+            return;
+        await budgets.deleteBudget(budgetToDelete._id);
+        setBudgetToDelete(undefined);
    }
 
    const completeBudget = async (budget: Budget) => {
-      budget.completed = !budget.completed;
-      const budgetResponse = await budgets.budgetOnSave(budget);
-      if(!budgetResponse || !budgetResponse.valid)
-         Toast.show(`Unable to complete ${budget.name}`);
+      const updatedBudget: Partial<Budget> = { completed: !budget.completed }
+      await budgets.updateBudget(budget._id, updatedBudget);
    }
 
    if(props.items.length === 0)
@@ -49,7 +42,6 @@ const Tab: React.FC<Props> = (props: Props) => {
                 addCreateNew={false}
             />
         )
-   
     return (
         <View style={globalStyles.listContainer}>
             {budgetToDelete && 
@@ -69,14 +61,14 @@ const Tab: React.FC<Props> = (props: Props) => {
                 />}
             <List
                 items={props.items.map(x => ({
-                    id: x.budgetId,
+                    id: x._id,
                     name: x.name,
                     description: `${formatDate(x.startDate)} - ${formatDate(x.endDate)}`,
                     leftSwipeContent: { color: colors.red, iconName: "delete" },
                     rightSwipeContent: { color: colors.green, iconName: "check" },
                     onLeftActionRelease: () => setBudgetToDelete(x),
                     onRightActionRelease: () => completeBudget(x),
-                    onPressAction: () => navigateToPaymentPage(x.budgetId),
+                    onPressAction: () => navigateToPaymentPage(x),
                     icon: (props.type === "Completed" ? 
                     <Icon name="check-circle" color={colors.green} /> : null)
                 }))}

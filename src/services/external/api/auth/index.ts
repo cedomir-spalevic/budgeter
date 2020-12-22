@@ -1,6 +1,11 @@
 import ApiConfig from "../config";
-import { AuthenticationResponse } from "../models";
-import { AlreadyExistsError, GeneralError, InternalServerError, NoUserFoundError, UnauthorizedError } from "../models/errors";
+import { 
+   AlreadyExistsError, 
+   GeneralError, 
+   InternalServerError, 
+   NotFoundError, 
+   UnauthorizedError 
+} from "../models/errors";
 import { AuthResponse } from "../models/responses";
 
 class AuthenticationService {
@@ -35,7 +40,7 @@ class AuthenticationService {
          throw new UnauthorizedError();
       }
       if(response.status === 404) {
-         throw new NoUserFoundError();
+         throw new NotFoundError();
       }
       if(response.status === 500) {
          const body = await response.json();

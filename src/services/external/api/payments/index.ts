@@ -1,5 +1,7 @@
-import { Payment, PaymentResponse } from "../models";
+import { Payment } from "../models/data";
 import ApiConfig from "../config";
+import { GeneralError, InternalServerError, NotFoundError } from "../models/errors";
+import { ListResponse } from "../models/responses";
 
 class PaymentsService {
    private resource: string;
@@ -15,47 +17,99 @@ class PaymentsService {
       return PaymentsService.instance;
    }
 
-   public async getPayments(): Promise<Payment[]> {
+   public async getPayments(limit: number, skip: number): Promise<ListResponse<Payment>> {
       const apiConfig = ApiConfig.getInstance();
-      const response = await apiConfig.callApiProtected(this.resource);
-      if (response.status !== 200)
-         throw "Unable to get Payments";
-
-      const payments = await response.json() as any[];
-      return payments.map(x => ({
-         paymentId: x.paymentId,
-         name: x.name,
-         amount: x.amount,
-         dueDate: x.dueDate ? new Date(x.dueDate) : undefined
-      }))
+      const url = `${this.resource}?limit=${limit}&skip=${skip}`
+      const response = await apiConfig.callApiProtected(url);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      return {
+         count: body.count,
+         values: body.values.map(x => ({
+            _id: x._id,
+            name: x.name,
+            dueDate: new Date(x.dueDate),
+            amount: x.amount,
+            createdOn: new Date(x.createdOn),
+            modifiedOn: new Date(x.modifiedOn)
+         }))
+      }
    }
 
-   public async createPayment(payment: Payment): Promise<PaymentResponse> {
+   public async createPayment(payment: Partial<Payment>): Promise<Payment> {
       const apiConfig = ApiConfig.getInstance();
+      let body = {
+         name: payment.name,
+         dueDate: payment.dueDate.toISOString(),
+         amount: payment.amount
+      }
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify(payment)
+         body: JSON.stringify(body)
       };
       const response = await apiConfig.callApiProtected(this.resource, options);
-      return await response.json() as PaymentResponse;
+      const responseBody = await response.json();
+      if(response.status === 400) {
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 500) {
+         throw new InternalServerError(responseBody.message);
+      }
+      return {
+         _id: responseBody._id,
+         name: responseBody.name,
+         dueDate: new Date(responseBody.dueDate),
+         amount: responseBody.amount,
+         createdOn: new Date(responseBody.createdOn),
+         modifiedOn: new Date(responseBody.modifiedOn)
+      }
    }
 
-   public async updatePayment(payment: Payment): Promise<PaymentResponse> {
+   public async updatePayment(paymentId: string, payment: Partial<Payment>): Promise<Payment> {
       const apiConfig = ApiConfig.getInstance();
-      let updatedPayment = { ...payment };
-      updatedPayment.paymentId = undefined;
+      let body = {
+         name: payment.name,
+         dueDate: payment.dueDate.toISOString(),
+         amount: payment.amount
+      }
       const options: RequestInit = {
          method: "PATCH",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify(updatedPayment)
+         body: JSON.stringify(body)
       };
-      const response = await apiConfig.callApiProtected(`${this.resource}/${payment.paymentId}`, options);
-      return await response.json() as PaymentResponse;
+      const response = await apiConfig.callApiProtected(`${this.resource}/${paymentId}`, options);
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 404) {
+         throw new NotFoundError();
+      }
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
+      const responseBody = await response.json();
+      return {
+         _id: responseBody._id,
+         name: responseBody.name,
+         dueDate: new Date(responseBody.dueDate),
+         amount: responseBody.amount,
+         createdOn: new Date(responseBody.createdOn),
+         modifiedOn: new Date(responseBody.modifiedOn)
+      }
    }
 
    public async deletePayment(paymentId: string): Promise<void> {
@@ -64,8 +118,17 @@ class PaymentsService {
          method: "DELETE"
       };
       const response = await apiConfig.callApiProtected(`${this.resource}/${paymentId}`, options);
-      if (response.status !== 200)
-         throw "Unable to delete Payment";
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 404) {
+         throw new NotFoundError();
+      }
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
    }
 }
 

@@ -48,7 +48,7 @@ interface Props {
    onFaceIdClick: () => void;
 }
 
-const SignInForm = (props: Props & FormikProps<FormValues>) => {
+const SignInFormView = (props: Props & FormikProps<FormValues>) => {
    return (
       <>
          <View style={globalStyles.inputContainer}>
@@ -94,7 +94,7 @@ const SignInForm = (props: Props & FormikProps<FormValues>) => {
    )
 }
 
-const SignIn: React.FC = () => {
+const SignInForm: React.FC = () => {
    const navigation = useNavigation();
    const auth = useAuth();
    const [foundEmail, setFoundEmail] = useState<string>();
@@ -129,7 +129,7 @@ const SignIn: React.FC = () => {
             })
          }
       }
-   })(SignInForm);
+   })(SignInFormView);
 
    return (
       <Form 
@@ -139,4 +139,4 @@ const SignIn: React.FC = () => {
    )
 }
 
-export default SignIn;
+export default SignInForm;

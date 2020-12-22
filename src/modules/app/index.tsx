@@ -74,6 +74,7 @@ const AppLoader: React.FC = () => {
    const payments = usePayments();
 
    const load = async () => {
+      /** Any app wide data load should go here */
       await budgets.getBudgets();
       await payments.getPayments();
       setDataLoaded(true);;

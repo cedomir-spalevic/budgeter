@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { globalStyles } from "styles";
 import BudgetForm from "./BudgetForm";
 import { TypingView } from "components";
-import { Finance } from "styles/images";
+import { Finance } from "assets/svg";
 import { useHeaderHeight } from "@react-navigation/stack";
 
 const styles = StyleSheet.create({

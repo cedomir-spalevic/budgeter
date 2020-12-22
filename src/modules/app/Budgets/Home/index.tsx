@@ -13,7 +13,7 @@ const HomeScreen: React.FC = () => {
    const createNewBudget = () => navigation.navigate(BudgetsRoute.Budget);
 
    useEffect(() => {
-      if(budgets.budgets.length > 0)
+      if(budgets.values && budgets.values.length > 0)
          navigation.setOptions({
             headerRight: () => (
                <Icon
@@ -25,7 +25,7 @@ const HomeScreen: React.FC = () => {
          })
    })
 
-   if (budgets.budgets.length === 0)
+   if (budgets.values.length === 0)
       return (
          <Empty 
             message="You don't have any Budgets yet!" 

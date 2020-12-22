@@ -1,5 +1,7 @@
-import { Budget, BudgetPayment, BudgetResponse } from "../models";
+import { Budget } from "../models/data";
 import ApiConfig from "../config";
+import { ListResponse } from "../models/responses";
+import { GeneralError, InternalServerError, NotFoundError } from "../models/errors";
 
 class BudgetsService {
    private resource: string;
@@ -15,21 +17,33 @@ class BudgetsService {
       return BudgetsService.instance;
    }
 
-   public async getBudgets(): Promise<Budget[]> {
+   public async getBudgets(limit: number, skip: number): Promise<ListResponse<Budget>> {
       const apiConfig = ApiConfig.getInstance();
-      const response = await apiConfig.callApiProtected(this.resource);
-      if (response.status !== 200)
-         throw "Unable to get Budgets";
-
-      const budgets = await response.json() as any[];
-      return budgets.map(x => ({
-         budgetId: x.budgetId,
-         name: x.name,
-         startDate: new Date(x.startDate),
-         endDate: new Date(x.endDate),
-         completed: x.completed,
-         payments: []
-      }))
+      const url = `${this.resource}?limit=${limit}&skip=${skip}`
+      const response = await apiConfig.callApiProtected(url);
+      const responseBody = await response.json();
+      if(response.status === 400) {
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 500) {
+         throw new InternalServerError(responseBody.message);
+      }
+      return {
+         count: responseBody.count,
+         values: responseBody.values.map(x => ({
+            _id: x._id,
+            name: x.name,
+            startDate: new Date(x.startDate),
+            endDate: new Date(x.endDate),
+            completed: x.completed,
+            createdOn: new Date(x.createdOn),
+            modifiedOn: new Date(x.modifiedOn),
+            payments: x.payments.map(y => ({
+               paymentId: y.paymentId,
+               completed: y.paymentId
+            }))
+         }))
+      }
    }
 
    public async deleteBudget(budgetId: string): Promise<void> {
@@ -38,51 +52,120 @@ class BudgetsService {
          method: "DELETE"
       };
       const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}`, options);
-      if (response.status !== 200)
-         throw "Unable to delete Budget";
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 404) {
+         throw new NotFoundError();
+      }
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
    }
 
-   public async createBudget(budget: Budget): Promise<BudgetResponse> {
+   public async createBudget(budget: Partial<Budget>): Promise<Budget> {
       const apiConfig = ApiConfig.getInstance();
-      const options: RequestInit = {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json"
-         },
-         body: JSON.stringify(budget)
-      };
-      const response = await apiConfig.callApiProtected(this.resource, options);
-      return await response.json() as BudgetResponse;
-   }
-
-   public async updateBudget(budget: Budget): Promise<BudgetResponse> {
-      const apiConfig = ApiConfig.getInstance();
-      let updatedBudget = { ...budget };
-      updatedBudget.budgetId = undefined;
-      const options: RequestInit = {
-         method: "PATCH",
-         headers: {
-            "Content-Type": "application/json"
-         },
-         body: JSON.stringify(updatedBudget)
-      };
-      const response = await apiConfig.callApiProtected(`${this.resource}/${budget.budgetId}`, options);
-      return await response.json() as BudgetResponse;
-   }
-
-   public async addPayment(budgetId: string, paymentId: string): Promise<void> {
-      const apiConfig = ApiConfig.getInstance();
-      let body = { paymentId };
+      const body = {
+         name: budget.name,
+         startDate: budget.startDate?.toISOString(),
+         endDate: budget.endDate?.toISOString()
+      }
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
          body: JSON.stringify(body)
+      };
+      const response = await apiConfig.callApiProtected(this.resource, options);
+      const responseBody = await response.json();
+      if(response.status === 400) {
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 500) {
+         throw new InternalServerError(responseBody.message);
+      }
+      return {
+         _id: responseBody._id,
+         name: responseBody.name,
+         startDate: new Date(responseBody.startDate),
+         endDate: new Date(responseBody.endDate),
+         completed: responseBody.completed,
+         createdOn: new Date(responseBody.createdOn),
+         modifiedOn: new Date(responseBody.modifiedOn),
+         payments: responseBody.payments.map(y => ({
+            paymentId: y.paymentId,
+            completed: y.paymentId
+         }))
+      }
+   }
+
+   public async updateBudget(budgetId: string, budget: Partial<Budget>): Promise<Budget> {
+      const apiConfig = ApiConfig.getInstance();
+      const body = {
+         name: budget.name,
+         startDate: budget.startDate && budget.startDate.toISOString(),
+         endDate: budget.endDate && budget.endDate.toISOString(),
+         completed: budget.completed
+      }
+      const options: RequestInit = {
+         method: "PATCH",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify(body)
+      };
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}`, options);
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 404) {
+         throw new NotFoundError();
+      }
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
+      const responseBody = await response.json();
+      return {
+         _id: responseBody._id,
+         name: responseBody.name,
+         startDate: new Date(responseBody.startDate),
+         endDate: new Date(responseBody.endDate),
+         completed: responseBody.completed,
+         createdOn: new Date(responseBody.createdOn),
+         modifiedOn: new Date(responseBody.modifiedOn),
+         payments: responseBody.payments.map(y => ({
+            paymentId: y.paymentId,
+            completed: y.paymentId
+         }))
+      }
+   }
+
+   public async addPayment(budgetId: string, paymentId: string): Promise<void> {
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({ paymentId })
       }
       const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments`, options);
-      if (response.status !== 201)
-         throw "Error adding payment to budget";
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 404) {
+         throw new NotFoundError();
+      }
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
    }
 
    public async removePayment(budgetId: string, paymentId: string): Promise<void> {
@@ -94,53 +177,40 @@ class BudgetsService {
          }
       }
       const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}`, options);
-      if (response.status !== 200)
-         throw "Unable to delete payment";
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
+      }
+      if(response.status === 404) {
+         throw new NotFoundError();
+      }
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
    }
 
-   public async getBudgetPayments(budgetId: string): Promise<BudgetPayment[]> {
+   public async updatePayment(budgetId: string, paymentId: string, completed: boolean): Promise<void> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
-         method: "GET",
+         method: "PATCH",
          headers: {
             "Content-Type": "application/json"
-         }
+         },
+         body: JSON.stringify({ completed })
       }
-      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments`, options);
-      if (response.status !== 200)
-         throw "Unable to get Budget Payments";
-
-      const budgetPayments = await response.json() as any[];
-      return budgetPayments.map(x => ({
-         paymentId: x.paymentId,
-         completed: x.completed
-      }))
-   }
-
-   public async completePayment(budgetId: string, paymentId: string): Promise<void> {
-      const apiConfig = ApiConfig.getInstance();
-      const options: RequestInit = {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json"
-         }
+      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}`, options);
+      if(response.status === 400) {
+         const responseBody = await response.json();
+         throw new GeneralError(responseBody.message);
       }
-      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}/complete`, options);
-      if (response.status !== 200)
-         throw "Unable to complete payment";
-   }
-
-   public async uncompletePayment(budgetId: string, paymentId: string): Promise<void> {
-      const apiConfig = ApiConfig.getInstance();
-      const options: RequestInit = {
-         method: "POST",
-         headers: {
-            "Content-Type": "application/json"
-         }
+      if(response.status === 404) {
+         throw new NotFoundError();
       }
-      const response = await apiConfig.callApiProtected(`${this.resource}/${budgetId}/payments/${paymentId}/uncomplete`, options);
-      if (response.status !== 200)
-         throw "Unable to uncomplete payment";
+      if(response.status === 500) {
+         const responseBody = await response.json();
+         throw new InternalServerError(responseBody.message);
+      }
    }
 }
 

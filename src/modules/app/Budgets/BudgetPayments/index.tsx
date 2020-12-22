@@ -4,9 +4,8 @@ import { View, Text, StyleSheet } from "react-native";
 import { List, Empty, Icon } from "components";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { BudgetsRoute } from "../routes";
-import { Payment, Budget } from "services/external/api/models";
+import { Payment, Budget } from "services/external/api/models/data";
 import { formatDate } from "services/internal/datetime";
-import Toast from "react-native-root-toast";
 import { ConfirmDialog } from "react-native-simple-dialogs";
 import { toCurrency } from "services/internal/currency";
 import { usePayments } from "context/Payments";
@@ -54,46 +53,32 @@ const BudgetPaymentsScreen: React.FC = () => {
 
    const getPayments = () => {
       let p = route.params.budget.payments.map(x => x.paymentId);
-      let nPayments = payments.payments.filter(x => p.includes(x.paymentId));
+      let nPayments = payments.values.filter(x => p.includes(x._id));
       setPaymentsList([...nPayments]);
    }
 
-   const syncBudget = () => {
-      let budget = budgets.budgets.find(x => x.budgetId === route.params.budget.budgetId);
-      navigation.setParams({ budget })
+   const removePayment = async () => {
+      if(!paymentToRemove)
+         return;
+      const b = route.params.budget;
+      const index = b.payments.findIndex(x => x.paymentId === paymentToRemove._id);
+      if(index === -1)
+         return;
+      await budgets.removePayment(b._id, paymentToRemove._id);
+      setPaymentToRemove(undefined);
       getPayments();
    }
 
-   const removePayment = async () => {
-      try {
-         const removed = await budgets.removePayment(route.params.budget, paymentToRemove.paymentId);
-         if(!removed)
-            throw new Error();
-         const newBudget = route.params.budget;
-         newBudget.payments = newBudget.payments.filter(x => x.paymentId !== paymentToRemove.paymentId);
-         let nPayments = payments.payments.filter(x => x.paymentId !== paymentToRemove.paymentId);
-         setPaymentToRemove(undefined);
-         setPaymentsList([...nPayments]);
-         navigation.setParams({ budget: newBudget });
-      }
-      catch (error) {
-         Toast.show("Unable to remove Payment from Budget");
-      }
-   }
-
-   const finishPayment = async (paymentId: string) => {
-      let budgetPayment = route.params.budget.payments.find(x => x.paymentId === paymentId);
-
-      try {
-         let newBudget = await budgets.completePayment(route.params.budget, paymentId, !budgetPayment.completed);
-         let paymentIds = newBudget.payments.map(x => x.paymentId);
-         let nPayments = payments.payments.filter(x => paymentIds.includes(x.paymentId));
-         setPaymentsList([...nPayments]);
-         navigation.setParams({ budget: newBudget })
-      }
-      catch (error) {
-         Toast.show(`Unable to ${budgetPayment.completed ? "complete" : "uncomplete"} Payment`);
-      }
+   const updatePayment = async (paymentId: string) => {
+      const b = route.params.budget;
+      const index = b.payments.findIndex(x => x.paymentId === paymentId);
+      if(index === -1)
+         return;
+      const completed = b.payments[index].completed;
+      await budgets.updatePayment(route.params.budget._id, paymentId, !completed);
+      b.completed = !completed;
+      navigation.setParams({ budget: b });
+      getPayments();
    }
 
    useEffect(() => {
@@ -103,12 +88,13 @@ const BudgetPaymentsScreen: React.FC = () => {
    }, [paymentsList])
 
    useEffect(() => {
-      getPayments();
-   }, [payments.payments])
-
-   useEffect(() => {
-      syncBudget();
-   }, [budgets.budgets])   
+      const onFocus = navigation.addListener("focus", () => {
+         const b = budgets.values.find(x => x._id === route.params.budget._id);
+         navigation.setParams({ budget: b });
+         getPayments();
+      })
+      return onFocus
+   }, [navigation])
 
    useEffect(() => {
       if (!payments || paymentsList.length === 0) {
@@ -165,24 +151,24 @@ const BudgetPaymentsScreen: React.FC = () => {
             <List
                items={paymentsList.map(x => {
                   let rightContainerColor = colors.green, rightIconName = "check";
-                  const payment = route.params.budget.payments.find(y => y.paymentId === x.paymentId);
+                  const payment = route.params.budget.payments.find(y => y.paymentId === x._id);
                   if (payment && payment.completed) {
                      rightContainerColor = colors.red;
                      rightIconName = "ban";
                   }
                   let icon = null;
-                  let found = route.params.budget.payments.find(y => y.paymentId === x.paymentId);
+                  let found = route.params.budget.payments.find(y => y.paymentId === x._id);
                   if (found && found.completed)
                      icon = <Icon name="check" color={colors.green} />;
                   return ({
-                     id: x.paymentId,
+                     id: x._id,
                      name: x.name,
                      description: x.dueDate && formatDate(x.dueDate),
                      icon: icon,
                      leftSwipeContent: { color: colors.red, iconName: "delete" },
                      rightSwipeContent: { color: colors.green, iconName: "check" },
                      onLeftActionRelease: () => setPaymentToRemove(x),
-                     onRightActionRelease: () => finishPayment(x.paymentId),
+                     onRightActionRelease: () => updatePayment(x._id),
                      onPressAction: () => viewPayment(x)
                   })
                })} 

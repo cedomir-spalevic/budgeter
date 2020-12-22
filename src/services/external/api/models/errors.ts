@@ -1,6 +1,6 @@
 export class AlreadyExistsError extends Error {}
 
-export class NoUserFoundError extends Error {}
+export class NotFoundError extends Error {}
 
 export class UnauthorizedError extends Error {}
 

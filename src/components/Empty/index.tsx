@@ -6,7 +6,7 @@ import {
    TouchableOpacity
 } from "react-native";
 import { globalStyles, colors } from "styles";
-import { NoData } from "styles/images";
+import { NoData } from "assets/svg";
 import { Icon } from "components";
 
 const styles = StyleSheet.create({
