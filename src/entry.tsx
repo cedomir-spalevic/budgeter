@@ -1,5 +1,6 @@
 import React from "react";
 import AuthNavigator from "modules/auth";
+import NewAuthNavigator from "modules/auth-new";
 import AppNavigator from "modules/app";
 import { AuthState, useAuth } from "context/Auth";
 import BudgetsProvider from "context/Budgets";
@@ -11,7 +12,7 @@ const Entry: React.FC = () => {
     const auth = useAuth();
 
     if(auth.authState !== AuthState.SignedIn)
-        return <AuthNavigator />;
+        return <NewAuthNavigator />;
     return (
         <BudgetsProvider>
             <PaymentsProvider>
