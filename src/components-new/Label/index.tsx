@@ -37,6 +37,7 @@ interface Props {
     type: "header" | "regular" | "subText" | "shadow";
     text: string;
     color?: string;
+    style?: TextStyle;
 }
 
 const Label: React.FC<Props> = (props: Props) => {
@@ -57,6 +58,8 @@ const Label: React.FC<Props> = (props: Props) => {
     }
     if(props.color)
         style.push({ color: props.color });
+    if(props.style)
+        style.push(props.style);
     return <Text style={style}>{props.text}</Text>
 }
 

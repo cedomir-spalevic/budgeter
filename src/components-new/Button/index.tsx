@@ -7,15 +7,13 @@ import { colors } from "styles";
 import Label from "components-new/Label";
 
 const styles = StyleSheet.create({
-   button: {
-      paddingTop: 10,
-      paddingBottom: 10,
-      paddingLeft: 30,
-      paddingRight: 30,
-      borderRadius: 10,
-      backgroundColor: colors.primary,
-      alignItems: "center"
-   }
+    button: {
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 10,
+        backgroundColor: colors.primary,
+        alignItems: "center"
+    }
 })
 
 interface Props {

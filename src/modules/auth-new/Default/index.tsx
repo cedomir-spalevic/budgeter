@@ -2,19 +2,15 @@ import React from "react";
 import {
     View,
     StyleSheet,
-    Dimensions,
     TouchableOpacity
 } from "react-native";
-import { colors, globalStyles } from "styles";
+import { colors } from "styles";
 import Welcome from "assets/svg/Welcome";
-import { Button, Label, Page } from "components-new";
+import { Button, Container, Label, Link, Page } from "components-new";
 import { useNavigation } from "@react-navigation/native";
 import { AuthRoutes } from "modules/auth-new/routes";
 
 const styles = StyleSheet.create({
-    content: {
-       width: Dimensions.get("screen").width * 0.8
-    },
     welcomeText: {
         alignItems: "center"
     },
@@ -35,8 +31,8 @@ const DefaultScreen: React.FC = () => {
     const navigation = useNavigation();
 
     return (
-        <Page verticallyCenter>
-            <View style={styles.content}>
+        <Page>
+            <Container flex verticallyCenter>
                 <View style={styles.welcomeText}>
                     <Label type="header" text="Welcome!" />
                     <Label type="shadow" text="Please log in to continue" />
@@ -47,11 +43,13 @@ const DefaultScreen: React.FC = () => {
                 <Button onPress={() => navigation.navigate(AuthRoutes.Login)} text="Log in" />
                 <View style={styles.registerText}>
                     <Label type="subText" text="Don't have an account?" />
-                    <TouchableOpacity onPress={() => navigation.navigate(AuthRoutes.Register)} style={styles.registerLink}>
-                        <Label type="subText" text="Register here" color={colors.primary} />
-                    </TouchableOpacity>
+                    <Link 
+                        onPress={() => navigation.navigate(AuthRoutes.Register)}
+                        text="Register Here"
+                        style={styles.registerLink}
+                    />
                 </View>
-            </View>
+            </Container>
         </Page>
     )
 }
