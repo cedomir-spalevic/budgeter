@@ -13,7 +13,7 @@ interface Context {
 export const ThemeContext = createContext<Context>(undefined!);
 
 const ThemeProvider: React.FC<Props & any> = (props: Props) => {
-    const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false);
+    const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true);
 
     useEffect(() => {
         if(Appearance.getColorScheme() === "dark")

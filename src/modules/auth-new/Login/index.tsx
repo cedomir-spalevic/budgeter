@@ -12,6 +12,7 @@ import {
 } from "components-new";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
+import { useAuth } from "context-new";
 
 interface FormProps {
 
@@ -42,13 +43,14 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
             </Container>
             <KeyboardAccessory justifyContent="space-between">
                 <Link onPress={() => {}} text="Forgot password?" />
-                <Button onPress={() => {}} text="Log in" />
+                <Button onPress={props.handleSubmit} text="Log in" />
             </KeyboardAccessory>
         </>
      )
 }
 
 const LoginScreen: React.FC = () => {
+    const auth = useAuth();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
@@ -56,10 +58,11 @@ const LoginScreen: React.FC = () => {
            password: ""
         }),
         validationSchema: Yup.object().shape({
-           email: Yup.string().required("Email cannot be blank"),
-           password: Yup.string().required("Password cannot be blank")
+        //    email: Yup.string().required("Email cannot be blank"),
+        //    password: Yup.string().required("Password cannot be blank")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
+            await auth.login(values.email, values.password);
         }
      })(LoginForm);
 
