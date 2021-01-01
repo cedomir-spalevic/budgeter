@@ -11,8 +11,7 @@ const oneTenth = Dimensions.get("screen").width * 0.1;
 
 const styles = StyleSheet.create({
     container: {
-        paddingLeft: oneTenth,
-        paddingRight: oneTenth
+        paddingHorizontal: oneTenth
     },
     verticallyCenter: {
         justifyContent: "center"

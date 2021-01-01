@@ -9,8 +9,7 @@ import { colors } from "styles";
 
 const styles = StyleSheet.create({
    buttonStyles: {
-      paddingTop: 10,
-      paddingBottom: 10,
+      paddingVertical: 5,
       paddingLeft: 30,
       paddingRight: 30,
       borderRadius: 5,

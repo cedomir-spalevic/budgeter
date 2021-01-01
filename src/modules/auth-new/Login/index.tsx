@@ -1,8 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
-import {
-    Keyboard,
-    Dimensions
-} from "react-native";
+import React from "react";
 import { 
     Button, 
     Container, 
@@ -16,7 +12,6 @@ import {
 } from "components-new";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { useModal } from "context-new";
 
 interface FormProps {
 
@@ -28,19 +23,6 @@ interface FormValues {
 }
 
 const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
-    const [height, setHeight] = useState<number>();
-    const [yOffset, setYOffset] = useState<number>();
-    const view = useRef(null);
-
-    useEffect(() => {
-        Keyboard.addListener("keyboardDidShow", e => setHeight(e.startCoordinates.height))
-    }, [])
-
-    let h = 0;
-    if(yOffset && height) {
-        h = (Dimensions.get("screen").height - height);
-    }
-    const modal = useModal();
     return (
         <>
             <Container flex>

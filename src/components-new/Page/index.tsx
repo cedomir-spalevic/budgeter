@@ -2,7 +2,6 @@ import React from "react";
 import { 
     View, 
     StyleSheet, 
-    Dimensions, 
     StyleProp,
     ViewStyle
 } from "react-native";
@@ -24,7 +23,7 @@ const Page: React.FC<Props> = (props: Props) => {
     style.push(styles.container);
     if(props.modal) {
         const modal = useModal();
-        style.push({ marginTop: modal.headerHeight })
+        style.push({ paddingTop: modal.headerHeight })
     }
 
     return (

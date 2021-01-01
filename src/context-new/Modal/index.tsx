@@ -1,6 +1,4 @@
-import { StackScreenProps } from "@react-navigation/stack";
-import React, { useState, createContext, useEffect, useContext } from "react";
-
+import React, { createContext, useContext } from "react";
 
 interface Props {
    children: React.ReactNode;
