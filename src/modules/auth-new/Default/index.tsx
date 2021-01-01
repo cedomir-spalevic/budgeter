@@ -1,16 +1,12 @@
 import React from "react";
-import {
-    View,
-    StyleSheet,
-    TouchableOpacity
-} from "react-native";
-import { colors } from "styles";
+import { View } from "react-native";
 import Welcome from "assets/svg/Welcome";
 import { Button, Container, Label, Link, Page } from "components-new";
 import { useNavigation } from "@react-navigation/native";
 import { AuthRoutes } from "modules/auth-new/routes";
+import { makeStyles } from "context-new";
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(palette => ({
     welcomeText: {
         alignItems: "center"
     },
@@ -25,10 +21,11 @@ const styles = StyleSheet.create({
     registerLink: {
         paddingLeft: 5
     }
- })
+}))
 
 const DefaultScreen: React.FC = () => {
     const navigation = useNavigation();
+    const styles = useStyles();
 
     return (
         <Page>

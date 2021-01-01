@@ -1,37 +1,38 @@
+import { makeStyles } from "context-new";
 import React from "react";
 import {
-    Text,                                      
-    StyleSheet,
+    Text,
     StyleProp,
     TextStyle
 } from "react-native";
-import { colors } from "styles";
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(palette => ({
     regular: {
         fontFamily: "Helvetica Neue",
         fontSize: 22,
-        color: colors.black
+        color: palette.textColor
     },
     header: {
         fontFamily: "Helvetica Neue",
         fontSize: 32,
         fontWeight: "bold",
-        color: colors.black
+        color: palette.textColor
     },
     shadow: {
         fontFamily: "Helvetica Neue",
         fontSize: 18,
-        color: colors.darkBlue,
+        color: palette.darkBlue,
         shadowOpacity: 0.2,
         shadowRadius: 2,
-        shadowOffset: { width: 2, height: 2}
+        shadowOffset: { width: 2, height: 2},
+        shadowColor: palette.textColor
     },
     subText: {
         fontFamily: "Helvetica Neue",
         fontSize: 18,
+        color: palette.textColor
     }
-})
+}));
 
 interface Props {
     type: "header" | "regular" | "subText" | "shadow";
@@ -41,6 +42,7 @@ interface Props {
 }
 
 const Label: React.FC<Props> = (props: Props) => {
+    const styles = useStyles();
     const style: StyleProp<TextStyle> = [];
     switch(props.type) {
         case "header":

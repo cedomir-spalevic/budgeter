@@ -1,20 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
-import { StyleSheet } from "react-native";
-
-const lightTheme: Palette = {
-    primary: "#1883C4",
-    secondary: "#ededed"
-}
-
-const darkTheme: Palette = {
-    primary: "#1883C4",
-    secondary: "#000"
-}
-
-interface Palette {
-    primary: string;
-    secondary: string;
-}
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Appearance, StyleSheet } from "react-native";
+import { darkTheme, lightTheme, Palette } from "styles-new";
 
 interface Props {
    children: React.ReactNode;
@@ -29,6 +15,11 @@ export const ThemeContext = createContext<Context>(undefined!);
 const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false);
 
+    useEffect(() => {
+        if(Appearance.getColorScheme() === "dark")
+            setIsDarkTheme(true);
+    }, [])
+
     return (
         <ThemeContext.Provider value={{ pallette: (isDarkTheme ? darkTheme : lightTheme)  }}>
             {props.children}
@@ -38,13 +29,13 @@ const ThemeProvider: React.FC<Props & any> = (props: Props) => {
 
 export const useTheme = (): Context => useContext<Context>(ThemeContext);
 
-type MakeStylesFunc<T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>> = (palette: Palette) => T;
-
-// <T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>>(styles: T | StyleSheet.NamedStyles<T>): T
-// type MakeStylesFunc = (palette: Palette) => StyleSheet.NamedStyles;
-export const makeStyles = (makeSylesFunc: MakeStylesFunc<any>): StyleSheet.NamedStyles<any> => {
-    const theme = useTheme();
-    return makeSylesFunc(theme.pallette);
-};
+type MakeStylesHook<T> = () => StyleSheet.NamedStyles<T>;
+type MakeStylesFuncParam<T> = (palette: Palette) => T | StyleSheet.NamedStyles<T>;
+export function makeStyles<T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>>(makeStylesFunc: MakeStylesFuncParam<T>): MakeStylesHook<T> {
+    return () => {
+        const theme = useTheme();
+        return makeStylesFunc(theme.pallette);
+    }
+}
 
 export default ThemeProvider;

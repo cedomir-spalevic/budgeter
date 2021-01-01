@@ -1,3 +1,4 @@
+import { makeStyles } from "context-new";
 import React from "react";
 import { 
     View, 
@@ -8,8 +9,7 @@ import {
 } from "react-native";
 
 const oneTenth = Dimensions.get("screen").width * 0.1;
-
-const styles = StyleSheet.create({
+const useStyles = makeStyles(() => ({
     container: {
         paddingHorizontal: oneTenth
     },
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     flex: {
         flex: 1
     }
-})
+}))
 
 interface Props {
     children: React.ReactNode;
@@ -32,6 +32,7 @@ interface Props {
 }
 
 const Container: React.FC<Props> = (props: Props) => {
+    const styles = useStyles();
     const style: StyleProp<ViewStyle> = [];
     style.push(styles.container);
     if(props.flex)

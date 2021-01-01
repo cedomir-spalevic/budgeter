@@ -9,16 +9,13 @@ import {
     TextField,
     TextFieldSecret
 } from "components-new";
-import { 
-    StyleSheet,
-    Text,
-    View
-} from "react-native";
+import { Text, View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { colors } from "styles";
+import { makeStyles } from "context-new";
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(palette => ({
     passwordRequirement: {
        flexDirection: "row",
        alignItems: "stretch"
@@ -32,7 +29,7 @@ const styles = StyleSheet.create({
     valid: {
        color: colors.green
     }
- })
+}))
 
 const upperChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const specialCharacters = "!#$%&()*+,-./:;<=>?@_";
@@ -54,6 +51,7 @@ interface FormValues {
 }
 
 const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
+    const styles = useStyles();
     const passwordRequirements = props.checkForPasswordRequirements();
     return (
         <>

@@ -1,29 +1,27 @@
+import { makeStyles, useTheme } from "context-new";
 import React, { useState, useEffect } from "react";
 import {
    View,
    TextInput,
-   Text,
-   StyleSheet,
    TouchableOpacity
 } from "react-native";
-import { colors } from "styles";
 
-const styles = StyleSheet.create({
-    container: {
-        paddingVertical: 10,
-        borderBottomWidth: 2,
-        borderBottomColor: "#e0e0e0",
-        flexDirection: "row",
-        marginBottom: 10,
-        width: "100%"
-    },
-    icon: {
-        fontSize: 18,
-        width: 25,
-        color: colors.secondaryDarker,
-        resizeMode: "contain"
-    }
-})
+const useStyles = makeStyles(palette => ({
+   container: {
+      paddingVertical: 10,
+      borderBottomWidth: 2,
+      borderBottomColor: "#e0e0e0",
+      flexDirection: "row",
+      marginBottom: 10,
+      width: "100%"
+   },
+   icon: {
+      fontSize: 18,
+      width: 25,
+      color: palette.gray,
+      resizeMode: "contain"
+   }
+}))
 
 interface Props {
    value?: string;
@@ -40,6 +38,8 @@ interface Props {
 
 const TextField: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<string>();
+   const styles = useStyles();
+   const theme = useTheme();
 
    const onChange = (input?: string) => {
       let newValue = (input === undefined ? "" : input);
@@ -61,6 +61,7 @@ const TextField: React.FC<Props> = (props: Props) => {
               </TouchableOpacity> )}
           <TextInput
             placeholder={props.placeholder}
+            placeholderTextColor={theme.pallette.gray}
             autoFocus={props.autoFocus}
             onChangeText={onChange}
             style={{ width: "80%" }}

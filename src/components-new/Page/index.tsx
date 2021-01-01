@@ -1,17 +1,17 @@
 import React from "react";
 import { 
     View, 
-    StyleSheet, 
     StyleProp,
     ViewStyle
 } from "react-native";
-import { useModal } from "context-new";
+import { makeStyles, useModal } from "context-new";
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(palette => ({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: palette.secondary
     }
-})
+}))
 
 interface Props {
     children: React.ReactNode;
@@ -19,6 +19,7 @@ interface Props {
 }
 
 const Page: React.FC<Props> = (props: Props) => {
+    const styles = useStyles();
     const style: StyleProp<ViewStyle> = [];
     style.push(styles.container);
     if(props.modal) {

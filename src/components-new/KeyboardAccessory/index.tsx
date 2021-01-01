@@ -1,3 +1,4 @@
+import { makeStyles } from "context-new";
 import React from "react";
 import { 
     View, 
@@ -9,15 +10,15 @@ import {
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 
 const oneTenth = Dimensions.get("screen").width * 0.05;
-
-const styles = StyleSheet.create({
+const useStyles = makeStyles(palette => ({
     container: {
         paddingVertical: 10,
         paddingHorizontal: oneTenth,
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: palette.secondary
     }
-})
+}))
 
 interface Props {
     children: React.ReactNode;
@@ -26,6 +27,7 @@ interface Props {
 }
 
 const KeyboardAccessory: React.FC<Props> = (props: Props) => {
+    const styles = useStyles();
     const style: StyleProp<ViewStyle> = [];
     style.push(styles.container);
     if(props.justifyContent)
