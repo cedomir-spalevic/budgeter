@@ -1,10 +1,14 @@
 import React from "react";
-import { Page, Label } from "components-new";
+import { createStackNavigator } from "@react-navigation/stack";
+import DefaultScreen from "./Default";
+import { PaymentsRoutes } from "./routes";
 
-const Payments: React.FC = () => (
-    <Page>
-        <Label type="header" text="Payments Page" />
-    </Page>
+const Stack = createStackNavigator();
+
+const PaymentsNavigator: React.FC = () => (
+   <Stack.Navigator initialRouteName={PaymentsRoutes.Default}>
+      <Stack.Screen name={PaymentsRoutes.Default} component={DefaultScreen} />
+   </Stack.Navigator>
 )
 
-export default Payments;
+export default PaymentsNavigator;

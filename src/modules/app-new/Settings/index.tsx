@@ -1,10 +1,14 @@
 import React from "react";
-import { Page, Label } from "components-new";
+import { createStackNavigator } from "@react-navigation/stack";
+import DefaultScreen from "./Default";
+import { SettingsRoutes } from "./routes";
 
-const Settings: React.FC = () => (
-    <Page>
-        <Label type="header" text="Settings Page" />
-    </Page>
+const Stack = createStackNavigator();
+
+const SettingsNavigaor: React.FC = () => (
+   <Stack.Navigator initialRouteName={SettingsRoutes.Default}>
+      <Stack.Screen name={SettingsRoutes.Default} component={DefaultScreen} />
+   </Stack.Navigator>
 )
 
-export default Settings;
+export default SettingsNavigaor;

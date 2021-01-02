@@ -1,10 +1,14 @@
 import React from "react";
-import { Page, Label } from "components-new";
+import { createStackNavigator } from "@react-navigation/stack";
+import { HomeRoutes } from "./routes";
+import DefaultScreen from "./Default";
 
-const Home: React.FC = () => (
-    <Page>
-        <Label type="header" text="Home Page" />
-    </Page>
+const Stack = createStackNavigator();
+
+const BudgetsNavigator: React.FC = () => (
+   <Stack.Navigator initialRouteName={HomeRoutes.Default}>
+      <Stack.Screen name={HomeRoutes.Default} component={DefaultScreen} />
+   </Stack.Navigator>
 )
 
-export default Home;
+export default BudgetsNavigator;

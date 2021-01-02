@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import Icon from "components/Icon";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { colors } from "styles";
 import HomeNavigator from "./Home";
 import IncomesNavigator from "./Incomes";
 import PaymentsNavigator from "./Payments";
 import SettingsNavigator from "./Settings";
-import { makeStyles, useTheme } from "context-new";
-import { Page } from "components-new";
+import { useTheme } from "context-new";
+import { Container, Icon, Page, Progress } from "components-new";
+import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 enum TabRoutes {
     Home = "Home",
@@ -17,74 +14,44 @@ enum TabRoutes {
     Settings = "Settings"
 }
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
-const useStyles = makeStyles(palette => ({
-    focusedIcon: {
-        color: palette.primary
-    },
-    regularIcon: {
-        color: palette.gray
-    }
-}))
+const getOptions = (name: string) => ({
+    tabBarIcon: ({ focused, color, size }) => (
+       <Icon name={name} size={size} color={color} />
+    )
+ })
 
 const AppNavigator: React.FC = () => {
-    const styles = useStyles();
     const theme = useTheme();
 
+    const tabBarOptions: BottomTabBarOptions = {
+        style: { backgroundColor: theme.pallette.tabBarColor },
+        inactiveTintColor: theme.pallette.gray,
+        activeTintColor: theme.pallette.primary,
+        showLabel: false
+    }
     return (
-        <Tab.Navigator b tabBarOptions={{ showLabel: false }}>
+        <Tab.Navigator initialRouteName={TabRoutes.Home} tabBarOptions={tabBarOptions}>
             <Tab.Screen
                 name={TabRoutes.Home}
                 component={HomeNavigator}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <Icon
-                            name="home"
-                            size={24}
-                            style={focused ? styles.focusedIcon : styles.regularIcon}
-                        />
-                    )
-                }}
+                options={getOptions("home")}
             />
             <Tab.Screen
                 name={TabRoutes.Payments}
                 component={PaymentsNavigator}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <Icon
-                            name="home"
-                            size={24}
-                            style={focused ? styles.focusedIcon : styles.regularIcon}
-                        />
-                    )
-                }}
+                options={getOptions("credit-card")}
             />
             <Tab.Screen
                 name={TabRoutes.Incomes}
                 component={IncomesNavigator}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <Icon
-                            name="home"
-                            size={24}
-                            style={focused ? styles.focusedIcon : styles.regularIcon}
-                        />
-                    )
-                }}
+                options={getOptions("attach-money")}
             />
             <Tab.Screen
                 name={TabRoutes.Settings}
                 component={SettingsNavigator}
-                options={{
-                    tabBarIcon: ({ focused }) => (
-                        <Icon
-                            name="settings"
-                            size={24}
-                            style={focused ? styles.focusedIcon : styles.regularIcon}
-                        />
-                    )
-                }}
+                options={getOptions("settings")}
             />
         </Tab.Navigator>
     );
@@ -109,7 +76,13 @@ const AppLoader: React.FC = () => {
    }, [])
 
    if(!dataLoaded)
-      return <Page><ActivityIndicator size="large" /></Page>;
+      return (
+            <Page>
+                <Container flex verticallyCenter>
+                    <Progress size="large" />
+                </Container>
+            </Page>
+        )
    return <AppNavigator />
 }
 

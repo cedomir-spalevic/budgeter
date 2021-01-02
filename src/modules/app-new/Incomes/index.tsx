@@ -1,10 +1,14 @@
 import React from "react";
-import { Page, Label } from "components-new";
+import { createStackNavigator } from "@react-navigation/stack";
+import DefaultScreen from "./Default";
+import { IncomesRoutes } from "./routes";
 
-const Incomes: React.FC = () => (
-    <Page>
-        <Label type="header" text="Incomes Page" />
-    </Page>
+const Stack = createStackNavigator();
+
+const IncomesNavigator: React.FC = () => (
+   <Stack.Navigator initialRouteName={IncomesRoutes.Default}>
+      <Stack.Screen name={IncomesRoutes.Default} component={DefaultScreen} />
+   </Stack.Navigator>
 )
 
-export default Incomes;
+export default IncomesNavigator;
