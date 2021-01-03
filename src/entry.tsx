@@ -1,10 +1,12 @@
 import React from "react";
-import AuthNavigator from "modules/auth-new";
-import AppLoader from "modules/app-new";
-import { AuthState, useAuth } from "context-new";
-import BudgetsProvider from "context/Budgets";
-import PaymentsProvider from "context/Payments";
-import NotificationsProvider from "context/Notifications";
+import AuthNavigator from "modules/auth";
+import AppLoader from "modules/app";
+import { 
+    AuthState, 
+    useAuth, 
+    PaymentsProvider, 
+    IncomesProvider 
+} from "context";
 
 const Entry: React.FC = () => {
     const auth = useAuth();
@@ -12,13 +14,11 @@ const Entry: React.FC = () => {
     if(auth.state !== AuthState.SignedIn)
         return <AuthNavigator />;
     return (
-        <BudgetsProvider>
-            <PaymentsProvider>
-                <NotificationsProvider>
-                    <AppLoader />
-                </NotificationsProvider>
-            </PaymentsProvider>
-        </BudgetsProvider>
+            <IncomesProvider>
+                <PaymentsProvider>
+                        <AppLoader />
+                </PaymentsProvider>
+            </IncomesProvider>
     )
 }
 export default Entry;

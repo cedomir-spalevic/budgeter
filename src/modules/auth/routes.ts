@@ -1,4 +1,5 @@
 export enum AuthRoutes {
-   SignIn = "Sign In",
-   Register = "Create Account"
+    Default = "Default",
+    Login = "Log in",
+    Register = "Register"
 }

@@ -11,6 +11,7 @@
     "clean": "watchman watch-del-all && rm -rf node_modules && npm install --ignore-engines && npm start --reset-cache"
   },
   "dependencies": {
+    "@react-native-community/checkbox": "^0.5.6",
     "@react-native-community/datetimepicker": "^3.0.1",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/toolbar-android": "0.1.0-rc.2",

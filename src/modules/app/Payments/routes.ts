@@ -1,4 +1,3 @@
-export enum PaymentsRoute {
-    Home = "Your Payments",
-    Payment = "Payment"
- }
+export enum PaymentsRoutes {
+    Default = "Default"
+}

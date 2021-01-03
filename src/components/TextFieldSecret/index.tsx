@@ -9,21 +9,18 @@ interface Props {
 }
 
 const TextFieldSecret: React.FC<Props> = (props: Props) => {
-   const [hidden, setHidden] = useState<boolean>(true);
+    const [hidden, setHidden] = useState<boolean>(true);
 
+    const visible = <Icon onPress={() => setHidden(false)} name="visibility" />
+    const visibleOff = <Icon onPress={() => setHidden(true)} name="visibility-off" />
+    
    return (
       <TextField
          preRenderIcon={<Icon name="lock" />}
          placeholder={props.placeholder}
          errorMessage={props.errorMessage}
          hidden={hidden}
-         postRenderIcon={hidden ?
-            <TouchableOpacity onPress={() => setHidden(false)}>
-               <Icon name="visibility" />
-            </TouchableOpacity> : 
-            <TouchableOpacity onPress={() => setHidden(true)}>
-               <Icon name="visibility-off" />
-            </TouchableOpacity>}
+         postRenderIcon={hidden ? visible : visibleOff}
          onChange={nt => props.onChange && props.onChange(nt)}
       />
    )

@@ -1,47 +1,78 @@
 import React from "react";
 import {
-   createStackNavigator
+   createStackNavigator, 
+   StackNavigationOptions,
+   useHeaderHeight
 } from "@react-navigation/stack";
-import SigninScreen from "./SignIn";
-import RegisterScreen from "./Register";
 import { AuthRoutes } from "./routes";
-import { defaultScreenOptions } from "modules";
 import { Icon } from "components";
+import LoginScreen from "./Login";
+import DefaultScreen from "./Default";
+import RegisterScreen from "./Register";
+import { colors } from "styles";
+import { NavigationHeaderProvider } from "context";
 
-const RootStack = createStackNavigator();
-const MainStack = createStackNavigator();
+const modalScreenOptions: StackNavigationOptions = {
+    headerBackImage: () => (
+        <Icon
+            name="close"
+            size={32}
+            style={{ paddingLeft: 20, color: colors.primary }}
+        />
+    ),
+    headerBackTitleVisible: false,
+    headerTitle: null,
+    headerTransparent: true,
+    headerShown: true
+}
 
-const MainNavigator: React.FC = () => (
-   <MainStack.Navigator initialRouteName={AuthRoutes.SignIn} screenOptions={defaultScreenOptions}>
-      <MainStack.Screen
-         name={AuthRoutes.SignIn}
-         component={SigninScreen}
-         options={{ headerShown: false }}
-      />
-   </MainStack.Navigator>
+const LoginStack = createStackNavigator();
+const RegisterStack = createStackNavigator();
+const DefaultStack = createStackNavigator();
+
+const LoginNavigator: React.FC = () => {
+    const headerHeight = useHeaderHeight();
+    return (
+        <NavigationHeaderProvider headerHeight={headerHeight}>
+            <LoginStack.Navigator initialRouteName={AuthRoutes.Login}>
+                <LoginStack.Screen name={AuthRoutes.Login} component={LoginScreen} />
+            </LoginStack.Navigator>
+        </NavigationHeaderProvider>
+    )
+}
+
+const RegisterNavigator: React.FC = () => {
+    const headerHeight = useHeaderHeight();
+    return (
+        <NavigationHeaderProvider headerHeight={headerHeight}>
+            <RegisterStack.Navigator initialRouteName={AuthRoutes.Register}>
+                <RegisterStack.Screen
+                    name={AuthRoutes.Register}
+                    component={RegisterScreen}
+                />
+            </RegisterStack.Navigator>
+        </NavigationHeaderProvider>
+    )
+}
+
+const DefaultNavigator: React.FC = () => (
+    <DefaultStack.Navigator initialRouteName={AuthRoutes.Default} mode="modal">
+        <DefaultStack.Screen
+            name={AuthRoutes.Default}
+            component={DefaultScreen}
+            options={{ headerShown: false }}
+        />
+        <DefaultStack.Screen
+            name={AuthRoutes.Login}
+            component={LoginNavigator}
+            options={modalScreenOptions}
+        />
+        <DefaultStack.Screen
+            name={AuthRoutes.Register}
+            component={RegisterNavigator}
+            options={modalScreenOptions}
+        />
+    </DefaultStack.Navigator>
 )
 
-const RootNavigator: React.FC = () => (
-   <RootStack.Navigator initialRouteName={AuthRoutes.SignIn} mode="modal" screenOptions={defaultScreenOptions}>
-      <RootStack.Screen
-         name={AuthRoutes.SignIn}
-         component={MainNavigator}
-         options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-         name={AuthRoutes.Register}
-         component={RegisterScreen}
-         options={{
-            headerBackImage: (color) => (
-               <Icon 
-                  name="close" 
-                  size={32} 
-                  style={{ paddingLeft: 20, color: color.tintColor }} 
-               />
-            )
-         }}
-      />
-   </RootStack.Navigator>
-);
-
-export default RootNavigator;
+export default DefaultNavigator;

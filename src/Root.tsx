@@ -1,6 +1,6 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthProvider, ThemeProvider } from "context-new";
+import { AuthProvider, ThemeProvider } from "context";
 import Entry from "Entry";
 // Required for react-native-root-toast for react-native >= 0.62
 import { RootSiblingParent } from "react-native-root-siblings";

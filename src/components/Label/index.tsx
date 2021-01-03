@@ -1,33 +1,68 @@
+import { makeStyles } from "context";
 import React from "react";
-import { Text, TextStyle } from "react-native";
-import { labelStyles } from "styles";
+import {
+    Text,
+    StyleProp,
+    TextStyle
+} from "react-native";
+
+const useStyles = makeStyles(palette => ({
+    regular: {
+        fontFamily: "Helvetica Neue",
+        fontSize: 22,
+        color: palette.textColor
+    },
+    header: {
+        fontFamily: "Helvetica Neue",
+        fontSize: 32,
+        fontWeight: "bold",
+        color: palette.textColor
+    },
+    shadow: {
+        fontFamily: "Helvetica Neue",
+        fontSize: 18,
+        color: palette.darkBlue,
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        shadowOffset: { width: 2, height: 2},
+        shadowColor: palette.textColor
+    },
+    subText: {
+        fontFamily: "Helvetica Neue",
+        fontSize: 18,
+        color: palette.textColor
+    }
+}));
 
 interface Props {
-   text: string;
-   type?: "header" | "shadow" | "normal";
-   size?: number;
-   color?: string;
+    type: "header" | "regular" | "subText" | "shadow";
+    text: string;
+    color?: string;
+    style?: TextStyle;
 }
 
 const Label: React.FC<Props> = (props: Props) => {
-   let theme: TextStyle = {};
-   if (props.type) {
-      if (props.type === "header")
-         theme = labelStyles.header;
-      else if (props.type === "shadow")
-         theme = labelStyles.shadow;
-   }
-   else {
-      if (props.size)
-         theme.fontSize = props.size;
-      if (props.color)
-         theme.color = props.color;
-   }
-   return (
-      <Text style={[labelStyles.label, theme]}>
-         {props.text}
-      </Text>
-   )
+    const styles = useStyles();
+    const style: StyleProp<TextStyle> = [];
+    switch(props.type) {
+        case "header":
+            style.push(styles.header);
+            break;
+        case "regular":
+            style.push(styles.regular);
+            break;
+        case "subText":
+            style.push(styles.subText);
+            break;
+        case "shadow":
+            style.push(styles.shadow);
+            break;
+    }
+    if(props.color)
+        style.push({ color: props.color });
+    if(props.style)
+        style.push(props.style);
+    return <Text style={style}>{props.text}</Text>
 }
 
 export default Label;
