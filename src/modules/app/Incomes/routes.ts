@@ -1,3 +1,4 @@
 export enum IncomesRoutes {
-    Default = "Default"
+    Default = "Default",
+    Income = "Income"
 }

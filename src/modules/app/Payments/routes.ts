@@ -1,3 +1,4 @@
 export enum PaymentsRoutes {
-    Default = "Default"
+    Default = "Default",
+    Payment = "Payment"
 }

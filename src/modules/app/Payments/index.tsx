@@ -4,6 +4,7 @@ import DefaultScreen from "./Default";
 import { PaymentsRoutes } from "./routes";
 import { NavigationHeaderProvider, useTheme } from "context";
 import { Dimensions } from "react-native";
+import PaymentScreen from "../Shared/Payment";
 
 const DefaultNavigator: React.FC = () => {
    const headerHeight = useHeaderHeight();
@@ -11,6 +12,15 @@ const DefaultNavigator: React.FC = () => {
        <NavigationHeaderProvider headerHeight={headerHeight}>
           <DefaultScreen />
        </NavigationHeaderProvider>
+   )
+}
+
+const PaymentNavigator: React.FC = () => {
+   const headerHeight = useHeaderHeight();
+   return (
+      <NavigationHeaderProvider headerHeight={headerHeight}>
+         <PaymentScreen />
+      </NavigationHeaderProvider>
    )
 }
 
@@ -28,8 +38,9 @@ const PaymentsNavigator: React.FC = () => {
       headerBackTitleVisible: false
    }
    return (
-      <Stack.Navigator initialRouteName={PaymentsRoutes.Default} screenOptions={options}>
+      <Stack.Navigator initialRouteName={PaymentsRoutes.Default} screenOptions={options} mode="modal">
          <Stack.Screen name={PaymentsRoutes.Default} component={DefaultNavigator} />
+         <Stack.Screen name={PaymentsRoutes.Payment} component={PaymentNavigator} />
       </Stack.Navigator>
    )
 }

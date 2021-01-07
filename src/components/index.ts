@@ -8,8 +8,10 @@ import Icon from "./Icon";
 import KeyboardAccessory from "./KeyboardAccessory";
 import Label from "./Label";
 import List from "./List";
+import NumberPad from "./NumberPad";
 import Link from "./Link";
 import Page from "./Page";
+import PickerSelect from "./PickerSelect";
 import Progress from "./Progress";
 import Searchbox from "./Searchbox";
 import Switch from "./Switch";
@@ -27,8 +29,10 @@ export {
     KeyboardAccessory,
     Label,
     List,
+    NumberPad,
     Link,
     Page,
+    PickerSelect,
     Progress,
     Searchbox,
     Switch,

@@ -13,6 +13,7 @@ import {
 import { View } from "react-native";
 import { useAuth, useTheme, usePayments, useNavigationHeader } from "context";
 import { useNavigation } from "@react-navigation/native";
+import { PaymentsRoutes } from "../routes";
 
 const Payments: React.FC = () => {
     const navigation = useNavigation();
@@ -40,7 +41,7 @@ const Payments: React.FC = () => {
 
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => <Icon name="add" color={theme.pallette.primary} size={32} />
+            headerRight: () => <Icon onPress={() => navigation.navigate(PaymentsRoutes.Payment)} name="add" color={theme.pallette.primary} size={32} />
         })
     })
 

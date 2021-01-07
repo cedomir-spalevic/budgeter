@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { 
     Button, 
     Container, 
@@ -13,6 +13,7 @@ import {
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context";
+import { useNavigation } from "@react-navigation/native";
 
 interface FormProps {
 
@@ -51,6 +52,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
 
 const LoginScreen: React.FC = () => {
     const auth = useAuth();
+    const navigation = useNavigation();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
@@ -66,11 +68,17 @@ const LoginScreen: React.FC = () => {
         }
      })(LoginForm);
 
+    useEffect(() => {
+        navigation.setOptions({
+            headerTitle: () => <Label type="header" text="Log in" />
+        })
+    })
+
     return (
         <Page useHeaderHeight>
-            <Container horizontallyCenter>
-                <Label style={{ marginBottom: 25 }} type="header" text="Log in to Budgeter" />
-            </Container>
+            {/* <Container>
+                <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
+            </Container> */}
             <Form />
         </Page>
     )

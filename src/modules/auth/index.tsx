@@ -11,15 +11,19 @@ import DefaultScreen from "./Default";
 import RegisterScreen from "./Register";
 import { colors } from "styles";
 import { NavigationHeaderProvider } from "context";
+import { Dimensions } from "react-native";
 
 const modalScreenOptions: StackNavigationOptions = {
-    headerBackImage: () => (
+    headerLeft: () => null,
+    headerRight: () => (
         <Icon
             name="close"
             size={32}
             style={{ paddingLeft: 20, color: colors.primary }}
         />
     ),
+    headerLeftContainerStyle: { paddingLeft: Dimensions.get("screen").width * 0.1 },
+    headerRightContainerStyle: { paddingRight: Dimensions.get("screen").width * 0.1 },
     headerBackTitleVisible: false,
     headerTitle: null,
     headerTransparent: true,
