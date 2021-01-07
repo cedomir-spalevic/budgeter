@@ -9,6 +9,7 @@ import { Icon } from "components";
 import LoginScreen from "./Login";
 import DefaultScreen from "./Default";
 import RegisterScreen from "./Register";
+import ForgotPasswordScreen from "./ForgotPassword";
 import { colors } from "styles";
 import { NavigationHeaderProvider } from "context";
 import { Dimensions } from "react-native";
@@ -40,6 +41,7 @@ const LoginNavigator: React.FC = () => {
         <NavigationHeaderProvider headerHeight={headerHeight}>
             <LoginStack.Navigator initialRouteName={AuthRoutes.Login}>
                 <LoginStack.Screen name={AuthRoutes.Login} component={LoginScreen} />
+                <LoginStack.Screen name={AuthRoutes.ForgotPassword} component={ForgotPasswordScreen} />
             </LoginStack.Navigator>
         </NavigationHeaderProvider>
     )

@@ -3,9 +3,11 @@ import HomeNavigator from "./Home";
 import IncomesNavigator from "./Incomes";
 import PaymentsNavigator from "./Payments";
 import SettingsNavigator from "./Settings";
-import { useTheme } from "context";
+import { NavigationHeaderProvider, useTheme } from "context";
 import { Container, Icon, Page, Progress } from "components";
 import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator, useHeaderHeight } from "@react-navigation/stack";
+import IncomeScreen from "./Shared/Income";
 
 enum TabRoutes {
     Home = "Home",
@@ -22,14 +24,15 @@ const getOptions = (name: string) => ({
     )
  })
 
-const AppNavigator: React.FC = () => {
+const TabNavigator: React.FC = () => {
     const theme = useTheme();
 
     const tabBarOptions: BottomTabBarOptions = {
         style: { backgroundColor: theme.pallette.tabBarColor },
         inactiveTintColor: theme.pallette.gray,
         activeTintColor: theme.pallette.primary,
-        showLabel: false
+        showLabel: false,
+        keyboardHidesTabBar: true
     }
     return (
         <Tab.Navigator initialRouteName={TabRoutes.Home} tabBarOptions={tabBarOptions}>
@@ -55,6 +58,25 @@ const AppNavigator: React.FC = () => {
             />
         </Tab.Navigator>
     );
+}
+
+const App = createStackNavigator();
+
+const IncomeNavigator: React.FC = () => {
+    const headerHeight = useHeaderHeight();
+    return (
+       <NavigationHeaderProvider headerHeight={headerHeight}>
+          <IncomeScreen />
+       </NavigationHeaderProvider>
+    )
+ }
+
+const AppNavigator: React.FC = () => {
+    return (
+        <App.Navigator initialRouteName="Tab" screenOptions={{ headerShown: false }}>
+            <App.Screen name="Tab" component={TabNavigator} />
+        </App.Navigator>
+    )
 }
 
 const AppLoader: React.FC = () => {

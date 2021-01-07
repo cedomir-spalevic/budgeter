@@ -1,14 +1,11 @@
 import { makeStyles, useTheme } from "context";
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
    View,
    TextInput,
-   TouchableOpacity,
-   NativeSyntheticEvent,
-   TextInputKeyPressEventData
+   TouchableOpacity
 } from "react-native";
-import { toCurrency } from "services/internal/currency";
-import RNPickerSelect from "react-native-picker-select";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const useStyles = makeStyles(palette => ({
    container: {
@@ -29,22 +26,38 @@ const useStyles = makeStyles(palette => ({
 
 interface Props {
    value?: string;
+   hidden?: boolean;
    errorMessage?: string;
-   placeholder?: string;
-   items: { label: string; value: string }[];
    onChange?: (newText: string) => void;
+   autoFocus?: boolean;
+   placeholder?: string;
    preRenderIcon?: JSX.Element;
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
 }
 
-const PickerSelect: React.FC<Props> = (props: Props) => {
-    const isBackspace = useRef<boolean>(false);
-    const [num, setNum] = useState<string>("");
-    const [enteredValue, setEnteredValue] = useState<string>();
-    const styles = useStyles();
-    const theme = useTheme();
+const DatePicker: React.FC<Props> = (props: Props) => {
+   const [value, setValue] = useState<string>();
+   const [visible, setVisible] = useState<boolean>(false);
+   const styles = useStyles();
+   const theme = useTheme();
+
+   const onChange = (input?: string) => {
+      let newValue = (input === undefined ? "" : input);
+      setValue(newValue);
+      if(props.onChange)
+         props.onChange(newValue);
+   }
+
+   const onConfirm = (d) => {
+       console.log(d);
+   }
+
+   useEffect(() => {
+      if (props.value && value === undefined)
+         setValue(props.value);
+   })
 
    return (
       <View style={styles.container}>
@@ -52,11 +65,14 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
               <TouchableOpacity onPress={props.onPreRenderIconClick}>
                 {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
               </TouchableOpacity> )}
-          <RNPickerSelect
-            placeholder={{ label: props.placeholder, value: null, color: "#9EA0A4" }}
-            style={{ viewContainer: { width: "80%" }, inputIOS: { color: theme.pallette.textColor } }}
-            onValueChange={v => console.log(v)}
-            items={props.items}
+          <TextInput
+            placeholder={props.placeholder}
+            placeholderTextColor={theme.pallette.gray}
+            autoFocus={props.autoFocus}
+            onChangeText={onChange}
+            style={{ width: "80%" }}
+            editable={false}
+            onTouchStart={() => setVisible(true)}
           />
           {props.postRenderIcon && (
              <TouchableOpacity onPress={props.onPostRenderIconClick}>
@@ -64,8 +80,13 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
              </TouchableOpacity> )}
          {/* {props.errorMessage &&
             <Text style={globalStyles.errorMessage}>{props.errorMessage}</Text> } */}
+        <DateTimePickerModal
+            isVisible={visible}
+            onConfirm={d => onConfirm(d)}
+            onCancel={() => setVisible(false)}
+        />
       </View>
    )
 }
 
-export default PickerSelect;
+export default DatePicker;

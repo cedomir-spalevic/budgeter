@@ -3,6 +3,7 @@ import ActionList from "./ActionList";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 import Container from "./Container";
+import DatePicker from "./DatePicker";
 import Empty from "./Empty";
 import Icon from "./Icon";
 import KeyboardAccessory from "./KeyboardAccessory";
@@ -24,6 +25,7 @@ export {
     Button,
     Checkbox,
     Container,
+    DatePicker,
     Empty,
     Icon,
     KeyboardAccessory,

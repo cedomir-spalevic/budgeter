@@ -14,10 +14,9 @@ import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
-import { AuthRoutes } from "../routes";
 
 interface FormProps {
-    onForgotPasswordClick: () => void;
+
 }
 
 interface FormValues {
@@ -26,7 +25,6 @@ interface FormValues {
 }
 
 const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
-    
     return (
         <>
             <Container flex>
@@ -45,7 +43,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
             </Container>
             <KeyboardAccessory justifyContent="space-between">
-                <Link onPress={() => props.onForgotPasswordClick()} text="Forgot password?" />
+                <Link onPress={() => {}} text="Forgot password?" />
                 <Button onPress={props.handleSubmit} text="Log in" />
             </KeyboardAccessory>
         </>
@@ -72,7 +70,7 @@ const LoginScreen: React.FC = () => {
 
     useEffect(() => {
         navigation.setOptions({
-            headerTitle: () => <Label type="header" text="Log in" />
+            headerTitle: () => <Label type="header" text="Forgot Password" />
         })
     })
 
@@ -81,9 +79,7 @@ const LoginScreen: React.FC = () => {
             {/* <Container>
                 <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
             </Container> */}
-            <Form 
-                onForgotPasswordClick={() => navigation.navigate(AuthRoutes.ForgotPassword)}
-            />
+            <Form />
         </Page>
     )
 }

@@ -7,7 +7,9 @@ import {
     Label, 
     Page,
     TextField,
-    NumberPad
+    NumberPad,
+    PickerSelect,
+    DatePicker
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
@@ -36,6 +38,21 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
                 <NumberPad
                     preRenderIcon={<Icon name="attach-money" />}
                     placeholder="Amount"
+                />
+                <PickerSelect 
+                    preRenderIcon={<Icon name="repeat" />}
+                    placeholder="Repeat?"
+                    items={[
+                        { label: "None", value: "none" },
+                        { label: "Daily", value: "daily" },
+                        { label: "Weekly", value: "weekly" },
+                        { label: "Biweekly", value: "biweekly" },
+                        { label: "Monthly", value: "monthly" },
+                        { label: "Yearly", value: "yearly" }
+                    ]}
+                />
+                <DatePicker
+                    placeholder="Start Date"
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">

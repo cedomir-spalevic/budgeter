@@ -77,7 +77,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
             autoFocus={props.autoFocus}
             contextMenuHidden={true}
             keyboardType="number-pad"
-            style={{ width: "80%" }}
+            style={{ width: "80%", color: theme.pallette.textColor }}
             value={toCurrency(Number(num)/100)}
             onKeyPress={onKeyPress}
           />
