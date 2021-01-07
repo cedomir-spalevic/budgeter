@@ -5,6 +5,8 @@ import { View } from "react-native";
 const useStyles = makeStyles(palette => ({
     header: {
         justifyContent: "space-between",
+        flexDirection: "row",
+        alignItems: "center",
         paddingBottom: 10
     }
 }))

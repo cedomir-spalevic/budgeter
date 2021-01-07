@@ -72,7 +72,7 @@ const AppLoader: React.FC = () => {
    }
 
    useEffect(() => {
-      //load();
+      load();
    }, [])
 
    if(!dataLoaded)

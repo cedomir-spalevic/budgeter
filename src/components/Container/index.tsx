@@ -32,12 +32,14 @@ interface Props {
     justifyContent?: "center" | "flex-end" | "flex-start" | "space-around" | "space-between" | "space-evenly";
     alignItems?: "baseline" | "center" | "flex-end" | "flex-start" | "stretch"
     flex?: boolean;
+    fullWith?: boolean;
 }
 
 const Container: React.FC<Props> = (props: Props) => {
     const styles = useStyles();
     const style: StyleProp<ViewStyle> = [];
-    style.push(styles.container);
+    if(!props.fullWith)
+        style.push(styles.container);
     if(props.flex)
         style.push(styles.flex);
     if(props.verticallyCenter)
