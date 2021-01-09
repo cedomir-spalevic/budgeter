@@ -5,6 +5,7 @@ import Checkbox from "./Checkbox";
 import Container from "./Container";
 import DatePicker from "./DatePicker";
 import Empty from "./Empty";
+import Header from "./Header";
 import Icon from "./Icon";
 import KeyboardAccessory from "./KeyboardAccessory";
 import Label from "./Label";
@@ -27,6 +28,7 @@ export {
     Container,
     DatePicker,
     Empty,
+    Header,
     Icon,
     KeyboardAccessory,
     Label,

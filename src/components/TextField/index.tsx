@@ -1,10 +1,12 @@
 import { makeStyles, useTheme } from "context";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import {
    View,
    TextInput,
    TouchableOpacity,
-   Text
+   Text,
+   NativeSyntheticEvent,
+   TextInputSubmitEditingEventData
 } from "react-native";
 
 const useStyles = makeStyles(palette => ({
@@ -14,13 +16,18 @@ const useStyles = makeStyles(palette => ({
    },
    input: {
       flexDirection: "row",
+      justifyContent: "space-between",
       paddingVertical: 10,
       borderBottomWidth: 2,
       borderBottomColor: "#e0e0e0",
-      marginBottom: 10,
+      marginBottom: 5,
    },
    inputWithError: {
       borderBottomColor: palette.error
+   },
+   inputContainer: {
+      flexDirection: "row",
+      flex: 1
    },
    icon: {
       fontSize: 18,
@@ -44,6 +51,8 @@ interface Props {
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
+   onSubmit?: () => void;
+   textInputRef?: React.Ref<TextInput>;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -51,14 +60,21 @@ const TextField: React.FC<Props> = (props: Props) => {
    const styles = useStyles();
    const theme = useTheme();
    const inputStyles = [styles.input];
-   if(props.errorMessage)
+   if(props.errorMessage) {
       inputStyles.push(styles.inputWithError);
+   }
 
    const onChange = (input?: string) => {
       let newValue = (input === undefined ? "" : input);
       setValue(newValue);
       if(props.onChange)
          props.onChange(newValue);
+   }
+
+   const onSubmitEditing = (event: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+      event.preventDefault();
+      if(props.onSubmit)
+         props.onSubmit();
    }
 
    useEffect(() => {
@@ -69,17 +85,21 @@ const TextField: React.FC<Props> = (props: Props) => {
    return (
       <View style={styles.container}>
          <View style={inputStyles}>
-            {props.preRenderIcon && (
-               <TouchableOpacity onPress={props.onPreRenderIconClick}>
-                  {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
-               </TouchableOpacity> )}
-            <TextInput
-               placeholder={props.placeholder}
-               placeholderTextColor={theme.pallette.gray}
-               autoFocus={props.autoFocus}
-               onChangeText={onChange}
-               style={{ width: "80%" }}
-            />
+            <View style={styles.inputContainer}>
+               {props.preRenderIcon && (
+                  <TouchableOpacity onPress={props.onPreRenderIconClick}>
+                     {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
+                  </TouchableOpacity> )}
+               <TextInput
+                  placeholder={props.placeholder}
+                  placeholderTextColor={theme.pallette.gray}
+                  autoFocus={props.autoFocus}
+                  onChangeText={onChange}
+                  secureTextEntry={props.hidden}
+                  onSubmitEditing={onSubmitEditing}
+                  ref={props.textInputRef}
+               />
+            </View>
             {props.postRenderIcon && (
                <TouchableOpacity onPress={props.onPostRenderIconClick}>
                   {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
@@ -91,4 +111,4 @@ const TextField: React.FC<Props> = (props: Props) => {
    )
 }
 
-export default TextField;
+export default forwardRef((props: Props, ref: React.Ref<TextInput>) => <TextField textInputRef={ref} {...props} />);

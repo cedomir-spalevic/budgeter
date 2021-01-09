@@ -16,10 +16,10 @@ const Icon: React.FC<Props> = (props: Props) => {
     return (
         <MaterialIcon 
             name={props.name} 
-            color={props.color ?? theme.pallette.textColor}
             size={props.size}
             style={props.style}
             onPress={props.onPress}
+            color={props.color ?? theme.pallette.gray}
         />
     )
 }

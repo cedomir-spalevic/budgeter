@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useRef } from "react";
 import { 
     Button, 
     Container, 
@@ -15,9 +15,11 @@ import * as Yup from "yup";
 import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { AuthRoutes } from "../routes";
+import { TextInput } from "react-native";
 
 interface FormProps {
     onForgotPasswordClick: () => void;
+    passwordRef?: React.MutableRefObject<TextInput>;
 }
 
 interface FormValues {
@@ -26,7 +28,6 @@ interface FormValues {
 }
 
 const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
-    
     return (
         <>
             <Container flex>
@@ -37,11 +38,14 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.email}
                     placeholder="Email"
                     autoFocus
+                    onSubmit={() => props.passwordRef.current.focus()}
                 />
                 <TextFieldSecret
                     placeholder="Enter your password"
                     errorMessage={props.touched.password && props.errors.password}
                     onChange={props.handleChange("password")}
+                    ref={props.passwordRef}
+                    onSubmit={() => props.submitForm()}
                 />
             </Container>
             <KeyboardAccessory justifyContent="space-between">
@@ -55,6 +59,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
 const LoginScreen: React.FC = () => {
     const auth = useAuth();
     const navigation = useNavigation();
+    const passwordRef = useRef<TextInput>();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
@@ -66,17 +71,24 @@ const LoginScreen: React.FC = () => {
             password: Yup.string().required("Password cannot be blank")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
-            await auth.login(values.email, values.password);
+            const response = await auth.login(values.email, values.password);
+            if(!response.valid) {
+                formikBag.setErrors({
+                    email: response.emailError,
+                    password: response.passwordError
+                })
+            }
         }
      })(LoginForm);
 
     return (
-        <Page useHeaderHeight>
+        <Page>
             <Container>
                 <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
             </Container>
             <Form 
                 onForgotPasswordClick={() => navigation.navigate(AuthRoutes.ForgotPassword)}
+                passwordRef={passwordRef}
             />
         </Page>
     )

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { TextField, Icon } from "components";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TextInput } from "react-native";
 
 interface Props {
    placeholder?: string;
    errorMessage?: string;
    onChange?: (newText: string) => void;
+   onSubmit?: () => void;
+   textInputRef?: React.Ref<TextInput>;
 }
 
 const TextFieldSecret: React.FC<Props> = (props: Props) => {
@@ -22,8 +24,10 @@ const TextFieldSecret: React.FC<Props> = (props: Props) => {
          hidden={hidden}
          postRenderIcon={hidden ? visible : visibleOff}
          onChange={nt => props.onChange && props.onChange(nt)}
+         onSubmit={props.onSubmit}
+         ref={props.textInputRef}
       />
    )
 }
 
-export default TextFieldSecret;
+export default forwardRef((props: Props, ref: React.Ref<TextInput>) => <TextFieldSecret textInputRef={ref} {...props} />);

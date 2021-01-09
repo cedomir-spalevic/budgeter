@@ -1,8 +1,9 @@
-import React, { useState, createContext, useContext, useEffect } from "react";
+import React, { useState, createContext, useContext } from "react";
 import AuthenticationService from "services/external/api/auth";
-import * as LocalAuthentication from "expo-local-authentication";
 import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
-import { AlreadyExistsError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
+import { NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
+import { Alert } from "react-native";
+import { btoa } from "services/internal/security";
 
 interface Response {
     valid: boolean;
@@ -35,7 +36,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const login = async (email: string, password: string): Promise<Response> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
-            const response = await authenticationService.login(email, password);
+            const response = await authenticationService.login(email, btoa(password));
             setItem(StorageKeys.AccessToken, response.token);
             setItem(StorageKeys.UserEmail, email);
             setState(AuthState.SignedIn);
@@ -47,13 +48,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             else if(error instanceof NotFoundError) 
                 return { valid: false, emailError: "No user found with this email" }
             else {
-                // TODO: add error state
+                Alert.alert("Unable to log in", "We're having trouble logging you in. Please try again later.")
                 return { valid: false }
             }
         }
-        console.log("here")
-        setState(AuthState.SignedIn);
-        return { valid: true };
     }
 
     const register = async (email: string, password: string): Promise<Response> => {
@@ -132,10 +130,6 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
 //       if(response)
 //          setAuthState(AuthState.SignedIn);
 //    }
-
-   useEffect(() => {
-      //verify();
-   }, [])
 
    return (
       <AuthContext.Provider value={{ state, login, logout, register }}>

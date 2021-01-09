@@ -75,7 +75,7 @@ const LoginScreen: React.FC = () => {
     })
 
     return (
-        <Page useHeaderHeight>
+        <Page>
             {/* <Container>
                 <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
             </Container> */}
