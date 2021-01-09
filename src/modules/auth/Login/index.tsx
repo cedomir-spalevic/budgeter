@@ -62,25 +62,19 @@ const LoginScreen: React.FC = () => {
            password: ""
         }),
         validationSchema: Yup.object().shape({
-        //    email: Yup.string().required("Email cannot be blank"),
-        //    password: Yup.string().required("Password cannot be blank")
+            email: Yup.string().required("Email cannot be blank"),
+            password: Yup.string().required("Password cannot be blank")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
             await auth.login(values.email, values.password);
         }
      })(LoginForm);
 
-    useEffect(() => {
-        navigation.setOptions({
-            headerTitle: () => <Label type="header" text="Log in" />
-        })
-    })
-
     return (
         <Page useHeaderHeight>
-            {/* <Container>
+            <Container>
                 <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
-            </Container> */}
+            </Container>
             <Form 
                 onForgotPasswordClick={() => navigation.navigate(AuthRoutes.ForgotPassword)}
             />

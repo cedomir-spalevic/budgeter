@@ -3,23 +3,33 @@ import React, { useState, useEffect } from "react";
 import {
    View,
    TextInput,
-   TouchableOpacity
+   TouchableOpacity,
+   Text
 } from "react-native";
 
 const useStyles = makeStyles(palette => ({
    container: {
+      flexDirection: "column",
+      width: "100%"
+   },
+   input: {
+      flexDirection: "row",
       paddingVertical: 10,
       borderBottomWidth: 2,
       borderBottomColor: "#e0e0e0",
-      flexDirection: "row",
       marginBottom: 10,
-      width: "100%"
+   },
+   inputWithError: {
+      borderBottomColor: palette.error
    },
    icon: {
       fontSize: 18,
       width: 25,
       color: palette.gray,
       resizeMode: "contain"
+   },
+   errorText: {
+      color: palette.error
    }
 }))
 
@@ -40,6 +50,9 @@ const TextField: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
+   const inputStyles = [styles.input];
+   if(props.errorMessage)
+      inputStyles.push(styles.inputWithError);
 
    const onChange = (input?: string) => {
       let newValue = (input === undefined ? "" : input);
@@ -55,23 +68,25 @@ const TextField: React.FC<Props> = (props: Props) => {
 
    return (
       <View style={styles.container}>
-          {props.preRenderIcon && (
-              <TouchableOpacity onPress={props.onPreRenderIconClick}>
-                {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
-              </TouchableOpacity> )}
-          <TextInput
-            placeholder={props.placeholder}
-            placeholderTextColor={theme.pallette.gray}
-            autoFocus={props.autoFocus}
-            onChangeText={onChange}
-            style={{ width: "80%" }}
-          />
-          {props.postRenderIcon && (
-             <TouchableOpacity onPress={props.onPostRenderIconClick}>
-                {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
-             </TouchableOpacity> )}
-         {/* {props.errorMessage &&
-            <Text style={globalStyles.errorMessage}>{props.errorMessage}</Text> } */}
+         <View style={inputStyles}>
+            {props.preRenderIcon && (
+               <TouchableOpacity onPress={props.onPreRenderIconClick}>
+                  {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
+               </TouchableOpacity> )}
+            <TextInput
+               placeholder={props.placeholder}
+               placeholderTextColor={theme.pallette.gray}
+               autoFocus={props.autoFocus}
+               onChangeText={onChange}
+               style={{ width: "80%" }}
+            />
+            {props.postRenderIcon && (
+               <TouchableOpacity onPress={props.onPostRenderIconClick}>
+                  {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
+               </TouchableOpacity> )}
+         </View>
+         {props.errorMessage &&
+            <Text style={styles.errorText}>{props.errorMessage}</Text> }
       </View>
    )
 }

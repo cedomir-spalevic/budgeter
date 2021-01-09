@@ -22,7 +22,7 @@ class AuthenticationService {
       return AuthenticationService.instance;
    }
 
-   async signin(email: string, password: string): Promise<AuthResponse> {
+   async login(email: string, password: string): Promise<AuthResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -31,7 +31,7 @@ class AuthenticationService {
          },
          body: JSON.stringify({ email, password })
       };
-      const response = await apiConfig.callApi(`${this.resource}/signin`, options);
+      const response = await apiConfig.callApi(`${this.resource}/login`, options);
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);
@@ -48,15 +48,7 @@ class AuthenticationService {
       }
       const body = await response.json();
       return {
-         token: body.token,
-         user: {
-            _id: body.user._id,
-            email: body.user.email,
-            isAdmin: body.user.isAdmin,
-            isService: body.user.isService,
-            createdOn: new Date(body.user.createdOn),
-            modifiedOn: new Date(body.user.modifiedOn)
-         }
+         token: body.token
       }
    }
 
@@ -92,15 +84,7 @@ class AuthenticationService {
       }
       const body = await response.json();
       return {
-         token: body.token,
-         user: {
-            _id: body.user._id,
-            email: body.user.email,
-            isAdmin: body.user.isAdmin,
-            isService: body.user.isService,
-            createdOn: new Date(body.user.createdOn),
-            modifiedOn: new Date(body.user.modifiedOn)
-         }
+         token: body.token
       }
    }
 }

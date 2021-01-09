@@ -19,9 +19,9 @@ class ApiConfig {
       const environmentService = EnvironmentService.getInstance();
       switch(environmentService.environment) {
          case Environment.Local:
-            return "http://localhost:4000/prod/";
+            return "http://localhost:4000/dev/";
          case Environment.Dev:
-            return "https://4hdyvf9voi.execute-api.us-east-1.amazonaws.com/prod/";
+            return "https://g5quz7hgte.execute-api.us-east-1.amazonaws.com/dev/";
          case Environment.Prod:
             return "";
       }

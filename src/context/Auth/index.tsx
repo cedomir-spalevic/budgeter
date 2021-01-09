@@ -33,6 +33,24 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const [state, setState] = useState<AuthState>(AuthState.SignedOut);
 
     const login = async (email: string, password: string): Promise<Response> => {
+        try {
+            const authenticationService = AuthenticationService.getInstance();
+            const response = await authenticationService.login(email, password);
+            setItem(StorageKeys.AccessToken, response.token);
+            setItem(StorageKeys.UserEmail, email);
+            setState(AuthState.SignedIn);
+            return { valid: true };
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) 
+                return { valid: false, passwordError: "Incorrect password" }
+            else if(error instanceof NotFoundError) 
+                return { valid: false, emailError: "No user found with this email" }
+            else {
+                // TODO: add error state
+                return { valid: false }
+            }
+        }
         console.log("here")
         setState(AuthState.SignedIn);
         return { valid: true };
