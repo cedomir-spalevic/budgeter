@@ -8,6 +8,8 @@ export const lightTheme: Palette = {
     gray: "#ccc",
     error: "#bb0000",
     success: "#00ad56",
+    white: "#fff",
+    black: "#000"
 }
 
 export const darkTheme: Palette = {
@@ -20,6 +22,8 @@ export const darkTheme: Palette = {
     gray: "#ccc",
     error: "#bb0000",
     success: "#00ad56",
+    white: "#fff",
+    black: "#000"
 }
 
 export interface Palette {
@@ -32,4 +36,6 @@ export interface Palette {
     gray: string;
     error: string;
     success: string;
+    white: string;
+    black: string;
 }

@@ -1,8 +1,7 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { colors } from "styles";
-import Label from "components/Label";
-import { makeStyles } from "context";
+import { makeStyles, useTheme } from "context";
+import { Progress, Label } from "components";
 
 const useStyles = makeStyles(palette => ({
     button: {
@@ -17,13 +16,21 @@ const useStyles = makeStyles(palette => ({
 interface Props {
     onPress: () => void;
     text: string;
+    loading?: boolean;
 }
 
 const Button: React.FC<Props> = (props: Props) => {
     const styles = useStyles();
+    const theme = useTheme();
     return (
         <TouchableOpacity style={[styles.button]} onPress={props.onPress}>
-            <Label type="regular" text={props.text} color={colors.white} />
+            {props.loading ? <Progress size="small" color={theme.pallette.white} /> : (
+                <Label 
+                    type="regular" 
+                    text={props.text} 
+                    color={theme.pallette.white} 
+                />
+            )}
         </TouchableOpacity>
     )
 }

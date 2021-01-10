@@ -4,7 +4,7 @@ import Welcome from "assets/svg/Welcome";
 import { Button, Container, Label, Link, Page } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { AuthRoutes } from "modules/auth/routes";
-import { makeStyles } from "context";
+import { makeStyles, useAuth } from "context";
 
 const useStyles = makeStyles(palette => ({
     welcomeText: {
@@ -26,6 +26,13 @@ const useStyles = makeStyles(palette => ({
 const DefaultScreen: React.FC = () => {
     const navigation = useNavigation();
     const styles = useStyles();
+    const auth = useAuth();
+
+    const login = async () => {
+        const localLAuthenticationResult = await auth.tryLocalAuthentication();
+        if(!localLAuthenticationResult)
+            navigation.navigate(AuthRoutes.Login);
+    }
 
     return (
         <Page>
@@ -37,7 +44,7 @@ const DefaultScreen: React.FC = () => {
                 <View style={styles.image}>
                     <Welcome />
                 </View>
-                <Button onPress={() => navigation.navigate(AuthRoutes.Login)} text="Log in" />
+                <Button onPress={() => login()} text="Log in" />
                 <View style={styles.registerText}>
                     <Label type="subText" text="Don't have an account?" />
                     <Link 

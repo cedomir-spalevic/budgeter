@@ -4,11 +4,12 @@ import { useTheme } from "context";
 
 interface Props {
     size: "small" | "large";
+    color?: string;
 }
 
 const Progress: React.FC<Props> = (props: Props) => {
     const theme = useTheme();
-    return <ActivityIndicator size={props.size} color={theme.pallette.textColor} />
+    return <ActivityIndicator size={props.size} color={props.color ?? theme.pallette.textColor} />
 }
 
 export default Progress;

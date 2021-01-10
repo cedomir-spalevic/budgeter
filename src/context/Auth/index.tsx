@@ -1,9 +1,10 @@
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
 import { NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
 import { Alert } from "react-native";
 import { btoa } from "services/internal/security";
+import * as LocalAuthentication from "expo-local-authentication";
 
 interface Response {
     valid: boolean;
@@ -23,6 +24,7 @@ interface Props {
 
 interface Context {
     state: AuthState;
+    tryLocalAuthentication: () => Promise<boolean>;
     login: (email: string, password: string) => Promise<Response>;
     logout: () => void;
     register: (email: string, password: string) => Promise<Response>;
@@ -33,12 +35,33 @@ export const AuthContext = createContext<Context>(undefined!);
 const AuthProvider: React.FC<Props> = (props: Props) => {
     const [state, setState] = useState<AuthState>(AuthState.SignedOut);
 
+    const verify = () => {
+        const authenticationService = AuthenticationService.getInstance();
+        authenticationService.verify().then(x => {
+            if(x)
+                setState(AuthState.Verified);
+        })
+    }
+
+    const tryLocalAuthentication = async (): Promise<boolean> => {
+        try {
+            if(state !== AuthState.Verified)
+                return;
+            const response = await LocalAuthentication.authenticateAsync();
+            if(response)
+                setState(AuthState.SignedIn);
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
+
     const login = async (email: string, password: string): Promise<Response> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
             const response = await authenticationService.login(email, btoa(password));
             setItem(StorageKeys.AccessToken, response.token);
-            setItem(StorageKeys.UserEmail, email);
             setState(AuthState.SignedIn);
             return { valid: true };
         }
@@ -59,80 +82,16 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     }
 
     const logout = () => {
-        deleteItem(StorageKeys.UserEmail);
         deleteItem(StorageKeys.AccessToken);
         setState(AuthState.SignedOut);
     }
 
-//    const signin = async (email: string, password: string): Promise<Response | undefined> => {
-//       try {
-//          const authenticationService = AuthenticationService.getInstance();
-//          const response = await authenticationService.signin(email, password);
-//          setItem(StorageKeys.AccessToken, response.token);
-//          setItem(StorageKeys.UserEmail, email);
-//          setAuthState(AuthState.SignedIn);
-//          return undefined;
-//       }
-//       catch (error) {
-//          if(error instanceof UnauthorizedError) 
-//             return { passwordError: "Incorrect password" }
-//          else if(error instanceof NotFoundError) 
-//             return { emailError: "No user found with this email" }
-//          else {
-//             console.error("Error occurred during sign in");
-//             console.error(error);
-//             return { formError: error.message }
-//          }
-//       }
-//    }
-
-//    const signup = async (email: string, password: string): Promise<Response | undefined> => {
-//       try {
-//          const authenticationService = AuthenticationService.getInstance();
-//          const response = await authenticationService.register(email, password);
-//          setItem(StorageKeys.AccessToken, response.token);
-//          setItem(StorageKeys.UserEmail, email);
-//          setAuthState(AuthState.SignedIn);
-//          return undefined;
-//       }
-//       catch (error) {
-//          if(error instanceof AlreadyExistsError) 
-//             return { emailError: "A user already exists with this email" }
-//          else {
-//             console.error("Error occurred during sign in");
-//             console.error(error);
-//             return { formError: error.message }
-//          }
-//       }
-//    }
-
-//    const signout = async () => {
-//       deleteItem(StorageKeys.UserEmail);
-//       deleteItem(StorageKeys.AccessToken);
-//       setAuthState(AuthState.SignedOut)
-//    }
-
-//    const verify = async () => {
-//       try {
-//          const authenticationService = AuthenticationService.getInstance();
-//          const valid = await authenticationService.verify();
-//          if(!valid)
-//             throw new Error();
-//          setAuthState(AuthState.Verified);
-//       }
-//       catch (error) {
-//          setAuthState(AuthState.SignedOut);
-//       }
-//    }
-
-//    const useLocalAuthentication = async () => {
-//       const response = await LocalAuthentication.authenticateAsync();
-//       if(response)
-//          setAuthState(AuthState.SignedIn);
-//    }
+    useEffect(() => {
+        verify();
+    }, [])
 
    return (
-      <AuthContext.Provider value={{ state, login, logout, register }}>
+      <AuthContext.Provider value={{ state, tryLocalAuthentication, login, logout, register }}>
          {props.children}
       </AuthContext.Provider>
    )

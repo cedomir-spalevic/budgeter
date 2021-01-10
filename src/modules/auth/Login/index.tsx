@@ -50,7 +50,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
             </Container>
             <KeyboardAccessory justifyContent="space-between">
                 <Link onPress={() => props.onForgotPasswordClick()} text="Forgot password?" />
-                <Button onPress={props.handleSubmit} text="Log in" />
+                <Button onPress={props.handleSubmit} text="Log in" loading={props.isSubmitting} />
             </KeyboardAccessory>
         </>
      )
