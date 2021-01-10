@@ -3,7 +3,8 @@ import React from "react";
 import { 
     View,
     StyleProp,
-    ViewStyle
+    ViewStyle,
+    ScrollView
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -30,6 +31,7 @@ interface Props {
     alignItems?: "baseline" | "center" | "flex-end" | "flex-start" | "stretch"
     flex?: boolean;
     fullWith?: boolean;
+    allowScroll?: boolean;
 }
 
 const Container: React.FC<Props> = (props: Props) => {
@@ -47,6 +49,12 @@ const Container: React.FC<Props> = (props: Props) => {
         style.push({ justifyContent: props.justifyContent });
     if(props.alignItems)
         style.push({ alignItems: props.alignItems });
+    if(props.allowScroll)
+        return (
+            <ScrollView contentContainerStyle={style}>
+                {props.children}
+            </ScrollView>
+        )
     return (
         <View style={style}>
             {props.children}

@@ -11,6 +11,7 @@
     "clean": "watchman watch-del-all && rm -rf node_modules && npm install --ignore-engines && npm start --reset-cache"
   },
   "dependencies": {
+    "@react-hook/merged-ref": "^1.3.0",
     "@react-native-community/checkbox": "^0.5.6",
     "@react-native-community/datetimepicker": "^3.0.1",
     "@react-native-community/masked-view": "^0.1.10",
@@ -23,6 +24,7 @@
     "formik": "^2.2.6",
     "react": "16.11.0",
     "react-native": "^0.63.2",
+    "react-native-confirmation-code-field": "^6.5.1",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-keyboard-accessory": "^0.1.14",
     "react-native-linear-gradient": "^2.5.6",

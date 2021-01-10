@@ -30,7 +30,8 @@ interface FormValues {
 const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
-            <Container flex>
+            <Container allowScroll flex>
+                <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
                 <TextField
                     preRenderIcon={<Icon name="email" />}
                     errorMessage={props.touched.email && props.errors.email}
@@ -83,9 +84,6 @@ const LoginScreen: React.FC = () => {
 
     return (
         <Page>
-            <Container>
-                <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
-            </Container>
             <Form 
                 onForgotPasswordClick={() => navigation.navigate(AuthRoutes.ForgotPassword)}
                 passwordRef={passwordRef}

@@ -12,6 +12,11 @@ const useStyles = makeStyles(theme => ({
         fontSize: theme.font.regularSize,
         color: theme.palette.textColor
     },
+    code: {
+        fontFamily: theme.font.fontFamily,
+        fontSize: 24,
+        color: theme.palette.textColor
+    },
     header: {
         fontFamily: theme.font.fontFamily,
         fontSize: theme.font.headerSize,
@@ -35,8 +40,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface Props {
-    type: "header" | "regular" | "subText" | "shadow";
-    text: string;
+    type: "header" | "regular" | "subText" | "shadow" | "code";
+    text: string | React.ReactNode;
     color?: string;
     style?: TextStyle;
 }
@@ -56,6 +61,9 @@ const Label: React.FC<Props> = (props: Props) => {
             break;
         case "shadow":
             style.push(styles.shadow);
+            break;
+        case "code":
+            style.push(styles.code);
             break;
     }
     if(props.color)

@@ -1,12 +1,12 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
-import { NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
+import { AlreadyExistsError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
 import { Alert } from "react-native";
 import { btoa } from "services/internal/security";
 import * as LocalAuthentication from "expo-local-authentication";
 
-interface Response {
+interface AuthResponse {
     valid: boolean;
     emailError?: string;
     passwordError?: string;
@@ -25,15 +25,17 @@ interface Props {
 interface Context {
     state: AuthState;
     tryLocalAuthentication: () => Promise<boolean>;
-    login: (email: string, password: string) => Promise<Response>;
+    login: (email: string, password: string) => Promise<AuthResponse>;
     logout: () => void;
-    register: (email: string, password: string) => Promise<Response>;
+    register: (firstName: string, lastName: string, email: string, password: string) => Promise<AuthResponse>;
+    confirmRegister: (code: number) => Promise<AuthResponse>;
 }
 
 export const AuthContext = createContext<Context>(undefined!);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
     const [state, setState] = useState<AuthState>(AuthState.SignedOut);
+    const [confirmationKey, setConfirmationKey] = useState<string>();
 
     const verify = () => {
         const authenticationService = AuthenticationService.getInstance();
@@ -57,7 +59,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         }
     }
 
-    const login = async (email: string, password: string): Promise<Response> => {
+    const login = async (email: string, password: string): Promise<AuthResponse> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
             const response = await authenticationService.login(email, btoa(password));
@@ -77,8 +79,40 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         }
     }
 
-    const register = async (email: string, password: string): Promise<Response> => {
-        return {valid: true}
+    const register = async (firstName: string, lastName: string, email: string, password: string): Promise<AuthResponse> => {
+        try {
+            const authenticationService = AuthenticationService.getInstance();
+            const response = await authenticationService.register(firstName, lastName, email, btoa(password));
+            setConfirmationKey(response.key);
+            return { valid: true };
+        }
+        catch(error) {
+            if(error instanceof AlreadyExistsError)
+                return { valid: false, emailError: "A user already exists with this email address " }
+            else {
+                Alert.alert("Unable to create account", "We're having trouble creating your account. Please try again later.");
+                return { valid: false }
+            }
+        }
+    }
+
+    const confirmRegister = async (code: number): Promise<AuthResponse> => {
+        try {
+            const authenticationService = AuthenticationService.getInstance();
+            const response = await authenticationService.confirmRegister(confirmationKey, code);
+            setConfirmationKey(undefined);
+            setItem(StorageKeys.AccessToken, response.token);
+            setState(AuthState.SignedIn);
+            return { valid: true };
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) 
+                return { valid: false }
+            else {
+                Alert.alert("Unable to confirm your email", "We're having trouble confirming your email. Please try again later.")
+                return { valid: false }
+            }
+        }
     }
 
     const logout = () => {
@@ -91,7 +125,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     }, [])
 
    return (
-      <AuthContext.Provider value={{ state, tryLocalAuthentication, login, logout, register }}>
+      <AuthContext.Provider value={{ state, tryLocalAuthentication, login, logout, register, confirmRegister }}>
          {props.children}
       </AuthContext.Provider>
    )

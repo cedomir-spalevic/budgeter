@@ -9,11 +9,13 @@ import {
     TextField,
     TextFieldSecret
 } from "components";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { colors } from "styles";
-import { makeStyles } from "context";
+import { makeStyles, useAuth } from "context";
+import { useNavigation } from "@react-navigation/native";
+import { AuthRoutes } from "../routes";
 
 const useStyles = makeStyles(palette => ({
     passwordRequirement: {
@@ -61,7 +63,8 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
     const passwordRequirements = props.checkForPasswordRequirements();
     return (
         <>
-            <Container flex>
+            <Container allowScroll flex>
+                <Label style={{ marginBottom: 25 }} type="header" text="Create your account" />
                 <TextField
                     preRenderIcon={<Icon name="subject" />}
                     errorMessage={props.touched.firstName && props.errors.firstName}
@@ -98,11 +101,12 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
                 <TextFieldSecret
                     placeholder="Confirm your password"
-                    errorMessage={props.touched.password && props.errors.password}
-                    onChange={props.handleChange("password")}
+                    errorMessage={props.touched.confirmPassword && props.errors.confirmPassword}
+                    onChange={props.handleChange("confirmPassword")}
                     onSubmit={() => props.handleSubmit()}
                     ref={props.confirmPasswordRef}
                 />
+                <View style={{ height: 10 }}></View>
                 <View style={styles.passwordRequirement}>
                    {passwordRequirements.containsMinimumLength ?
                       <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
@@ -112,30 +116,32 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                    </Text>
                 </View>
                 <View style={styles.passwordRequirement}>
-                {passwordRequirements.containsUpperCase ?
-                    <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
-                        : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
-                <Text style={passwordRequirements.containsUpperCase ? styles.valid : styles.invalid}>
+                    {passwordRequirements.containsUpperCase ?
+                        <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
+                            : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
+                    <Text style={passwordRequirements.containsUpperCase ? styles.valid : styles.invalid}>
                     Have at least one upper case character
                     </Text>
                 </View>
                 <View style={styles.passwordRequirement}>
-                {passwordRequirements.containsSpecialCharacters ?
-                    <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
-                        : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
-                <Text style={passwordRequirements.containsSpecialCharacters ? styles.valid : styles.invalid}>
-                    Have at least one special character: {`\n${specialCharacters}`}
-                </Text>
+                    {passwordRequirements.containsSpecialCharacters ?
+                        <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
+                            : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
+                    <Text style={passwordRequirements.containsSpecialCharacters ? styles.valid : styles.invalid}>
+                        Have at least one special character: {`\n${specialCharacters}`}
+                    </Text>
                 </View>
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
-                <Button onPress={() => {}} text="Next" loading={props.isSubmitting} />
+                <Button onPress={props.handleSubmit} text="Next" loading={props.isSubmitting} />
             </KeyboardAccessory>
         </>
      )
 }
 
 const RegisterScreen: React.FC = () => {
+    const navigation = useNavigation();
+    const auth = useAuth();
     const lastNameRef = useRef<TextInput>();
     const emailRef = useRef<TextInput>();
     const passwordRef = useRef<TextInput>();
@@ -182,24 +188,28 @@ const RegisterScreen: React.FC = () => {
                .oneOf([Yup.ref("password"), null], "Does not match password")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
+            const response = await auth.register(values.firstName, values.lastName, values.email, values.password);
+            if(!response.valid) {
+                formikBag.setErrors({
+                    email: response.emailError,
+                    password: response.passwordError
+                });
+                return;
+            }
+            navigation.navigate(AuthRoutes.ConfirmationCode);
         }
      })(RegisterForm);
 
     return (
         <Page>
-            <Container>
-                <Label style={{ marginBottom: 25 }} type="header" text="Create your account" />
-            </Container>
-            <ScrollView keyboardDismissMode="on-drag">
-                <Form 
-                    checkForPasswordRequirements={() => passwordRequirements.current}
-                    lastNameRef={lastNameRef}
-                    emailRef={emailRef}
-                    passwordRef={passwordRef}
-                    confirmPasswordRef={confirmPasswordRef}
-                />
-            </ScrollView>
-        </Page>
+            <Form 
+                checkForPasswordRequirements={() => passwordRequirements.current}
+                lastNameRef={lastNameRef}
+                emailRef={emailRef}
+                passwordRef={passwordRef}
+                confirmPasswordRef={confirmPasswordRef}
+            />
+    </Page>
     )
 }
 

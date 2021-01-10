@@ -9,6 +9,7 @@ import DefaultScreen from "./Default";
 import RegisterScreen from "./Register";
 import ForgotPasswordScreen from "./ForgotPassword";
 import { Header } from "components";
+import ConfirmationCodeScreen from "./ConfirmationCode";
 
 const getHeader = (initialRoute: string): StackNavigationOptions => ({
     header: (props) => <Header isModal={true} initialRoute={initialRoute} {...props} />
@@ -28,6 +29,7 @@ const LoginNavigator: React.FC = () => (
 const RegisterNavigator: React.FC = () => (
     <RegisterStack.Navigator initialRouteName={AuthRoutes.Register} screenOptions={getHeader(AuthRoutes.Register)}>
         <RegisterStack.Screen name={AuthRoutes.Register} component={RegisterScreen} />
+        <RegisterStack.Screen name={AuthRoutes.ConfirmationCode} component={ConfirmationCodeScreen} />
     </RegisterStack.Navigator>
 )
 

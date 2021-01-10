@@ -1,12 +1,14 @@
+import useMergedRef from "@react-hook/merged-ref";
 import { makeStyles, useTheme } from "context";
-import React, { useState, useEffect, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef, useRef } from "react";
 import {
    View,
    TextInput,
    TouchableOpacity,
    Text,
    NativeSyntheticEvent,
-   TextInputSubmitEditingEventData
+   TextInputSubmitEditingEventData,
+   ShadowPropTypesIOS
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -57,10 +59,12 @@ interface Props {
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
    onSubmit?: () => void;
-   textInputRef?: React.Ref<TextInput>;
+   textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void)
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
+   const textInput = useRef<TextInput>();
+   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
@@ -82,13 +86,18 @@ const TextField: React.FC<Props> = (props: Props) => {
          props.onSubmit();
    }
 
+   const onContainerPress = () => {
+      if(textInput.current)
+         textInput.current.focus();
+   }
+
    useEffect(() => {
       if (props.value && value === undefined)
          setValue(props.value);
    })
 
    return (
-      <View style={styles.container}>
+      <View style={styles.container} onTouchStart={() => onContainerPress()}>
          <View style={inputStyles}>
             <View style={styles.inputContainer}>
                {props.preRenderIcon && (
@@ -102,7 +111,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                   onChangeText={onChange}
                   secureTextEntry={props.hidden}
                   onSubmitEditing={onSubmitEditing}
-                  ref={props.textInputRef}
+                  ref={mergedRefs}
                   style={styles.textInput}
                   blurOnSubmit={false}
                   keyboardAppearance={theme.kind === "dark" ? "dark" : "light"}
@@ -119,4 +128,4 @@ const TextField: React.FC<Props> = (props: Props) => {
    )
 }
 
-export default forwardRef((props: Props, ref: React.Ref<TextInput>) => <TextField textInputRef={ref} {...props} />);
+export default forwardRef<TextInput, Props>((props, ref) => <TextField textInputRef={ref} {...props} />);

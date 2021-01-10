@@ -2,6 +2,7 @@ import ActionItem from "./ActionItem";
 import ActionList from "./ActionList";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
+import ConfirmationCodeInput from "./ConfirmationCodeInput";
 import Container from "./Container";
 import DatePicker from "./DatePicker";
 import Empty from "./Empty";
@@ -25,6 +26,7 @@ export {
     ActionList,
     Button,
     Checkbox,
+    ConfirmationCodeInput,
     Container,
     DatePicker,
     Empty,

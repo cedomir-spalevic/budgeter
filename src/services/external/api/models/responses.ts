@@ -1,4 +1,6 @@
-import { User } from "./data";
+export interface ConfirmationCodeResponse {
+    key: string;
+}
 
 export interface AuthResponse {
     token: string;

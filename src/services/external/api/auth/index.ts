@@ -6,7 +6,7 @@ import {
    NotFoundError, 
    UnauthorizedError 
 } from "../models/errors";
-import { AuthResponse } from "../models/responses";
+import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
 
 class AuthenticationService {
    private resource: string;
@@ -61,14 +61,14 @@ class AuthenticationService {
       return response.status === 200;
    }
 
-   async register(email: string, password: string): Promise<AuthResponse> {
+   async register(firstName: string, lastName: string, email: string, password: string): Promise<ConfirmationCodeResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ email, password })
+         body: JSON.stringify({ firstName, lastName, email, password })
       };
       const response = await apiConfig.callApi(`${this.resource}/register`, options);
       if(response.status === 400) {
@@ -84,8 +84,33 @@ class AuthenticationService {
       }
       const body = await response.json();
       return {
-         token: body.token
+         key: body.key
       }
+   }
+
+   async confirmRegister(key: string, code: number): Promise<AuthResponse> {
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({ code })
+      };
+      const response = await apiConfig.callApi(`${this.resource}/register/confirm/${key}`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 401) {
+         throw new UnauthorizedError();
+      }
+      if(response.status === 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      return { token: body.token };
    }
 }
 
