@@ -11,11 +11,12 @@ import {
     Searchbox
 } from "components";
 import { View } from "react-native";
-import { useAuth, useTheme, usePayments, useNavigationHeader } from "context";
+import { useAuth, useTheme, usePayments, useNavigationHeader, useHeaderOptions } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { PaymentsRoutes } from "../routes";
 
 const Payments: React.FC = () => {
+    const headerOptions = useHeaderOptions();
     const navigation = useNavigation();
     const payments = usePayments();
     const theme = useTheme();
@@ -40,13 +41,19 @@ const Payments: React.FC = () => {
     )
 
     useEffect(() => {
-        navigation.setOptions({
-            headerRight: () => <Icon onPress={() => navigation.navigate(PaymentsRoutes.Payment)} name="add" color={theme.value.palette.primary} size={32} />
+        headerOptions.setOptions({
+            rightActions: (
+                <Icon
+                    name="add"
+                    color={theme.value.palette.primary}
+                    size={32}
+                />
+            )
         })
     })
 
     return (
-        <Page useHeaderHeight>
+        <Page>
             <Container>
                 <ActionItem title={<Label type="header" text="Payments" />}>
                     <Searchbox 

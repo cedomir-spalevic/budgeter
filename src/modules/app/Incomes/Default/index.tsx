@@ -29,7 +29,7 @@ const Incomes: React.FC = () => {
     })
 
     return (
-        <Page useHeaderHeight>
+        <Page>
             <Container flex>
                 <Label type="header" text="Incomes" />
                 <Container flex verticallyCenter>

@@ -1,14 +1,11 @@
 import React from "react";
-import { Checkbox, Container, Page, Label, List, ActionItem } from "components";
+import { Container, Page, Label, List, ActionItem } from "components";
 import { useAuth, useTheme } from "context";
 
 const SwipeOptions: React.FC = () => {
-    const theme = useTheme();
-    const auth = useAuth();
-
     return (
-        <Page useHeaderHeight>
-            <Container flex>
+        <Page>
+            <Container allowScroll flex>
                 <ActionItem title={<Label type="header" text="Swipe Options" />}>
                     <List 
                         items={[

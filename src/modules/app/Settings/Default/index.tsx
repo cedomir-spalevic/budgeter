@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { Container, Page, Label, List, ActionItem } from "components";
 import { useAuth, useTheme } from "context";
 import { useNavigation } from "@react-navigation/native";
@@ -11,8 +10,8 @@ const Settings: React.FC = () => {
     const navigation = useNavigation();
 
     return (
-        <Page useHeaderHeight>
-            <Container justifyContent="space-between" flex>
+        <Page>
+            <Container allowScroll justifyContent="space-between" flex>
                 <ActionItem title={<Label type="header" text="Settings" />}>
                     <List 
                         items={[
@@ -22,16 +21,15 @@ const Settings: React.FC = () => {
                         ]} 
                     />
                 </ActionItem>
-                
                 <List 
-                        items={[{ 
-                            text: "Log out", 
-                            textColor: theme.value.palette.error, 
-                            iconColor:  theme.value.palette.error,
-                            iconName: "exit-to-app",
-                            onPress: () => auth.logout()
-                        }]} 
-                    />
+                    items={[{ 
+                        text: "Log out", 
+                        textColor: theme.value.palette.error, 
+                        iconColor:  theme.value.palette.error,
+                        iconName: "exit-to-app",
+                        onPress: () => auth.logout()
+                    }]} 
+                />
             </Container>
         </Page>
     )

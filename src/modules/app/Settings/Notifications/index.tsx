@@ -1,15 +1,11 @@
 import React from "react";
-import { Checkbox, Container, Page, Label, List, ActionItem } from "components";
-import { useAuth, useTheme } from "context";
+import { Container, Page, Label, List, ActionItem } from "components";
 import { Switch } from "components";
 
 const Notifications: React.FC = () => {
-    const theme = useTheme();
-    const auth = useAuth();
-
     return (
-        <Page useHeaderHeight>
-            <Container flex>
+        <Page>
+            <Container allowScroll flex>
                 <ActionItem title={<Label type="header" text="Notifications" />}>
                     <List 
                         items={[

@@ -5,7 +5,8 @@ import {
     AuthState, 
     useAuth, 
     PaymentsProvider, 
-    IncomesProvider
+    IncomesProvider,
+    HeaderOptionsProvider
 } from "context";
 
 const Entry: React.FC = () => {
@@ -14,11 +15,13 @@ const Entry: React.FC = () => {
     if(auth.state !== AuthState.SignedIn)
         return <AuthNavigator />;
     return (
-        <IncomesProvider>
-            <PaymentsProvider>
-                    <AppLoader />
-            </PaymentsProvider>
-        </IncomesProvider>
+        <HeaderOptionsProvider>
+            <IncomesProvider>
+                <PaymentsProvider>
+                        <AppLoader />
+                </PaymentsProvider>
+            </IncomesProvider>
+        </HeaderOptionsProvider>
     )
 }
 export default Entry;

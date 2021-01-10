@@ -1,6 +1,6 @@
 import { StackHeaderProps } from "@react-navigation/stack";
-import { makeStyles, useTheme } from "context";
-import React from "react";
+import { makeStyles, useTheme, useHeaderOptions } from "context";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Dimensions
@@ -9,12 +9,15 @@ import { Icon } from "components";
 
 const useStyles = makeStyles(theme => ({
     header: {
-        paddingTop: 60,
+        height: 100,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingHorizontal: Dimensions.get("screen").width*.1,
+        paddingHorizontal: theme.size.pagePadding,
         backgroundColor: theme.palette.secondary
+    },
+    actions: {
+        paddingTop: 50
     }
 }))
 
@@ -24,8 +27,10 @@ interface Props {
 }
 
 const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderProps) => {
+    const [showBackButton, setShowBackButton] = useState<boolean>(false);
     const styles = useStyles();
     const theme = useTheme();
+    const headerOptions = useHeaderOptions();
 
     const closeModal = () => {
         props.navigation.popToTop();
@@ -33,13 +38,24 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
             props.navigation.goBack();
     }
 
+    const goBack = () => {
+        if(props.previous && props.previous.route.name === props.initialRoute)
+            setShowBackButton(false);
+        props.navigation.goBack();
+    }
+
+    useEffect(() => {
+        setShowBackButton(props.scene.route.name !== props.initialRoute);
+    }, [props.scene.route.name])
+
     return (
         <View style={styles.header}>
-            <View>
-                {props.initialRoute !== props.scene.route.name &&
-                    <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => props.navigation.goBack()} />}
+            <View style={styles.actions}>
+                {showBackButton &&
+                    <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => goBack()} />}
             </View>
-            <View>
+            <View style={styles.actions}>
+                {headerOptions.options && headerOptions.options.rightActions}
                 {props.isModal &&
                     <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}
             </View>
