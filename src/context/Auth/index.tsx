@@ -100,7 +100,8 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             const authenticationService = AuthenticationService.getInstance();
             const key = await getItem(StorageKeys.ConfirmationKey);
             const response = await authenticationService.confirmRegister(key, code);
-            setItem(StorageKeys.AccessToken, response.token);
+            await deleteItem(StorageKeys.ConfirmationKey);
+            await setItem(StorageKeys.AccessToken, response.token);
             setState(AuthState.SignedIn);
             return { valid: true };
         }

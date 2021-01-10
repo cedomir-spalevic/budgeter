@@ -5,11 +5,30 @@ import {
     KeyboardAccessory, 
     Label, 
     Page,
-    ConfirmationCodeInput
+    ConfirmationCodeInput,
+    Icon
 } from "components";
+import { View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import { makeStyles, useTheme } from "context";
+
+const useStyles = makeStyles(theme => ({
+    errorView: {
+       flexDirection: "row",
+       alignItems: "center",
+       justifyContent: "center"
+    },
+    iconStyles: {
+       paddingRight: 10,
+       fontSize: 24,
+       color: theme.palette.error
+    },
+    spacer: {
+        height: 25
+    }
+}))
 
 export interface ConfirmationCodeParams {
     message?: string;
@@ -31,16 +50,32 @@ interface FormValues {
 }
 
 const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
+    const styles = useStyles();
+    const theme = useTheme();
     return (
         <>
             <Container allowScroll flex>
-                <Label style={{ marginBottom: 25 }} type="header" text="Enter confirmation code" />
-                {props.message && 
-                    <Label style={{ marginBottom: 25 }} type="regular" text={props.message} />}
+                <Label type="header" text="Enter confirmation code" />
+                <View style={styles.spacer}></View>
+                {props.message && (
+                    <>
+                        <Label type="regular" text={props.message} />
+                        <View style={styles.spacer}></View>
+                    </>
+                )}
                 <ConfirmationCodeInput
                     onChange={code => props.setFieldValue("code", code, true)}
                     onSubmit={() => props.handleSubmit()}
                 />
+                {props.touched.code && props.errors.code && (
+                    <>
+                        <View style={styles.spacer}></View>
+                        <View style={styles.errorView}>
+                            <Icon name="error" style={styles.iconStyles} />
+                            <Label text={props.errors.code} color={theme.value.palette.error} type="regular" />
+                        </View>
+                    </>
+                )}
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
                 <Button onPress={props.handleSubmit} text="Confirm" loading={props.isSubmitting} />
@@ -62,9 +97,10 @@ const ConfirmationCodeScreen: React.FC = () => {
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
             if(route.params) {
                 const confirmed = await route.params.onSubmit(values.code);
-                console.log(confirmed)
                 if(!confirmed) {
-                    // TODO: Set error message
+                    formikBag.setErrors({ 
+                        code: "Incorrect confirmation code"
+                    })
                 }
             }
         }

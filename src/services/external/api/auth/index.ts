@@ -97,10 +97,7 @@ class AuthenticationService {
          },
          body: JSON.stringify({ code })
       };
-      console.log(key);
-      console.log(code)
       const response = await apiConfig.callApi(`${this.resource}/register/confirm/${key}`, options);
-      console.log(response.status)
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);
@@ -110,9 +107,6 @@ class AuthenticationService {
       }
       if(response.status >= 500) {
          const body = await response.json();
-         console.log(body)
-         console.log(body.message);
-         console.log(body.stack);
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
