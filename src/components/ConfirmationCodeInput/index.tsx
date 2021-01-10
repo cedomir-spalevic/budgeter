@@ -15,16 +15,18 @@ import { Label } from "components";
 const useStyles = makeStyles(theme => ({
     cell: {
         width: 45,
+        height: 45,
         borderBottomWidth: 2,
         borderBottomColor: "#e0e0e0",
         textAlign: 'center',
     },
     focusCell: {
-        borderColor: theme.palette.primary,
+        borderBottomColor: theme.palette.primary,
     },
 }))
 
 interface Props {
+    onChange: (code: number) => void;
     onSubmit: (code: number) => void;
 }
 
@@ -32,12 +34,16 @@ const CELL_COUNT = 6;
 
 const ConfirmationCodeInput: React.FC<Props> = (props: Props) => {
     const [value, setValue] = useState<string>("");
-    const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
     const [p, getCellOnLayoutHandler] = useClearByFocusCell({
         value,
         setValue,
       });
     const styles = useStyles();
+
+    const onChange = (text: string) => {
+        setValue(text);
+        props.onChange(Number(text));
+    }
 
     useEffect(() => {   
         if(value.length === CELL_COUNT)
@@ -47,9 +53,9 @@ const ConfirmationCodeInput: React.FC<Props> = (props: Props) => {
     return (
         <View>
             <CodeField
-                ref={ref}
+                autoFocus
                 value={value}
-                onChangeText={setValue}
+                onChangeText={onChange}
                 cellCount={CELL_COUNT}
                 keyboardType="number-pad"
                 textContentType="oneTimeCode"

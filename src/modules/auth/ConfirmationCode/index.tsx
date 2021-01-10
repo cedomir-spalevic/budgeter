@@ -9,9 +9,21 @@ import {
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { useAuth } from "context";
+import { RouteProp, useRoute } from "@react-navigation/native";
+
+export interface ConfirmationCodeParams {
+    message?: string;
+    onSubmit: (code: number) => Promise<boolean>;
+}
+
+type ParamList = {
+    "ConfirmationCode": ConfirmationCodeParams
+}
+
+type RouteProps = RouteProp<ParamList, "ConfirmationCode">;
 
 interface FormProps {
+    message?: string;
 }
 
 interface FormValues {
@@ -23,8 +35,11 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
         <>
             <Container allowScroll flex>
                 <Label style={{ marginBottom: 25 }} type="header" text="Enter confirmation code" />
-                <ConfirmationCodeInput 
-                    onSubmit={code => props.setFieldValue("code", code)}
+                {props.message && 
+                    <Label style={{ marginBottom: 25 }} type="regular" text={props.message} />}
+                <ConfirmationCodeInput
+                    onChange={code => props.setFieldValue("code", code, true)}
+                    onSubmit={() => props.handleSubmit()}
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
@@ -35,7 +50,7 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
 }
 
 const ConfirmationCodeScreen: React.FC = () => {
-    const auth = useAuth();
+    const route = useRoute<RouteProps>();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
@@ -45,13 +60,19 @@ const ConfirmationCodeScreen: React.FC = () => {
             code: Yup.number().required("Enter the confirmation code sent to your email")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
-            console.log(values);
+            if(route.params) {
+                const confirmed = await route.params.onSubmit(values.code);
+                console.log(confirmed)
+                if(!confirmed) {
+                    // TODO: Set error message
+                }
+            }
         }
      })(ConfirmationCodeForm);
 
     return (
         <Page>
-            <Form />
+            <Form message={route.params?.message} />
         </Page>
     )
 }

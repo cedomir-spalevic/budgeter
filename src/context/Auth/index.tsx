@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
-import { deleteItem, setItem, StorageKeys } from "services/internal/storage";
+import { deleteItem, getItem, setItem, StorageKeys } from "services/internal/storage";
 import { AlreadyExistsError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
 import { Alert } from "react-native";
 import { btoa } from "services/internal/security";
@@ -35,7 +35,6 @@ export const AuthContext = createContext<Context>(undefined!);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
     const [state, setState] = useState<AuthState>(AuthState.SignedOut);
-    const [confirmationKey, setConfirmationKey] = useState<string>();
 
     const verify = () => {
         const authenticationService = AuthenticationService.getInstance();
@@ -83,12 +82,12 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         try {
             const authenticationService = AuthenticationService.getInstance();
             const response = await authenticationService.register(firstName, lastName, email, btoa(password));
-            setConfirmationKey(response.key);
+            await setItem(StorageKeys.ConfirmationKey, response.key)
             return { valid: true };
         }
         catch(error) {
             if(error instanceof AlreadyExistsError)
-                return { valid: false, emailError: "A user already exists with this email address " }
+                return { valid: false, emailError: "A user already exists with this email address" }
             else {
                 Alert.alert("Unable to create account", "We're having trouble creating your account. Please try again later.");
                 return { valid: false }
@@ -99,8 +98,8 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const confirmRegister = async (code: number): Promise<AuthResponse> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
-            const response = await authenticationService.confirmRegister(confirmationKey, code);
-            setConfirmationKey(undefined);
+            const key = await getItem(StorageKeys.ConfirmationKey);
+            const response = await authenticationService.confirmRegister(key, code);
             setItem(StorageKeys.AccessToken, response.token);
             setState(AuthState.SignedIn);
             return { valid: true };

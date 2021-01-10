@@ -152,6 +152,11 @@ const RegisterScreen: React.FC = () => {
        containsSpecialCharacters: false
     });
 
+    const confirmRegister = async (code: number) => {
+        const response = await auth.confirmRegister(code);
+        return response.valid;
+    }
+
     const testForMinimumRequirements = (value: string): boolean => {
         let hasMinimumLength = false, hasUpperCase = false, hasSpecialCharacters = false;
         if(value && value.length >= 8)
@@ -196,7 +201,10 @@ const RegisterScreen: React.FC = () => {
                 });
                 return;
             }
-            navigation.navigate(AuthRoutes.ConfirmationCode);
+            navigation.navigate(AuthRoutes.ConfirmationCode, { 
+                onSubmit: confirmRegister,
+                message: "Please enter the confirmation code that was sent to your email address"
+            });
         }
      })(RegisterForm);
 
