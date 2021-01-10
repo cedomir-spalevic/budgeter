@@ -1,9 +1,8 @@
 import { StackHeaderProps } from "@react-navigation/stack";
-import { makeStyles, useTheme, useHeaderOptions } from "context";
+import { makeStyles, useTheme } from "context";
 import React, { useEffect, useState } from "react";
 import {
-    View,
-    Dimensions
+    View
 } from "react-native";
 import { Icon } from "components";
 
@@ -23,6 +22,7 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
     isModal?: boolean;
+    modalHasParentInStack?: boolean;
     initialRoute: string;
 }
 
@@ -30,10 +30,10 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     const [showBackButton, setShowBackButton] = useState<boolean>(false);
     const styles = useStyles();
     const theme = useTheme();
-    const headerOptions = useHeaderOptions();
 
     const closeModal = () => {
-        props.navigation.popToTop();
+        if(props.modalHasParentInStack)
+            props.navigation.popToTop();
         if(props.navigation.canGoBack())
             props.navigation.goBack();
     }
@@ -48,14 +48,20 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
         setShowBackButton(props.scene.route.name !== props.initialRoute);
     }, [props.scene.route.name])
 
+    const headerLeft = props.scene.descriptor.options.headerLeft;
+    const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
+    const headerRight = props.scene.descriptor.options.headerRight;
+    const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
+
     return (
         <View style={styles.header}>
             <View style={styles.actions}>
                 {showBackButton &&
                     <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => goBack()} />}
+                {leftActions}
             </View>
             <View style={styles.actions}>
-                {headerOptions.options && headerOptions.options.rightActions}
+                {rightActions}
                 {props.isModal &&
                     <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}
             </View>

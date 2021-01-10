@@ -6,7 +6,8 @@ import {
     Label, 
     Page,
     ConfirmationCodeInput,
-    Icon
+    Icon,
+    Spacer
 } from "components";
 import { View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
@@ -24,9 +25,6 @@ const useStyles = makeStyles(theme => ({
        paddingRight: 10,
        fontSize: 24,
        color: theme.palette.error
-    },
-    spacer: {
-        height: 25
     }
 }))
 
@@ -56,11 +54,11 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
         <>
             <Container allowScroll flex>
                 <Label type="header" text="Enter confirmation code" />
-                <View style={styles.spacer}></View>
+                <Spacer />
                 {props.message && (
                     <>
                         <Label type="regular" text={props.message} />
-                        <View style={styles.spacer}></View>
+                        <Spacer />
                     </>
                 )}
                 <ConfirmationCodeInput
@@ -69,7 +67,7 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
                 {props.touched.code && props.errors.code && (
                     <>
-                        <View style={styles.spacer}></View>
+                        <Spacer />
                         <View style={styles.errorView}>
                             <Icon name="error" style={styles.iconStyles} />
                             <Label text={props.errors.code} color={theme.value.palette.error} type="regular" />

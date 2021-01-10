@@ -6,6 +6,7 @@ import {
     KeyboardAccessory, 
     Label, 
     Page,
+    Spacer,
     TextField,
     TextFieldSecret
 } from "components";
@@ -64,7 +65,8 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
             <Container allowScroll flex>
-                <Label style={{ marginBottom: 25 }} type="header" text="Create your account" />
+                <Label type="header" text="Create your account" />
+                <Spacer />
                 <TextField
                     preRenderIcon={<Icon name="subject" />}
                     errorMessage={props.touched.firstName && props.errors.firstName}
@@ -106,7 +108,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                     onSubmit={() => props.handleSubmit()}
                     ref={props.confirmPasswordRef}
                 />
-                <View style={{ height: 10 }}></View>
+                <Spacer />
                 <View style={styles.passwordRequirement}>
                    {passwordRequirements.containsMinimumLength ?
                       <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />

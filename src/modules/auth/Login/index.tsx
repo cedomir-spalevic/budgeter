@@ -8,7 +8,8 @@ import {
     Page,
     TextField,
     Link,
-    TextFieldSecret
+    TextFieldSecret,
+    Spacer
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
@@ -31,7 +32,8 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
             <Container allowScroll flex>
-                <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
+                <Label type="header" text="Log in" />
+                <Spacer />
                 <TextField
                     preRenderIcon={<Icon name="email" />}
                     errorMessage={props.touched.email && props.errors.email}

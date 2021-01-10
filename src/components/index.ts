@@ -17,6 +17,7 @@ import Page from "./Page";
 import PickerSelect from "./PickerSelect";
 import Progress from "./Progress";
 import Searchbox from "./Searchbox";
+import Spacer from "./Spacer";
 import Switch from "./Switch";
 import TextField from "./TextField";
 import TextFieldSecret from "./TextFieldSecret";
@@ -41,6 +42,7 @@ export {
     PickerSelect,
     Progress,
     Searchbox,
+    Spacer,
     Switch,
     TextField,
     TextFieldSecret

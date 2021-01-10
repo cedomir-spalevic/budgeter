@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import Welcome from "assets/svg/Welcome";
-import { Button, Container, Label, Link, Page } from "components";
+import { Button, Container, Label, Link, Page, Spacer } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { AuthRoutes } from "modules/auth/routes";
 import { makeStyles, useAuth } from "context";
@@ -11,8 +11,7 @@ const useStyles = makeStyles(palette => ({
         alignItems: "center"
     },
     image: {
-        alignItems: "center",
-        paddingVertical: 15
+        alignItems: "center"
     },
     registerText: {
         paddingTop: 8,
@@ -41,9 +40,11 @@ const DefaultScreen: React.FC = () => {
                     <Label type="header" text="Welcome!" />
                     <Label type="shadow" text="Please log in to continue" />
                 </View>
+                <Spacer />
                 <View style={styles.image}>
                     <Welcome />
                 </View>
+                <Spacer />
                 <Button size="large" onPress={() => login()} text="Log in" />
                 <View style={styles.registerText}>
                     <Label type="regular" text="Don't have an account?" />

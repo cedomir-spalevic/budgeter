@@ -6,13 +6,11 @@ import {
     KeyboardAccessory, 
     Label, 
     Page,
-    TextField,
-    Link,
-    TextFieldSecret
+    TextField
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { useAuth } from "context";
+import { useNavigation } from "@react-navigation/native";
 
 interface FormProps {
 
@@ -25,7 +23,8 @@ interface FormValues {
 const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
-            <Container flex>
+            <Container allowScroll flex>
+                <Label style={{ marginBottom: 25 }} type="header" text="Create Payment" />
                 <TextField
                     preRenderIcon={<Icon name="title" />}
                     errorMessage={props.touched.name && props.errors.name}
@@ -43,25 +42,21 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
 }
 
 const PaymentScreen: React.FC = () => {
-    const auth = useAuth();
+    const navigation = useNavigation();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
             name: ""
         }),
         validationSchema: Yup.object().shape({
-        //    email: Yup.string().required("Email cannot be blank"),
-        //    password: Yup.string().required("Password cannot be blank")
+
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
         }
-     })(PaymentForm);
+    })(PaymentForm);
 
     return (
-        <Page useHeaderHeight>
-            <Container horizontallyCenter>
-                <Label style={{ marginBottom: 25 }} type="header" text="Create Payment" />
-            </Container>
+        <Page>
             <Form />
         </Page>
     )
