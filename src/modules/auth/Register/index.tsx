@@ -9,7 +9,7 @@ import {
     TextField,
     TextFieldSecret
 } from "components";
-import { Text, View } from "react-native";
+import { ScrollView, Text, TextInput, View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { colors } from "styles";
@@ -41,10 +41,16 @@ interface PasswordRequirements {
  }
 
 interface FormProps {
+    lastNameRef?: React.MutableRefObject<TextInput>;
+    emailRef?: React.MutableRefObject<TextInput>;
+    passwordRef?: React.MutableRefObject<TextInput>;
+    confirmPasswordRef?: React.MutableRefObject<TextInput>;
     checkForPasswordRequirements: () => PasswordRequirements;
 }
 
 interface FormValues {
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -57,22 +63,45 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
         <>
             <Container flex>
                 <TextField
+                    preRenderIcon={<Icon name="subject" />}
+                    errorMessage={props.touched.firstName && props.errors.firstName}
+                    onChange={props.handleChange("firstName")}
+                    value={props.values.firstName}
+                    placeholder="First Name"
+                    onSubmit={() => props.lastNameRef.current.focus()}
+                    autoFocus
+                />
+                <TextField
+                    preRenderIcon={<Icon name="subject" />}
+                    errorMessage={props.touched.lastName && props.errors.lastName}
+                    onChange={props.handleChange("lastName")}
+                    value={props.values.lastName}
+                    placeholder="Last Name"
+                    onSubmit={() => props.emailRef.current.focus()}
+                    ref={props.lastNameRef}
+                />
+                <TextField
                     preRenderIcon={<Icon name="email" />}
                     errorMessage={props.touched.email && props.errors.email}
                     onChange={props.handleChange("email")}
                     value={props.values.email}
                     placeholder="Email"
-                    autoFocus
+                    onSubmit={() => props.passwordRef.current.focus()}
+                    ref={props.emailRef}
                 />
                 <TextFieldSecret
                     placeholder="Enter your password"
                     errorMessage={props.touched.password && props.errors.password}
                     onChange={props.handleChange("password")}
+                    onSubmit={() => props.confirmPasswordRef.current.focus()}
+                    ref={props.passwordRef}
                 />
                 <TextFieldSecret
                     placeholder="Confirm your password"
                     errorMessage={props.touched.password && props.errors.password}
                     onChange={props.handleChange("password")}
+                    onSubmit={() => props.handleSubmit()}
+                    ref={props.confirmPasswordRef}
                 />
                 <View style={styles.passwordRequirement}>
                    {passwordRequirements.containsMinimumLength ?
@@ -100,13 +129,17 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                 </View>
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
-                <Button onPress={() => {}} text="Next" />
+                <Button onPress={() => {}} text="Next" loading={props.isSubmitting} />
             </KeyboardAccessory>
         </>
      )
 }
 
 const RegisterScreen: React.FC = () => {
+    const lastNameRef = useRef<TextInput>();
+    const emailRef = useRef<TextInput>();
+    const passwordRef = useRef<TextInput>();
+    const confirmPasswordRef = useRef<TextInput>();
     const passwordRequirements = useRef<PasswordRequirements>({ 
        containsUpperCase: false, 
        containsMinimumLength: false, 
@@ -133,11 +166,15 @@ const RegisterScreen: React.FC = () => {
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
-           email: "",
-           password: "",
-           confirmPassword: ""
+            firstName: "",
+            lastName: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
         }),
         validationSchema: Yup.object().shape({
+            firstName: Yup.string().required("First name cannot be blank"),
+            lastName: Yup.string().required("Last name cannot be blank"),
             email: Yup.string().email("Not a valid email").required("Email cannot be blank"),
             password: Yup.string().required("Password cannot be blank")
                .test("minimumRequirements", "Password must meet minimum requirements", testForMinimumRequirements),
@@ -149,13 +186,19 @@ const RegisterScreen: React.FC = () => {
      })(RegisterForm);
 
     return (
-        <Page useHeaderHeight>
-            <Container horizontallyCenter>
+        <Page>
+            <Container>
                 <Label style={{ marginBottom: 25 }} type="header" text="Create your account" />
             </Container>
-            <Form 
-                checkForPasswordRequirements={() => passwordRequirements.current}
-            />
+            <ScrollView keyboardDismissMode="on-drag">
+                <Form 
+                    checkForPasswordRequirements={() => passwordRequirements.current}
+                    lastNameRef={lastNameRef}
+                    emailRef={emailRef}
+                    passwordRef={passwordRef}
+                    confirmPasswordRef={confirmPasswordRef}
+                />
+            </ScrollView>
         </Page>
     )
 }

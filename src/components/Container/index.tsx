@@ -1,17 +1,14 @@
 import { makeStyles } from "context";
 import React from "react";
 import { 
-    View, 
-    StyleSheet, 
-    Dimensions, 
+    View,
     StyleProp,
     ViewStyle
 } from "react-native";
 
-const oneTenth = Dimensions.get("screen").width * 0.1;
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
     container: {
-        paddingHorizontal: oneTenth
+        paddingHorizontal: theme.size.pagePadding
     },
     verticallyCenter: {
         justifyContent: "center"

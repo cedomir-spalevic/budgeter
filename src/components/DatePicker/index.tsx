@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
    container: {
       paddingVertical: 10,
       borderBottomWidth: 2,
@@ -19,7 +19,7 @@ const useStyles = makeStyles(palette => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: palette.gray,
+      color: theme.palette.gray,
       resizeMode: "contain"
    }
 }))
@@ -67,7 +67,7 @@ const DatePicker: React.FC<Props> = (props: Props) => {
               </TouchableOpacity> )}
           <TextInput
             placeholder={props.placeholder}
-            placeholderTextColor={theme.pallette.gray}
+            placeholderTextColor={theme.value.palette.gray}
             autoFocus={props.autoFocus}
             onChangeText={onChange}
             style={{ width: "80%" }}

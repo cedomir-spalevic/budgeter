@@ -7,7 +7,7 @@ import {
    TouchableOpacity
 } from "react-native";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
    container: {
       padding: 10,
       backgroundColor: "#e0e0e0",
@@ -20,7 +20,7 @@ const useStyles = makeStyles(palette => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: palette.gray,
+      color: theme.palette.gray,
       resizeMode: "contain"
    }
 }))
@@ -50,10 +50,10 @@ const Searchbox: React.FC<Props> = (props: Props) => {
 
    return (
       <View style={styles.container}>
-          <Icon size={18} color={theme.pallette.gray} name="search" />
+          <Icon size={18} color={theme.value.palette.gray} name="search" />
           <TextInput
             placeholder={props.placeholder}
-            placeholderTextColor={theme.pallette.gray}
+            placeholderTextColor={theme.value.palette.gray}
             onChangeText={onChange}
             style={{ width: "80%" }}
           />

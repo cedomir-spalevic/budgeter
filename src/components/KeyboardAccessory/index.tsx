@@ -2,21 +2,18 @@ import { makeStyles } from "context";
 import React from "react";
 import { 
     View, 
-    StyleSheet, 
-    Dimensions,
     StyleProp,
     ViewStyle
 } from "react-native";
 import { KeyboardAccessoryView } from "react-native-keyboard-accessory";
 
-const oneTenth = Dimensions.get("screen").width * 0.05;
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     container: {
         paddingVertical: 10,
-        paddingHorizontal: oneTenth,
+        paddingHorizontal: theme.size.pagePadding,
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: palette.secondary
+        backgroundColor: theme.palette.secondary
     }
 }))
 

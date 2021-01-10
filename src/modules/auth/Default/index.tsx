@@ -44,9 +44,9 @@ const DefaultScreen: React.FC = () => {
                 <View style={styles.image}>
                     <Welcome />
                 </View>
-                <Button onPress={() => login()} text="Log in" />
+                <Button size="large" onPress={() => login()} text="Log in" />
                 <View style={styles.registerText}>
-                    <Label type="subText" text="Don't have an account?" />
+                    <Label type="regular" text="Don't have an account?" />
                     <Link 
                         onPress={() => navigation.navigate(AuthRoutes.Register)}
                         text="Register Here"

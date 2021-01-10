@@ -9,7 +9,7 @@ import {
    TextInputSubmitEditingEventData
 } from "react-native";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
    container: {
       flexDirection: "column",
       width: "100%"
@@ -23,20 +23,25 @@ const useStyles = makeStyles(palette => ({
       marginBottom: 5,
    },
    inputWithError: {
-      borderBottomColor: palette.error
+      borderBottomColor: theme.palette.error
    },
    inputContainer: {
       flexDirection: "row",
       flex: 1
    },
+   textInput: {
+      fontSize: theme.font.regularSize,
+      fontFamily: theme.font.fontFamily,
+      color: theme.palette.textColor
+   },
    icon: {
       fontSize: 18,
       width: 25,
-      color: palette.gray,
+      color: theme.palette.gray,
       resizeMode: "contain"
    },
    errorText: {
-      color: palette.error
+      color: theme.palette.error
    }
 }))
 
@@ -92,12 +97,15 @@ const TextField: React.FC<Props> = (props: Props) => {
                   </TouchableOpacity> )}
                <TextInput
                   placeholder={props.placeholder}
-                  placeholderTextColor={theme.pallette.gray}
+                  placeholderTextColor={theme.value.palette.gray}
                   autoFocus={props.autoFocus}
                   onChangeText={onChange}
                   secureTextEntry={props.hidden}
                   onSubmitEditing={onSubmitEditing}
                   ref={props.textInputRef}
+                  style={styles.textInput}
+                  blurOnSubmit={false}
+                  keyboardAppearance={theme.kind === "dark" ? "dark" : "light"}
                />
             </View>
             {props.postRenderIcon && (

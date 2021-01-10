@@ -3,10 +3,10 @@ import { makeStyles, useTheme } from "context";
 import { Dimensions, TouchableOpacity, View } from "react-native";
 import { Label, Icon } from "components";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     container: {
         width: "100%",
-        backgroundColor: palette.cardColor,
+        backgroundColor: theme.palette.cardColor,
         marginTop: 5
     },
     listItem: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles(palette => ({
         alignItems: "center"
     },
     listItemBorder: {
-        borderBottomColor: palette.gray,
+        borderBottomColor: theme.palette.gray,
         borderBottomWidth: 1
     },
     listItemText: {
@@ -55,7 +55,7 @@ const ActionList: React.FC<Props> = (props: Props) => {
                         <View style={styles.listItemText}>
                             <Label type="regular" text={item.text} color={item.textColor} />
                             {item.note &&
-                                <Label type="subText" text={item.note.text} color={item.note.color === "red" ? theme.pallette.error : theme.pallette.success} />}
+                                <Label type="subText" text={item.note.text} color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} />}
                         </View>
                         {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
                     </TouchableOpacity>

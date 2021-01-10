@@ -10,7 +10,7 @@ const Switch: React.FC<Props> = (props: Props) => {
     const theme = useTheme();
     return (
         <RNSwitch 
-            trackColor={{ false: theme.pallette.primary, true: theme.pallette.primary }}
+            trackColor={{ false: theme.value.palette.primary, true: theme.value.palette.primary }}
             value={props.value} 
         />
     )

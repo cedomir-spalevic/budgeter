@@ -1,15 +1,13 @@
 import React from "react";
 import {
    createStackNavigator, 
-   StackNavigationOptions,
-   useHeaderHeight
+   StackNavigationOptions
 } from "@react-navigation/stack";
 import { AuthRoutes } from "./routes";
 import LoginScreen from "./Login";
 import DefaultScreen from "./Default";
 import RegisterScreen from "./Register";
 import ForgotPasswordScreen from "./ForgotPassword";
-import { NavigationHeaderProvider } from "context";
 import { Header } from "components";
 
 const getHeader = (initialRoute: string): StackNavigationOptions => ({
@@ -27,19 +25,11 @@ const LoginNavigator: React.FC = () => (
     </LoginStack.Navigator>
 )
 
-const RegisterNavigator: React.FC = () => {
-    const headerHeight = useHeaderHeight();
-    return (
-        <NavigationHeaderProvider headerHeight={headerHeight}>
-            <RegisterStack.Navigator initialRouteName={AuthRoutes.Register}>
-                <RegisterStack.Screen
-                    name={AuthRoutes.Register}
-                    component={RegisterScreen}
-                />
-            </RegisterStack.Navigator>
-        </NavigationHeaderProvider>
-    )
-}
+const RegisterNavigator: React.FC = () => (
+    <RegisterStack.Navigator initialRouteName={AuthRoutes.Register} screenOptions={getHeader(AuthRoutes.Register)}>
+        <RegisterStack.Screen name={AuthRoutes.Register} component={RegisterScreen} />
+    </RegisterStack.Navigator>
+)
 
 const DefaultNavigator: React.FC = () => (
     <DefaultStack.Navigator initialRouteName={AuthRoutes.Default} mode="modal" screenOptions={{ headerShown: false }}>

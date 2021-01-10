@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { toCurrency } from "services/internal/currency";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
    container: {
       paddingVertical: 10,
       borderBottomWidth: 2,
@@ -21,7 +21,7 @@ const useStyles = makeStyles(palette => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: palette.gray,
+      color: theme.palette.gray,
       resizeMode: "contain"
    }
 }))
@@ -73,11 +73,11 @@ const NumberPad: React.FC<Props> = (props: Props) => {
               </TouchableOpacity> )}
           <TextInput
             placeholder={props.placeholder}
-            placeholderTextColor={theme.pallette.gray}
+            placeholderTextColor={theme.value.palette.gray}
             autoFocus={props.autoFocus}
             contextMenuHidden={true}
             keyboardType="number-pad"
-            style={{ width: "80%", color: theme.pallette.textColor }}
+            style={{ width: "80%", color: theme.value.palette.textColor }}
             value={toCurrency(Number(num)/100)}
             onKeyPress={onKeyPress}
           />

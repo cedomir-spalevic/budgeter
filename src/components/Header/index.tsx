@@ -7,14 +7,14 @@ import {
 } from "react-native";
 import { Icon } from "components";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     header: {
         paddingTop: 60,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         paddingHorizontal: Dimensions.get("screen").width*.1,
-        backgroundColor: palette.secondary
+        backgroundColor: theme.palette.secondary
     }
 }))
 
@@ -37,11 +37,11 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
         <View style={styles.header}>
             <View>
                 {props.initialRoute !== props.scene.route.name &&
-                    <Icon name="chevron-left" size={32} color={theme.pallette.primary} onPress={() => props.navigation.goBack()} />}
+                    <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => props.navigation.goBack()} />}
             </View>
             <View>
                 {props.isModal &&
-                    <Icon name="close" size={32} color={theme.pallette.primary} onPress={() => closeModal()}  />}
+                    <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}
             </View>
         </View>
     )

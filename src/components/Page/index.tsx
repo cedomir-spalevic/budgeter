@@ -6,10 +6,10 @@ import {
 } from "react-native";
 import { makeStyles, useNavigationHeader } from "context";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     container: {
         flex: 1,
-        backgroundColor: palette.secondary
+        backgroundColor: theme.palette.secondary
     }
 }))
 

@@ -6,31 +6,31 @@ import {
     TextStyle
 } from "react-native";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     regular: {
-        fontFamily: "Helvetica Neue",
-        fontSize: 22,
-        color: palette.textColor
+        fontFamily: theme.font.fontFamily,
+        fontSize: theme.font.regularSize,
+        color: theme.palette.textColor
     },
     header: {
-        fontFamily: "Helvetica Neue",
-        fontSize: 32,
+        fontFamily: theme.font.fontFamily,
+        fontSize: theme.font.headerSize,
         fontWeight: "bold",
-        color: palette.textColor
+        color: theme.palette.textColor
     },
     shadow: {
-        fontFamily: "Helvetica Neue",
+        fontFamily: theme.font.fontFamily,
         fontSize: 18,
-        color: palette.darkBlue,
+        color: theme.palette.darkBlue,
         shadowOpacity: 0.2,
         shadowRadius: 2,
         shadowOffset: { width: 2, height: 2},
-        shadowColor: palette.textColor
+        shadowColor: theme.palette.textColor
     },
     subText: {
-        fontFamily: "Helvetica Neue",
-        fontSize: 18,
-        color: palette.textColor
+        fontFamily: theme.font.fontFamily,
+        fontSize: theme.font.subTextSize,
+        color: theme.palette.textColor
     }
 }));
 
@@ -62,7 +62,7 @@ const Label: React.FC<Props> = (props: Props) => {
         style.push({ color: props.color });
     if(props.style)
         style.push(props.style);
-    return <Text style={style}>{props.text}</Text>
+    return <Text adjustsFontSizeToFit style={style}>{props.text}</Text>
 }
 
 export default Label;

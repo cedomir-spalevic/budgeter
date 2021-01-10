@@ -14,18 +14,18 @@ const Appearance: React.FC = () => {
                         items={[
                             { 
                                 text: "Automatic", 
-                                action:<Checkbox checked={theme.theme === "auto"} />, 
-                                onPress: () => theme.setTheme("auto")
+                                action:<Checkbox checked={theme.kind === "auto"} />, 
+                                onPress: () => theme.setKind("auto")
                             },
                             { 
                                 text: "Dark", 
-                                action:<Checkbox checked={theme.theme === "dark"} />, 
-                                onPress: () => theme.setTheme("dark")
+                                action:<Checkbox checked={theme.kind === "dark"} />, 
+                                onPress: () => theme.setKind("dark")
                             },
                             { 
                                 text: "Light", 
-                                action:<Checkbox checked={theme.theme === "light"} />, 
-                                onPress: () => theme.setTheme("light")
+                                action:<Checkbox checked={theme.kind === "light"} />, 
+                                onPress: () => theme.setKind("light")
                             },
                         ]} 
                     />

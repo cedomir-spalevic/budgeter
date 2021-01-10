@@ -3,22 +3,22 @@ import { makeStyles } from "context";
 import { TouchableOpacity, View } from "react-native";
 import { Label, Icon } from "components";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     container: {
         width: "100%",
-        backgroundColor: palette.cardColor,
+        backgroundColor: theme.palette.cardColor,
         borderRadius: 10,
         marginTop: 5
     },
     listItem: {
         paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingVertical: 15,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
     },
     listItemBorder: {
-        borderBottomColor: palette.gray,
+        borderBottomColor: theme.palette.gray,
         borderBottomWidth: 1
     }
 }))
@@ -48,7 +48,7 @@ const List: React.FC<Props> = (props: Props) => {
                     listItemStyle.push(styles.listItemBorder)
                 return (
                     <TouchableOpacity onPress={item.onPress} style={listItemStyle}>
-                        <Label type="subText" text={item.text} color={item.textColor} />
+                        <Label type="regular" text={item.text} color={item.textColor} />
                         {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
                     </TouchableOpacity>
                 )

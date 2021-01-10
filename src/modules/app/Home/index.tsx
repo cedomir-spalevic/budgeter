@@ -20,7 +20,7 @@ const BudgetsNavigator: React.FC = () => {
    const theme = useTheme();
 
    const options: StackNavigationOptions = {
-      headerTintColor: theme.pallette.primary,
+      headerTintColor: theme.value.palette.primary,
       headerTransparent: true,
       headerTitle: (props: StackHeaderTitleProps) => null,
       headerLeftContainerStyle: { paddingLeft: Dimensions.get("screen").width * 0.1 },

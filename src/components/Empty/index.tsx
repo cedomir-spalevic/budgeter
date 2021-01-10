@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { globalStyles, colors } from "styles";
 import { NoData } from "assets/svg";
-import { Icon, Label, Link } from "components";
+import { Icon, Label } from "components";
 
 const styles = StyleSheet.create({
    textView: {

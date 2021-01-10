@@ -31,9 +31,9 @@ const Home: React.FC = () => {
         navigation.setOptions({
             headerTitle: () => (
                 <View style={styles.header}>
-                    <Icon name="chevron-left" size={24} color={theme.pallette.primary} />
+                    <Icon name="chevron-left" size={24} color={theme.value.palette.primary} />
                     <Label type="regular" text="December 2020" />
-                    <Icon name="chevron-right" size={24} color={theme.pallette.primary} />
+                    <Icon name="chevron-right" size={24} color={theme.value.palette.primary} />
                 </View>
             )
         })

@@ -10,7 +10,7 @@ import {
 import { toCurrency } from "services/internal/currency";
 import RNPickerSelect from "react-native-picker-select";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
    container: {
       paddingVertical: 10,
       borderBottomWidth: 2,
@@ -22,7 +22,7 @@ const useStyles = makeStyles(palette => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: palette.gray,
+      color: theme.palette.gray,
       resizeMode: "contain"
    }
 }))
@@ -54,7 +54,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
               </TouchableOpacity> )}
           <RNPickerSelect
             placeholder={{ label: props.placeholder, value: null, color: "#9EA0A4" }}
-            style={{ viewContainer: { width: "80%" }, inputIOS: { color: theme.pallette.textColor } }}
+            style={{ viewContainer: { width: "80%" }, inputIOS: { color: theme.value.palette.textColor } }}
             onValueChange={v => console.log(v)}
             items={props.items}
           />

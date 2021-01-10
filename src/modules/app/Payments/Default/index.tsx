@@ -41,7 +41,7 @@ const Payments: React.FC = () => {
 
     useEffect(() => {
         navigation.setOptions({
-            headerRight: () => <Icon onPress={() => navigation.navigate(PaymentsRoutes.Payment)} name="add" color={theme.pallette.primary} size={32} />
+            headerRight: () => <Icon onPress={() => navigation.navigate(PaymentsRoutes.Payment)} name="add" color={theme.value.palette.primary} size={32} />
         })
     })
 

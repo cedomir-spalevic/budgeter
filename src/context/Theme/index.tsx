@@ -1,30 +1,30 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Appearance, StyleSheet } from "react-native";
-import { darkTheme, lightTheme, Palette } from "styles-new";
+import { Theme, lightTheme, darkTheme } from "styles-new";
 
-type Theme = "auto" | "light" | "dark";
+type Kind = "auto" | "light" | "dark";
 
 interface Props {
    children: React.ReactNode;
 }
 
 interface Context {
-    pallette: Palette;
-    theme: Theme;
-    setTheme: (theme: Theme) => void;
+    value: Theme;
+    kind: Kind;
+    setKind: (kind: Kind) => void;
 }
 
 export const ThemeContext = createContext<Context>(undefined!);
 
 const ThemeProvider: React.FC<Props & any> = (props: Props) => {
-    const [theme, setTheme] = useState<Theme>("auto");
+    const [kind, setKind] = useState<Kind>("auto");
 
-    let pallette = lightTheme;
-    if(theme === "dark" || (theme === "auto" && Appearance.getColorScheme() === "dark"))
-        pallette = darkTheme;
+    let theme = lightTheme;
+    if(kind === "dark" || (kind === "auto" && Appearance.getColorScheme() === "dark"))
+        theme = darkTheme;
 
     return (
-        <ThemeContext.Provider value={{ pallette, theme, setTheme }}>
+        <ThemeContext.Provider value={{ value: theme, kind, setKind }}>
             {props.children}
         </ThemeContext.Provider>
     )
@@ -33,11 +33,11 @@ const ThemeProvider: React.FC<Props & any> = (props: Props) => {
 export const useTheme = (): Context => useContext<Context>(ThemeContext);
 
 type MakeStylesHook<T> = () => StyleSheet.NamedStyles<T>;
-type MakeStylesFuncParam<T> = (palette: Palette) => T | StyleSheet.NamedStyles<T>;
+type MakeStylesFuncParam<T> = (theme: Theme) => T | StyleSheet.NamedStyles<T>;
 export function makeStyles<T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>>(makeStylesFunc: MakeStylesFuncParam<T>): MakeStylesHook<T> {
     return () => {
         const theme = useTheme();
-        return makeStylesFunc(theme.pallette);
+        return makeStylesFunc(theme.value);
     }
 }
 

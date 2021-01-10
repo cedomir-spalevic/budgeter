@@ -19,7 +19,7 @@ import { TextInput } from "react-native";
 
 interface FormProps {
     onForgotPasswordClick: () => void;
-    passwordRef?: React.MutableRefObject<TextInput>;
+    passwordRef: React.MutableRefObject<TextInput>;
 }
 
 interface FormValues {
@@ -38,7 +38,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.email}
                     placeholder="Email"
                     autoFocus
-                    onSubmit={() => props.passwordRef.current.focus()}
+                    onSubmit={() => !props.values.email ? props.handleChange("email") : props.passwordRef.current.focus()}
                 />
                 <TextFieldSecret
                     placeholder="Enter your password"

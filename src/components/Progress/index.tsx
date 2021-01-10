@@ -9,7 +9,7 @@ interface Props {
 
 const Progress: React.FC<Props> = (props: Props) => {
     const theme = useTheme();
-    return <ActivityIndicator size={props.size} color={props.color ?? theme.pallette.textColor} />
+    return <ActivityIndicator size={props.size} color={props.color ?? theme.value.palette.textColor} />
 }
 
 export default Progress;
