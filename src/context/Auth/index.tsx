@@ -5,7 +5,7 @@ import { AlreadyExistsError, EmailNotVerifiedError, NotFoundError, UnauthorizedE
 import { Alert } from "react-native";
 import { btoa } from "services/internal/security";
 import * as LocalAuthentication from "expo-local-authentication";
-import { ChallengeType } from "services/external/api/models/data";
+import UserService from "services/external/api/me";
 
 interface AuthResponse {
     valid: boolean;
@@ -29,10 +29,10 @@ interface Context {
     tryLocalAuthentication: () => Promise<boolean>;
     login: (email: string, password: string) => Promise<AuthResponse>;
     register: (firstName: string, lastName: string, email: string, password: string) => Promise<AuthResponse>;
-    forgotPassword: (email: string) => Promise<void>;
-    confirmEmailVerification: (code: number) => Promise<void>;
-    confirmPasswordReset: (code: number) => Promise<void>;
-    updatePassword: (password: string) => Promise<void>;
+    forgotPassword: (email: string) => Promise<boolean>;
+    confirmEmailVerification: (code: number) => Promise<boolean>;
+    confirmPasswordReset: (code: number) => Promise<boolean>;
+    updatePassword: (password: string) => Promise<boolean>;
     logout: () => void;
 }
 
@@ -77,7 +77,9 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             else if(error instanceof NotFoundError) 
                 return { valid: false, emailError: "No user found with this email" }
             else if(error instanceof EmailNotVerifiedError) {
-                challenge(email, "emailVerification");
+                const authenticationService = AuthenticationService.getInstance();
+                const response = await authenticationService.challenge(email, "emailVerification");
+                await setItem(StorageKeys.ConfirmationKey, response.key)
                 return { valid: false, emailNotVerified: true };
             }
             else {
@@ -104,22 +106,20 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         }
     }
 
-    const challenge = async (email: string, type: ChallengeType): Promise<AuthResponse> => {
+    const forgotPassword = async (email: string): Promise<boolean> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
-            const response = await authenticationService.challenge(email, type);
-            await setItem(StorageKeys.ConfirmationKey, response.key)
-            return { valid: true };
+            const response = await authenticationService.challenge(email, "passwordReset");
+            await setItem(StorageKeys.ConfirmationKey, response.key);
+            return true;
         }
         catch(error) {
-            if(error instanceof NotFoundError)
-                return { valid: false }
-            Alert.alert("Unable to verify your email", "We're having trouble verifying your email. Please try again later.");
-            return { valid: false }
+            Alert.alert("Unable to confirm your email", "We're having trouble verifying your email. Please try again later.");
+            return false;
         }
     }
 
-    const confirmChallenge = async (code: number): Promise<AuthResponse> => {
+    const confirmEmailVerification = async (code: number): Promise<boolean> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
             const key = await getItem(StorageKeys.ConfirmationKey);
@@ -127,14 +127,46 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             await deleteItem(StorageKeys.ConfirmationKey);
             await setItem(StorageKeys.AccessToken, response.token);
             setState(AuthState.SignedIn);
-            return { valid: true };
+            return true;
         }
         catch(error) {
             if(error instanceof UnauthorizedError) 
-                return { valid: false }
+                return false;
             else {
                 Alert.alert("Unable to confirm your email", "We're having trouble confirming your email. Please try again later.")
-                return { valid: false }
+                return false;
+            }
+        }
+    }
+    const confirmPasswordReset = async (code: number): Promise<boolean> => {
+        try {
+            const authenticationService = AuthenticationService.getInstance();
+            const key = await getItem(StorageKeys.ConfirmationKey);
+            await authenticationService.confirmChallenge(key, code);
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) 
+                return false;
+            else {
+                Alert.alert("Unable to confirm your email", "We're having trouble confirming your email. Please try again later.")
+                return false;
+            }
+        }
+    }
+    
+    const updatePassword = async (password: string): Promise<boolean> => {
+        try {
+            const userService  = UserService.getInstance();
+            await userService.updatePassword(btoa(password));
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) 
+                return false;
+            else {
+                Alert.alert("Unable to update password", "We're having trouble updating your password. Please try again later.")
+                return false;
             }
         }
     }
@@ -148,8 +180,20 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         verify();
     }, [])
 
+    const value: Context = {
+        state,
+        tryLocalAuthentication,
+        login,
+        register,
+        forgotPassword,
+        confirmEmailVerification,
+        confirmPasswordReset,
+        updatePassword,
+        logout
+    }
+
    return (
-      <AuthContext.Provider value={{ state, tryLocalAuthentication, login, logout, register, challenge, confirmChallenge }}>
+      <AuthContext.Provider value={value}>
          {props.children}
       </AuthContext.Provider>
    )

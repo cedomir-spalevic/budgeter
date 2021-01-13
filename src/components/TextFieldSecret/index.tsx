@@ -24,6 +24,7 @@ const TextFieldSecret: React.FC<Props> = (props: Props) => {
          errorMessage={props.errorMessage}
          hidden={hidden}
          postRenderIcon={hidden ? visible : visibleOff}
+         onPostRenderIconClick={() => setHidden(!hidden)}
          onChange={nt => props.onChange && props.onChange(nt)}
          onSubmit={props.onSubmit}
          ref={props.textInputRef}

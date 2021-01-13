@@ -68,8 +68,8 @@ const LoginScreen: React.FC = () => {
     const passwordRef = useRef<TextInput>();
 
     const onEmailConfirmation = async (code: number) => {
-        const response = await auth.confirmChallenge(code);
-        return response.valid;
+        const response = await auth.confirmEmailVerification(code);
+        return response;
     }
 
     const Form = withFormik<FormProps, FormValues>({
@@ -90,7 +90,6 @@ const LoginScreen: React.FC = () => {
                         message: "Please enter the confirmation code that was sent to your email address"
                     });
                 }
-                    navigation.navigate(AuthRoutes.ConfirmationCode)
                 formikBag.setErrors({
                     email: response.emailError,
                     password: response.passwordError

@@ -3,5 +3,6 @@ export enum AuthRoutes {
     Login = "Log in",
     Register = "Register",
     ForgotPassword = "Forgot Password",
-    ConfirmationCode = "Confirmation Code"
+    ConfirmationCode = "Confirmation Code",
+    UpdatePassword = "Update Password"
 }

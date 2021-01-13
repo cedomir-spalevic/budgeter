@@ -7,7 +7,6 @@ import {
     Label, 
     Page,
     Spacer,
-    TextField,
     TextFieldSecret
 } from "components";
 import { Text, TextInput, View } from "react-native";
@@ -16,7 +15,6 @@ import * as Yup from "yup";
 import { colors } from "styles";
 import { makeStyles, useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
-import { AuthRoutes } from "../routes";
 
 const useStyles = makeStyles(palette => ({
     passwordRequirement: {
@@ -44,61 +42,24 @@ interface PasswordRequirements {
  }
 
 interface FormProps {
-    lastNameRef?: React.MutableRefObject<TextInput>;
-    emailRef?: React.MutableRefObject<TextInput>;
     passwordRef?: React.MutableRefObject<TextInput>;
     confirmPasswordRef?: React.MutableRefObject<TextInput>;
     checkForPasswordRequirements: () => PasswordRequirements;
 }
 
 interface FormValues {
-    firstName: string;
-    lastName: string;
-    email: string;
     password: string;
     confirmPassword: string;
 }
 
-const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
+const UpdatePasswordForm = (props: FormProps & FormikProps<FormValues>) => {
     const styles = useStyles();
     const passwordRequirements = props.checkForPasswordRequirements();
     return (
         <>
             <Container allowScroll flex>
-                <Label type="header" text="Create your account" />
+                <Label type="header" text="Update your password" />
                 <Spacer />
-                <TextField
-                    preRenderIcon={<Icon name="subject" />}
-                    errorMessage={props.touched.firstName && props.errors.firstName}
-                    onChange={props.handleChange("firstName")}
-                    value={props.values.firstName}
-                    placeholder="First Name"
-                    onSubmit={() => props.lastNameRef.current.focus()}
-                    textContentType="name"
-                    autoFocus
-                />
-                <TextField
-                    preRenderIcon={<Icon name="subject" />}
-                    errorMessage={props.touched.lastName && props.errors.lastName}
-                    onChange={props.handleChange("lastName")}
-                    value={props.values.lastName}
-                    placeholder="Last Name"
-                    onSubmit={() => props.emailRef.current.focus()}
-                    textContentType="name"
-                    ref={props.lastNameRef}
-                />
-                <TextField
-                    preRenderIcon={<Icon name="email" />}
-                    errorMessage={props.touched.email && props.errors.email}
-                    onChange={props.handleChange("email")}
-                    value={props.values.email}
-                    placeholder="Email"
-                    onSubmit={() => props.passwordRef.current.focus()}
-                    textContentType="emailAddress"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    ref={props.emailRef}
-                />
                 <TextFieldSecret
                     placeholder="Enter your password"
                     errorMessage={props.touched.password && props.errors.password}
@@ -141,17 +102,15 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                 </View>
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
-                <Button onPress={props.handleSubmit} text="Next" loading={props.isSubmitting} />
+                <Button onPress={props.handleSubmit} text="Update" loading={props.isSubmitting} />
             </KeyboardAccessory>
         </>
      )
 }
 
-const RegisterScreen: React.FC = () => {
+const UpdatePasswordScreen: React.FC = () => {
     const navigation = useNavigation();
     const auth = useAuth();
-    const lastNameRef = useRef<TextInput>();
-    const emailRef = useRef<TextInput>();
     const passwordRef = useRef<TextInput>();
     const confirmPasswordRef = useRef<TextInput>();
     const passwordRequirements = useRef<PasswordRequirements>({ 
@@ -159,11 +118,6 @@ const RegisterScreen: React.FC = () => {
        containsMinimumLength: false, 
        containsSpecialCharacters: false
     });
-
-    const confirmRegister = async (code: number) => {
-        const response = await auth.confirmEmailVerification(code);
-        return response;
-    }
 
     const testForMinimumRequirements = (value: string): boolean => {
         let hasMinimumLength = false, hasUpperCase = false, hasSpecialCharacters = false;
@@ -185,43 +139,24 @@ const RegisterScreen: React.FC = () => {
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
-            firstName: "",
-            lastName: "",
-            email: "",
             password: "",
             confirmPassword: ""
         }),
         validationSchema: Yup.object().shape({
-            firstName: Yup.string().required("First name cannot be blank"),
-            lastName: Yup.string().required("Last name cannot be blank"),
-            email: Yup.string().email("Not a valid email").required("Email cannot be blank"),
             password: Yup.string().required("Password cannot be blank")
                .test("minimumRequirements", "Password must meet minimum requirements", testForMinimumRequirements),
             confirmPassword: Yup.string().required("Confirm your password")
                .oneOf([Yup.ref("password"), null], "Does not match password")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
-            const response = await auth.register(values.firstName, values.lastName, values.email, values.password);
-            if(!response.valid) {
-                formikBag.setErrors({
-                    email: response.emailError,
-                    password: response.passwordError
-                });
-                return;
-            }
-            navigation.navigate(AuthRoutes.ConfirmationCode, { 
-                onSubmit: confirmRegister,
-                message: "Please enter the confirmation code that was sent to your email address"
-            });
+            const response = await auth.updatePassword(values.password);
         }
-     })(RegisterForm);
+     })(UpdatePasswordForm);
 
     return (
         <Page>
             <Form 
                 checkForPasswordRequirements={() => passwordRequirements.current}
-                lastNameRef={lastNameRef}
-                emailRef={emailRef}
                 passwordRef={passwordRef}
                 confirmPasswordRef={confirmPasswordRef}
             />
@@ -229,4 +164,4 @@ const RegisterScreen: React.FC = () => {
     )
 }
 
-export default RegisterScreen;
+export default UpdatePasswordScreen;

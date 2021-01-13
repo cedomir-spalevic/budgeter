@@ -1,5 +1,5 @@
 import useMergedRef from "@react-hook/merged-ref";
-import { makeStyles, useTheme } from "context";
+import { makeStyles, useScroll, useTheme } from "context";
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import {
    View,
@@ -8,7 +8,7 @@ import {
    Text,
    NativeSyntheticEvent,
    TextInputSubmitEditingEventData,
-   ShadowPropTypesIOS
+   LayoutChangeEvent
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -66,11 +66,13 @@ interface Props {
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
+   const layout = useRef<LayoutChangeEvent>();
    const textInput = useRef<TextInput>();
    const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
+   const scroll = useScroll();
    const inputStyles = [styles.input];
    if(props.errorMessage) {
       inputStyles.push(styles.inputWithError);
@@ -94,6 +96,18 @@ const TextField: React.FC<Props> = (props: Props) => {
          textInput.current.focus();
    }
 
+   const onPreRenderIconClick = () => {
+      if(props.onPreRenderIconClick)
+         props.onPreRenderIconClick();
+      textInput.current.focus();
+   }
+
+   const onPostRenderIconClick = () => {
+      if(props.onPostRenderIconClick)
+         props.onPostRenderIconClick();
+      textInput.current.focus();
+   }
+
    useEffect(() => {
       if (props.value && value === undefined)
          setValue(props.value);
@@ -104,7 +118,7 @@ const TextField: React.FC<Props> = (props: Props) => {
          <View style={inputStyles}>
             <View style={styles.inputContainer}>
                {props.preRenderIcon && (
-                  <TouchableOpacity onPress={props.onPreRenderIconClick}>
+                  <TouchableOpacity onPress={onPreRenderIconClick}>
                      {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
                   </TouchableOpacity> )}
                <TextInput
@@ -124,7 +138,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                />
             </View>
             {props.postRenderIcon && (
-               <TouchableOpacity onPress={props.onPostRenderIconClick}>
+               <TouchableOpacity onPress={onPostRenderIconClick}>
                   {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
                </TouchableOpacity> )}
          </View>

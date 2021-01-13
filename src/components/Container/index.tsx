@@ -1,5 +1,5 @@
-import { makeStyles } from "context";
-import React from "react";
+import { makeStyles, ScrollProvider } from "context";
+import React, { useRef } from "react";
 import { 
     View,
     StyleProp,
@@ -35,6 +35,7 @@ interface Props {
 }
 
 const Container: React.FC<Props> = (props: Props) => {
+    const scrollView = useRef<ScrollView>();
     const styles = useStyles();
     const style: StyleProp<ViewStyle> = [];
     if(!props.fullWith)
@@ -51,8 +52,10 @@ const Container: React.FC<Props> = (props: Props) => {
         style.push({ alignItems: props.alignItems });
     if(props.allowScroll)
         return (
-            <ScrollView contentContainerStyle={style}>
-                {props.children}
+            <ScrollView ref={scrollView} contentContainerStyle={style}>
+                <ScrollProvider scrollView={scrollView}>
+                    {props.children}
+                </ScrollProvider>
             </ScrollView>
         )
     return (

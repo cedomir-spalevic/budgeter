@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useRef } from "react";
 import { 
     Button, 
     Container, 
@@ -13,9 +13,11 @@ import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
+import { AuthRoutes } from "../routes";
 
 interface FormProps {
-
+    allowConfirmation: () => boolean;
+    goToConfirmationPage: () => void;
 }
 
 interface FormValues {
@@ -23,6 +25,14 @@ interface FormValues {
 }
 
 const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
+
+    const onResetClick = () => {
+        if(props.allowConfirmation())
+            props.goToConfirmationPage();
+        else
+            props.handleSubmit();
+    }
+
     return (
         <>
             <Container allowScroll flex>
@@ -42,7 +52,11 @@ const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
-                <Button onPress={props.handleSubmit} text="Reset Password" />
+                <Button 
+                    onPress={() => onResetClick()} 
+                    text={!props.allowConfirmation() ? "Reset Password" : "I received my code"} 
+                    loading={props.isSubmitting}
+                />
             </KeyboardAccessory>
         </>
      )
@@ -51,6 +65,16 @@ const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
 const ForgotPasswordScreen: React.FC = () => {
     const auth = useAuth();
     const navigation = useNavigation();
+    const allowConfirmation = useRef<boolean>(false);
+
+    const onEmailConfirmation = async (code: number) => {
+        const response = await auth.confirmPasswordReset(code);
+        if(response)
+            navigation.navigate(AuthRoutes.UpdatePassword);
+        return response;
+    }
+
+    const goToConfirmationPage = () => navigation.navigate(AuthRoutes.ConfirmationCode, { onSubmit: onEmailConfirmation });
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
@@ -60,20 +84,18 @@ const ForgotPasswordScreen: React.FC = () => {
             email: Yup.string().required("Email cannot be blank")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
-
+            const response = await auth.forgotPassword(values.email);
+            if(response) 
+                allowConfirmation.current = true;
         }
      })(ForgotPasswordForm);
 
-    useEffect(() => {
-        navigation.goBack()
-        navigation.setOptions({
-            headerTitle: () => <Label type="header" text="Forgot Password" />
-        })
-    })
-
     return (
         <Page>
-            <Form />
+            <Form 
+                allowConfirmation={() => allowConfirmation.current}
+                goToConfirmationPage={goToConfirmationPage}
+            />
         </Page>
     )
 }

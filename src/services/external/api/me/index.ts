@@ -46,18 +46,14 @@ class UserService {
 
    public async updatePassword(password: string): Promise<void> {
       const apiConfig = ApiConfig.getInstance();
-      const body = {
-          device: Platform.OS,
-          token: deviceToken
-      }
       const options: RequestInit = {
           method: "POST",
           headers: {
               "Content-Type": "application/json"
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify({ password })
       }
-      const response = await apiConfig.callApiSpecialKey(`${this.resource}/passwordReset`, options);
+      const response = await apiConfig.callApiSpecialKey(`${this.resource}/resetPassword`, options);
       if (response.status !== 200)
           throw "Unable to register device";
    }
