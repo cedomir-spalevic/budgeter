@@ -1,10 +1,48 @@
-import { StackHeaderProps } from "@react-navigation/stack";
+import { 
+    StackNavigationProp, 
+    StackHeaderStyleInterpolator
+} from "@react-navigation/stack";
 import { makeStyles, useTheme } from "context";
 import React, { useEffect, useState } from "react";
 import {
+    Animated,
     View
 } from "react-native";
 import { Icon } from "components";
+import { NavigationProp, ParamListBase, Route, StackNavigationState } from "@react-navigation/native";
+import { Layout, StackNavigationOptions } from "@react-navigation/stack/lib/typescript/src/types";
+import { EdgeInsets } from "react-native-safe-area-context";
+
+interface ExtraNavigationProps {
+    hideHeaderLeft?: boolean;
+    hideHeaderRight?: boolean;
+}
+
+type StackDescriptor = {
+    render(): JSX.Element;
+    options: ExtraNavigationProps & StackNavigationOptions;
+    navigation: NavigationProp<Record<string, object>, string, StackNavigationState, StackNavigationOptions, {}>;
+}
+
+type Scene<T> = {
+    route: T;
+    descriptor: StackDescriptor;
+    progress: {
+        current: Animated.AnimatedInterpolation;
+        next?: Animated.AnimatedInterpolation;
+        previous?: Animated.AnimatedInterpolation;
+    };
+}
+
+type StackHeaderProps = {
+    mode: 'float' | 'screen';
+    layout: Layout;
+    insets: EdgeInsets;
+    scene: Scene<Route<string>>;
+    previous?: Scene<Route<string>>;
+    navigation: StackNavigationProp<ParamListBase>;
+    styleInterpolator: StackHeaderStyleInterpolator;
+}
 
 const useStyles = makeStyles(theme => ({
     header: {
@@ -22,7 +60,6 @@ const useStyles = makeStyles(theme => ({
 
 interface Props {
     isModal?: boolean;
-    modalHasParentInStack?: boolean;
     initialRoute: string;
 }
 
@@ -32,7 +69,7 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     const theme = useTheme();
 
     const closeModal = () => {
-        if(props.modalHasParentInStack)
+        if(props.navigation.dangerouslyGetState().routeNames.length > 1)
             props.navigation.popToTop();
         if(props.navigation.canGoBack())
             props.navigation.goBack();
@@ -52,6 +89,8 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
     const headerRight = props.scene.descriptor.options.headerRight;
     const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
+
+    console.log(props.navigation.dangerouslyGetState())
 
     return (
         <View style={styles.header}>

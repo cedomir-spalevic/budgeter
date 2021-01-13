@@ -59,7 +59,10 @@ interface Props {
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
    onSubmit?: () => void;
-   textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void)
+   textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void);
+   autoCapitalize?: "none" | "sentences" | "words" | "characters";
+   textContentType?: "password" | "newPassword" | "name" | "emailAddress";
+   keyboardType?: "email-address";
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -115,6 +118,9 @@ const TextField: React.FC<Props> = (props: Props) => {
                   style={styles.textInput}
                   blurOnSubmit={false}
                   keyboardAppearance={theme.kind === "dark" ? "dark" : "light"}
+                  autoCapitalize={props.autoCapitalize}
+                  textContentType={props.textContentType}
+                  keyboardType={props.keyboardType}
                />
             </View>
             {props.postRenderIcon && (

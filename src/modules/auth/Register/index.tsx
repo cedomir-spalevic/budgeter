@@ -74,6 +74,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.firstName}
                     placeholder="First Name"
                     onSubmit={() => props.lastNameRef.current.focus()}
+                    textContentType="name"
                     autoFocus
                 />
                 <TextField
@@ -83,6 +84,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.lastName}
                     placeholder="Last Name"
                     onSubmit={() => props.emailRef.current.focus()}
+                    textContentType="name"
                     ref={props.lastNameRef}
                 />
                 <TextField
@@ -92,6 +94,9 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.email}
                     placeholder="Email"
                     onSubmit={() => props.passwordRef.current.focus()}
+                    textContentType="emailAddress"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
                     ref={props.emailRef}
                 />
                 <TextFieldSecret
@@ -100,6 +105,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                     onChange={props.handleChange("password")}
                     onSubmit={() => props.confirmPasswordRef.current.focus()}
                     ref={props.passwordRef}
+                    newPassword
                 />
                 <TextFieldSecret
                     placeholder="Confirm your password"
@@ -155,7 +161,7 @@ const RegisterScreen: React.FC = () => {
     });
 
     const confirmRegister = async (code: number) => {
-        const response = await auth.confirmRegister(code);
+        const response = await auth.confirmChallenge(code);
         return response.valid;
     }
 

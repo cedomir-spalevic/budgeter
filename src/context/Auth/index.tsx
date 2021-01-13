@@ -1,13 +1,15 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import { deleteItem, getItem, setItem, StorageKeys } from "services/internal/storage";
-import { AlreadyExistsError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
+import { AlreadyExistsError, EmailNotVerifiedError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
 import { Alert } from "react-native";
 import { btoa } from "services/internal/security";
 import * as LocalAuthentication from "expo-local-authentication";
+import { ChallengeType } from "services/external/api/models/data";
 
 interface AuthResponse {
     valid: boolean;
+    emailNotVerified?: boolean;
     emailError?: string;
     passwordError?: string;
 }
@@ -26,9 +28,12 @@ interface Context {
     state: AuthState;
     tryLocalAuthentication: () => Promise<boolean>;
     login: (email: string, password: string) => Promise<AuthResponse>;
-    logout: () => void;
     register: (firstName: string, lastName: string, email: string, password: string) => Promise<AuthResponse>;
-    confirmRegister: (code: number) => Promise<AuthResponse>;
+    forgotPassword: (email: string) => Promise<void>;
+    confirmEmailVerification: (code: number) => Promise<void>;
+    confirmPasswordReset: (code: number) => Promise<void>;
+    updatePassword: (password: string) => Promise<void>;
+    logout: () => void;
 }
 
 export const AuthContext = createContext<Context>(undefined!);
@@ -71,6 +76,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
                 return { valid: false, passwordError: "Incorrect password" }
             else if(error instanceof NotFoundError) 
                 return { valid: false, emailError: "No user found with this email" }
+            else if(error instanceof EmailNotVerifiedError) {
+                challenge(email, "emailVerification");
+                return { valid: false, emailNotVerified: true };
+            }
             else {
                 Alert.alert("Unable to log in", "We're having trouble logging you in. Please try again later.")
                 return { valid: false }
@@ -95,11 +104,26 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         }
     }
 
-    const confirmRegister = async (code: number): Promise<AuthResponse> => {
+    const challenge = async (email: string, type: ChallengeType): Promise<AuthResponse> => {
+        try {
+            const authenticationService = AuthenticationService.getInstance();
+            const response = await authenticationService.challenge(email, type);
+            await setItem(StorageKeys.ConfirmationKey, response.key)
+            return { valid: true };
+        }
+        catch(error) {
+            if(error instanceof NotFoundError)
+                return { valid: false }
+            Alert.alert("Unable to verify your email", "We're having trouble verifying your email. Please try again later.");
+            return { valid: false }
+        }
+    }
+
+    const confirmChallenge = async (code: number): Promise<AuthResponse> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
             const key = await getItem(StorageKeys.ConfirmationKey);
-            const response = await authenticationService.confirmRegister(key, code);
+            const response = await authenticationService.confirmChallenge(key, code);
             await deleteItem(StorageKeys.ConfirmationKey);
             await setItem(StorageKeys.AccessToken, response.token);
             setState(AuthState.SignedIn);
@@ -125,7 +149,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     }, [])
 
    return (
-      <AuthContext.Provider value={{ state, tryLocalAuthentication, login, logout, register, confirmRegister }}>
+      <AuthContext.Provider value={{ state, tryLocalAuthentication, login, logout, register, challenge, confirmChallenge }}>
          {props.children}
       </AuthContext.Provider>
    )

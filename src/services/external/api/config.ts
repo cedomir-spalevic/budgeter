@@ -32,6 +32,19 @@ class ApiConfig {
       return fetch(url, init);
    }
 
+   public async callApiSpecialKey(endpoint: string, init?: RequestInit): Promise<Response> {
+      const url = `${this.baseUrl}${endpoint}`;
+      const token = await getItem(StorageKeys.ConfirmationKey);
+      const options = {
+         ...init,
+         headers: {
+             ...(init && init.headers),
+             "Authorization": `Bearer ${token}`
+         }
+     };
+     return fetch(url, options);
+   }
+
    public async callApiProtected(endpoint: string, init?: RequestInit): Promise<Response> {
       const url = `${this.baseUrl}${endpoint}`;
       const token = await getItem(StorageKeys.AccessToken);

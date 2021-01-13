@@ -8,6 +8,7 @@ interface Props {
    onChange?: (newText: string) => void;
    onSubmit?: () => void;
    textInputRef?: React.Ref<TextInput>;
+   newPassword?: boolean;
 }
 
 const TextFieldSecret: React.FC<Props> = (props: Props) => {
@@ -26,6 +27,8 @@ const TextFieldSecret: React.FC<Props> = (props: Props) => {
          onChange={nt => props.onChange && props.onChange(nt)}
          onSubmit={props.onSubmit}
          ref={props.textInputRef}
+         textContentType={props.newPassword ? "newPassword" : "password"}
+         autoCapitalize="none"
       />
    )
 }

@@ -1,4 +1,8 @@
+export class ForceLogoutError extends Error {}
+
 export class AlreadyExistsError extends Error {}
+
+export class EmailNotVerifiedError extends Error {}
 
 export class NotFoundError extends Error {}
 

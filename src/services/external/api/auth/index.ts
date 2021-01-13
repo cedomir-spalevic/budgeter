@@ -1,6 +1,8 @@
 import ApiConfig from "../config";
+import { ChallengeType } from "../models/data";
 import { 
    AlreadyExistsError, 
+   EmailNotVerifiedError, 
    GeneralError, 
    InternalServerError, 
    NotFoundError, 
@@ -22,7 +24,7 @@ class AuthenticationService {
       return AuthenticationService.instance;
    }
 
-   async login(email: string, password: string): Promise<AuthResponse> {
+   public async login(email: string, password: string): Promise<AuthResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -42,6 +44,9 @@ class AuthenticationService {
       if(response.status === 404) {
          throw new NotFoundError();
       }
+      if(response.status === 406) {
+         throw new EmailNotVerifiedError();
+      }
       if(response.status >= 500) {
          const body = await response.json();
          throw new InternalServerError(body.message);
@@ -52,7 +57,7 @@ class AuthenticationService {
       }
    }
 
-   async verify(): Promise<boolean> {
+   public async verify(): Promise<boolean> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST"
@@ -61,7 +66,7 @@ class AuthenticationService {
       return response.status === 200;
    }
 
-   async register(firstName: string, lastName: string, email: string, password: string): Promise<ConfirmationCodeResponse> {
+   public async register(firstName: string, lastName: string, email: string, password: string): Promise<ConfirmationCodeResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -83,12 +88,32 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
-         key: body.key
-      }
+      return { key: body.key }
    }
 
-   async confirmRegister(key: string, code: number): Promise<AuthResponse> {
+   public async challenge(email: string, type: ChallengeType): Promise<ConfirmationCodeResponse> {
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({ email, type })
+      };
+      const response = await apiConfig.callApi(`${this.resource}/challenge`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      return { key: body.key }
+   }
+
+   public async confirmChallenge(key: string, code: number): Promise<AuthResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -97,7 +122,7 @@ class AuthenticationService {
          },
          body: JSON.stringify({ code })
       };
-      const response = await apiConfig.callApi(`${this.resource}/register/confirm/${key}`, options);
+      const response = await apiConfig.callApi(`${this.resource}/challenge/${key}`, options);
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);

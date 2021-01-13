@@ -7,8 +7,7 @@ import {
     Label, 
     Page,
     TextField,
-    Link,
-    TextFieldSecret
+    Spacer
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
@@ -21,13 +20,14 @@ interface FormProps {
 
 interface FormValues {
     email: string;
-    password: string;
 }
 
-const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
+const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
-            <Container flex>
+            <Container allowScroll flex>
+                <Label type="header" text="Enter your email" />
+                <Spacer />
                 <TextField
                     preRenderIcon={<Icon name="email" />}
                     errorMessage={props.touched.email && props.errors.email}
@@ -35,40 +35,37 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.email}
                     placeholder="Email"
                     autoFocus
-                />
-                <TextFieldSecret
-                    placeholder="Enter your password"
-                    errorMessage={props.touched.password && props.errors.password}
-                    onChange={props.handleChange("password")}
+                    onSubmit={() => props.submitForm()}
+                    textContentType="emailAddress"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
                 />
             </Container>
-            <KeyboardAccessory justifyContent="space-between">
-                <Link onPress={() => {}} text="Forgot password?" />
-                <Button onPress={props.handleSubmit} text="Log in" />
+            <KeyboardAccessory justifyContent="flex-end">
+                <Button onPress={props.handleSubmit} text="Reset Password" />
             </KeyboardAccessory>
         </>
      )
 }
 
-const LoginScreen: React.FC = () => {
+const ForgotPasswordScreen: React.FC = () => {
     const auth = useAuth();
     const navigation = useNavigation();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
-           email: "",
-           password: ""
+            email: ""
         }),
         validationSchema: Yup.object().shape({
-        //    email: Yup.string().required("Email cannot be blank"),
-        //    password: Yup.string().required("Password cannot be blank")
+            email: Yup.string().required("Email cannot be blank")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
-            await auth.login(values.email, values.password);
+
         }
-     })(LoginForm);
+     })(ForgotPasswordForm);
 
     useEffect(() => {
+        navigation.goBack()
         navigation.setOptions({
             headerTitle: () => <Label type="header" text="Forgot Password" />
         })
@@ -76,12 +73,9 @@ const LoginScreen: React.FC = () => {
 
     return (
         <Page>
-            {/* <Container>
-                <Label style={{ marginBottom: 25 }} type="header" text="Log in" />
-            </Container> */}
             <Form />
         </Page>
     )
 }
 
-export default LoginScreen;
+export default ForgotPasswordScreen;

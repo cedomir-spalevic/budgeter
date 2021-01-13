@@ -1,10 +1,9 @@
 export interface User { 
+    firstName: string;
+    lastName: string;
     email: string;
-    isAdmin: boolean;
-    isService: boolean;
     createdOn: Date;
     modifiedOn: Date;
-    _id: string;
 }
 
 export interface Budget {
@@ -31,3 +30,5 @@ export interface Payment {
     modifiedOn: Date;
     _id: string;
 }
+
+export type ChallengeType = "emailVerification" | "passwordReset";

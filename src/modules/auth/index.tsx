@@ -23,6 +23,7 @@ const LoginNavigator: React.FC = () => (
     <LoginStack.Navigator initialRouteName={AuthRoutes.Login} screenOptions={getHeader(AuthRoutes.Login)}>
         <LoginStack.Screen name={AuthRoutes.Login} component={LoginScreen} />
         <LoginStack.Screen name={AuthRoutes.ForgotPassword} component={ForgotPasswordScreen} />
+        <LoginStack.Screen name={AuthRoutes.ConfirmationCode} component={ConfirmationCodeScreen} />
     </LoginStack.Navigator>
 )
 
