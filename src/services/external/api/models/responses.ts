@@ -1,9 +1,12 @@
 export interface ConfirmationCodeResponse {
+    expires: number;
     key: string;
 }
 
 export interface AuthResponse {
-    token: string;
+    expires: number;
+    accessToken: string;
+    refreshToken: string;
 }
 
 export interface ListResponse<T> {

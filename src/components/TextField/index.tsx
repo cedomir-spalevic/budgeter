@@ -7,8 +7,7 @@ import {
    TouchableOpacity,
    Text,
    NativeSyntheticEvent,
-   TextInputSubmitEditingEventData,
-   LayoutChangeEvent
+   TextInputSubmitEditingEventData
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -66,13 +65,13 @@ interface Props {
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
-   const layout = useRef<LayoutChangeEvent>();
+   const scroll = useScroll();
+   const y = useRef<number>();
    const textInput = useRef<TextInput>();
    const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
-   const scroll = useScroll();
    const inputStyles = [styles.input];
    if(props.errorMessage) {
       inputStyles.push(styles.inputWithError);
@@ -114,7 +113,7 @@ const TextField: React.FC<Props> = (props: Props) => {
    })
 
    return (
-      <View style={styles.container} onTouchStart={() => onContainerPress()}>
+      <View style={styles.container} onTouchStart={() => onContainerPress()} onLayout={e => (y.current = e.nativeEvent.layout.y)}>
          <View style={inputStyles}>
             <View style={styles.inputContainer}>
                {props.preRenderIcon && (
@@ -135,6 +134,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                   autoCapitalize={props.autoCapitalize}
                   textContentType={props.textContentType}
                   keyboardType={props.keyboardType}
+                  onFocus={e => scroll.to(y.current)}
                />
             </View>
             {props.postRenderIcon && (

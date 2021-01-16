@@ -12,8 +12,7 @@ import {
 import { View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { makeStyles, useTheme } from "context";
+import { makeStyles, useAuth, useTheme } from "context";
 
 const useStyles = makeStyles(theme => ({
     errorView: {
@@ -27,17 +26,6 @@ const useStyles = makeStyles(theme => ({
        color: theme.palette.error
     }
 }))
-
-export interface ConfirmationCodeParams {
-    message?: string;
-    onSubmit: (code: number) => Promise<boolean>;
-}
-
-type ParamList = {
-    "ConfirmationCode": ConfirmationCodeParams
-}
-
-type RouteProps = RouteProp<ParamList, "ConfirmationCode">;
 
 interface FormProps {
     message?: string;
@@ -83,7 +71,7 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
 }
 
 const ConfirmationCodeScreen: React.FC = () => {
-    const route = useRoute<RouteProps>();
+    const auth = useAuth();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
@@ -93,20 +81,19 @@ const ConfirmationCodeScreen: React.FC = () => {
             code: Yup.number().required("Enter the confirmation code sent to your email")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
-            if(route.params) {
-                const confirmed = await route.params.onSubmit(values.code);
-                if(!confirmed) {
-                    formikBag.setErrors({ 
-                        code: "Incorrect confirmation code"
-                    })
-                }
+            const confirmed = await auth.confirmEmailVerification(values.code);
+            if(!confirmed) {
+                formikBag.setErrors({ 
+                    code: "Incorrect confirmation code"
+                })
             }
         }
      })(ConfirmationCodeForm);
 
+    // TODO: Message here?
     return (
         <Page>
-            <Form message={route.params?.message} />
+            <Form message={""} /> 
         </Page>
     )
 }

@@ -14,6 +14,7 @@ import { Layout, StackNavigationOptions } from "@react-navigation/stack/lib/type
 import { EdgeInsets } from "react-native-safe-area-context";
 
 interface ExtraNavigationProps {
+    popToTop?: boolean;
     hideHeaderLeft?: boolean;
     hideHeaderRight?: boolean;
 }
@@ -89,8 +90,9 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
     const headerRight = props.scene.descriptor.options.headerRight;
     const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
-
-    console.log(props.navigation.dangerouslyGetState())
+    const popToTop = props.scene.descriptor.options.popToTop;
+    if(popToTop)
+        props.navigation.popToTop();
 
     return (
         <View style={styles.header}>

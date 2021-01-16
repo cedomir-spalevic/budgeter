@@ -1,56 +1,27 @@
 import React from "react";
-import {
-   createStackNavigator, 
-   StackNavigationOptions
-} from "@react-navigation/stack";
 import { AuthRoutes } from "./routes";
-import LoginScreen from "./Login";
 import DefaultScreen from "./Default";
-import RegisterScreen from "./Register";
-import ForgotPasswordScreen from "./ForgotPassword";
-import { Header } from "components";
-import ConfirmationCodeScreen from "./ConfirmationCode";
-import UpdatePasswordScreen from "./UpdatePassword";
+import LoginNavigator from "./Login";
+import RegisterNavigator from "./Register";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const getHeader = (initialRoute: string): StackNavigationOptions => ({
-    header: (props) => <Header isModal={true} initialRoute={initialRoute} {...props} />
-})
+const Stack = createStackNavigator();
 
-const LoginStack = createStackNavigator();
-const RegisterStack = createStackNavigator();
-const DefaultStack = createStackNavigator();
-
-const LoginNavigator: React.FC = () => (
-    <LoginStack.Navigator initialRouteName={AuthRoutes.Login} screenOptions={getHeader(AuthRoutes.Login)}>
-        <LoginStack.Screen name={AuthRoutes.Login} component={LoginScreen} />
-        <LoginStack.Screen name={AuthRoutes.ForgotPassword} component={ForgotPasswordScreen} />
-        <LoginStack.Screen name={AuthRoutes.ConfirmationCode} component={ConfirmationCodeScreen} />
-        <LoginStack.Screen name={AuthRoutes.UpdatePassword} component={UpdatePasswordScreen} />
-    </LoginStack.Navigator>
-)
-
-const RegisterNavigator: React.FC = () => (
-    <RegisterStack.Navigator initialRouteName={AuthRoutes.Register} screenOptions={getHeader(AuthRoutes.Register)}>
-        <RegisterStack.Screen name={AuthRoutes.Register} component={RegisterScreen} />
-        <RegisterStack.Screen name={AuthRoutes.ConfirmationCode} component={ConfirmationCodeScreen} />
-    </RegisterStack.Navigator>
-)
-
-const DefaultNavigator: React.FC = () => (
-    <DefaultStack.Navigator initialRouteName={AuthRoutes.Default} mode="modal" screenOptions={{ headerShown: false }}>
-        <DefaultStack.Screen
+const AuthNavigator: React.FC = () => (
+    <Stack.Navigator initialRouteName={AuthRoutes.Default} mode="modal" screenOptions={{ headerShown: false }}>
+        <Stack.Screen
             name={AuthRoutes.Default}
             component={DefaultScreen}
         />
-        <DefaultStack.Screen
+        <Stack.Screen
             name={AuthRoutes.Login}
             component={LoginNavigator}
         />
-        <DefaultStack.Screen
+        <Stack.Screen
             name={AuthRoutes.Register}
             component={RegisterNavigator}
         />
-    </DefaultStack.Navigator>
+    </Stack.Navigator>
 )
 
-export default DefaultNavigator;
+export default AuthNavigator;

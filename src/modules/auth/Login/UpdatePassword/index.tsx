@@ -150,6 +150,9 @@ const UpdatePasswordScreen: React.FC = () => {
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
             const response = await auth.updatePassword(values.password);
+            if(!response) {
+                // TODO: Set some error message
+            }
         }
      })(UpdatePasswordForm);
 

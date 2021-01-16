@@ -13,7 +13,7 @@ import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
-import { AuthRoutes } from "../routes";
+import { LoginRoutes } from "../routes";
 
 interface FormProps {
     allowConfirmation: () => boolean;
@@ -67,15 +67,6 @@ const ForgotPasswordScreen: React.FC = () => {
     const navigation = useNavigation();
     const allowConfirmation = useRef<boolean>(false);
 
-    const onEmailConfirmation = async (code: number) => {
-        const response = await auth.confirmPasswordReset(code);
-        if(response)
-            navigation.navigate(AuthRoutes.UpdatePassword);
-        return response;
-    }
-
-    const goToConfirmationPage = () => navigation.navigate(AuthRoutes.ConfirmationCode, { onSubmit: onEmailConfirmation });
-
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
             email: ""
@@ -88,13 +79,13 @@ const ForgotPasswordScreen: React.FC = () => {
             if(response) 
                 allowConfirmation.current = true;
         }
-     })(ForgotPasswordForm);
+    })(ForgotPasswordForm);
 
     return (
         <Page>
             <Form 
                 allowConfirmation={() => allowConfirmation.current}
-                goToConfirmationPage={goToConfirmationPage}
+                goToConfirmationPage={() => navigation.navigate(LoginRoutes.ConfirmationCode)}
             />
         </Page>
     )

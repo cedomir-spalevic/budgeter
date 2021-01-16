@@ -1,27 +1,32 @@
-import React, { createContext, useContext } from "react";
-import { LayoutChangeEvent, ScrollView } from "react-native";
+import React, { createContext, useContext, useRef } from "react";
+import { ScrollView } from "react-native";
 
 interface Props {
-    scrollView: React.MutableRefObject<ScrollView>;
     children: React.ReactNode;
 }
 
 interface Context {
-    to: (event: LayoutChangeEvent) => void;
+    to: (y: number) => void;
+    setRef: (ref: React.MutableRefObject<ScrollView>) => void;
 }
 
 export const ScrollContext = createContext<Context>(undefined!);
 
 const ScrollProvider: React.FC<Props> = (props: Props) => {
+    const scrollViewRef = useRef<ScrollView>();
 
-    const to = (event: LayoutChangeEvent) => {
-        console.log(event);
-        alert("here")
-        props.scrollView.current.scrollTo({ y: event.nativeEvent.layout.y, animated: true })
+    const to = (y: number) => {
+        if(y < 200 || !scrollViewRef.current)
+            return;
+        scrollViewRef.current.scrollTo({ y: y, animated: true })
+    }
+
+    const setRef = (ref: React.MutableRefObject<ScrollView>) => {
+        scrollViewRef.current = ref.current;
     }
 
     return (
-        <ScrollContext.Provider value={{ to }}>
+        <ScrollContext.Provider value={{ to, setRef }}>
             {props.children}
         </ScrollContext.Provider>
     )

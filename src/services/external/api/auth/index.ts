@@ -1,14 +1,19 @@
 import ApiConfig from "../config";
 import { ChallengeType } from "../models/data";
 import { 
-   AlreadyExistsError, 
-   EmailNotVerifiedError, 
+   AlreadyExistsError,
    GeneralError, 
    InternalServerError, 
    NotFoundError, 
    UnauthorizedError 
 } from "../models/errors";
 import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
+
+interface LoginResponse {
+   isEmailVerified: boolean;
+   confirmationCodeResponse?: ConfirmationCodeResponse;
+   authResponse?: AuthResponse;
+}
 
 class AuthenticationService {
    private resource: string;
@@ -24,7 +29,8 @@ class AuthenticationService {
       return AuthenticationService.instance;
    }
 
-   public async login(email: string, password: string): Promise<AuthResponse> {
+   
+   public async login(email: string, password: string): Promise<LoginResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -44,8 +50,47 @@ class AuthenticationService {
       if(response.status === 404) {
          throw new NotFoundError();
       }
-      if(response.status === 406) {
-         throw new EmailNotVerifiedError();
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      let authResponse = undefined;
+      let confirmationCodeResponse = undefined;
+      let isEmailVerified = true;
+      if(response.status === 202) {
+         isEmailVerified = false;
+         confirmationCodeResponse = {
+            key: body.key,
+            expires: body.expires
+         }
+      }
+      else {
+         authResponse = {
+            expires: body.expires,
+            accessToken: body.accessToken,
+            refreshToken: body.refreshToken
+         }
+      }
+      return {
+         isEmailVerified,
+         authResponse,
+         confirmationCodeResponse
+      }
+   }
+
+   public async refresh(refreshToken: string): Promise<AuthResponse> {
+      const requestBody = {
+         refreshToken
+      }
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "POST",
+         body: JSON.stringify(requestBody)
+      };
+      const response = await apiConfig.callApiProtected(`${this.resource}/refresh`, options);
+      if(response.status === 401) {
+         throw new UnauthorizedError();
       }
       if(response.status >= 500) {
          const body = await response.json();
@@ -53,17 +98,10 @@ class AuthenticationService {
       }
       const body = await response.json();
       return {
-         token: body.token
+         expires: body.expires,
+         accessToken: body.accessToken,
+         refreshToken: body.refreshToken
       }
-   }
-
-   public async verify(): Promise<boolean> {
-      const apiConfig = ApiConfig.getInstance();
-      const options: RequestInit = {
-         method: "POST"
-      };
-      const response = await apiConfig.callApiProtected(`${this.resource}/verify`, options);
-      return response.status === 200;
    }
 
    public async register(firstName: string, lastName: string, email: string, password: string): Promise<ConfirmationCodeResponse> {
@@ -88,7 +126,10 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return { key: body.key }
+      return {
+         key: body.key,
+         expires: body.expires
+      }
    }
 
    public async challenge(email: string, type: ChallengeType): Promise<ConfirmationCodeResponse> {
@@ -110,7 +151,10 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return { key: body.key }
+      return {
+         key: body.key,
+         expires: body.expires
+      }
    }
 
    public async confirmChallenge(key: string, code: number): Promise<AuthResponse> {
@@ -135,7 +179,11 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return { token: body.token };
+      return {
+         expires: body.expires,
+         accessToken: body.accessToken,
+         refreshToken: body.refreshToken
+      }
    }
 }
 

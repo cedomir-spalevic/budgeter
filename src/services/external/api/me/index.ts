@@ -1,7 +1,8 @@
 import ApiConfig from "../config";
 import { Platform } from "react-native";
-import { ForceLogoutError, GeneralError, InternalServerError, UnauthorizedError } from "../models/errors";
+import { GeneralError, InternalServerError, UnauthorizedError } from "../models/errors";
 import { User } from "../models/data";
+import { AuthResponse } from "../models/responses";
 
 class UserService {
    private resource: string;
@@ -27,9 +28,6 @@ class UserService {
       if(response.status === 401) {
          throw new UnauthorizedError();
       }
-      if(response.status === 409) {
-         throw new ForceLogoutError();
-      }
       if(response.status >= 500) {
          const body = await response.json();
          throw new InternalServerError(body.message);
@@ -44,7 +42,7 @@ class UserService {
       }
    }
 
-   public async updatePassword(password: string): Promise<void> {
+   public async updatePassword(key: string, password: string): Promise<AuthResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
           method: "POST",
@@ -53,9 +51,24 @@ class UserService {
           },
           body: JSON.stringify({ password })
       }
-      const response = await apiConfig.callApiSpecialKey(`${this.resource}/resetPassword`, options);
-      if (response.status !== 200)
-          throw "Unable to register device";
+      const response = await apiConfig.callApiSpecialKey(`${this.resource}/resetPassword/${key}`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 401) {
+         throw new UnauthorizedError();
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      return {
+         expires: body.expires,
+         accessToken: body.accessToken,
+         refreshToken: body.refreshToken
+      }
    }
 
    public async registerDevice(deviceToken: string): Promise<void> {
