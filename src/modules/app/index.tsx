@@ -8,6 +8,7 @@ import { Container, Icon, Page, Progress } from "components";
 import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator, useHeaderHeight } from "@react-navigation/stack";
 import IncomeScreen from "./Shared/Income";
+import { useUser } from "context/User";
 
 enum TabRoutes {
     Home = "Home",
@@ -81,6 +82,7 @@ const AppNavigator: React.FC = () => {
 
 const AppLoader: React.FC = () => {
    const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+   const user = useUser();
 //    const budgets = useBudgets();
 //    const payments = usePayments();
 
@@ -88,6 +90,7 @@ const AppLoader: React.FC = () => {
       /** Any app wide data load should go here */
     //   await budgets.getBudgets();
     //   await payments.getPayments();
+        await user.getUser();
       setTimeout(() => {
         setDataLoaded(true);
       }, 2000)

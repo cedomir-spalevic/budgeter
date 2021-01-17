@@ -1,5 +1,6 @@
+import { getItem, StorageKeys } from "services/internal/storage";
 import ApiConfig from "../config";
-import { ChallengeType } from "../models/data";
+import { ChallengeType } from "../models/data/challenge";
 import { 
    AlreadyExistsError,
    GeneralError, 
@@ -64,6 +65,7 @@ class AuthenticationService {
             key: body.key,
             expires: body.expires
          }
+         await apiConfig.handleConfirmationCodeResponse(confirmationCodeResponse)
       }
       else {
          authResponse = {
@@ -71,6 +73,7 @@ class AuthenticationService {
             accessToken: body.accessToken,
             refreshToken: body.refreshToken
          }
+         await apiConfig.handleAuthResponse(authResponse);
       }
       return {
          isEmailVerified,
@@ -79,14 +82,12 @@ class AuthenticationService {
       }
    }
 
-   public async refresh(refreshToken: string): Promise<AuthResponse> {
-      const requestBody = {
-         refreshToken
-      }
+   public async refresh(): Promise<AuthResponse> {
+      const refreshToken = await getItem(StorageKeys.RefreshToken);
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
-         body: JSON.stringify(requestBody)
+         body: JSON.stringify({ refreshToken })
       };
       const response = await apiConfig.callApiProtected(`${this.resource}/refresh`, options);
       if(response.status === 401) {
@@ -97,11 +98,13 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
+      const authResponse: AuthResponse = {
          expires: body.expires,
          accessToken: body.accessToken,
          refreshToken: body.refreshToken
       }
+      await apiConfig.handleAuthResponse(authResponse);
+      return authResponse;
    }
 
    public async register(firstName: string, lastName: string, email: string, password: string): Promise<ConfirmationCodeResponse> {
@@ -126,10 +129,12 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
+      const confirmationCodeResponse: ConfirmationCodeResponse = {
          key: body.key,
          expires: body.expires
       }
+      await apiConfig.handleConfirmationCodeResponse(confirmationCodeResponse);
+      return confirmationCodeResponse;
    }
 
    public async challenge(email: string, type: ChallengeType): Promise<ConfirmationCodeResponse> {
@@ -151,13 +156,16 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
+      const confirmationCodeResponse: ConfirmationCodeResponse = {
          key: body.key,
          expires: body.expires
       }
+      await apiConfig.handleConfirmationCodeResponse(confirmationCodeResponse);
+      return confirmationCodeResponse;
    }
 
-   public async confirmChallenge(key: string, code: number): Promise<AuthResponse> {
+   public async confirmChallenge(code: number): Promise<AuthResponse> {
+      const key = await getItem(StorageKeys.ConfirmationKey);
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -179,11 +187,13 @@ class AuthenticationService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
+      const authResponse: AuthResponse = {
          expires: body.expires,
          accessToken: body.accessToken,
          refreshToken: body.refreshToken
       }
+      await apiConfig.handleAuthResponse(authResponse);
+      return authResponse;
    }
 }
 

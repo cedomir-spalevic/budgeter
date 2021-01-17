@@ -6,11 +6,13 @@ import {
     ActionItem,
     Icon,
     List,
-    Link
+    Link,
+    Button
 } from "components";
 import { makeStyles, useTheme } from "context";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from "context/User";
 
 const useStyles = makeStyles(() => ({
     header: {
@@ -26,6 +28,7 @@ const Home: React.FC = () => {
     const styles = useStyles();
     const navigation = useNavigation();
     const theme = useTheme();
+    const user = useUser();
 
     useEffect(() => {
         navigation.setOptions({
@@ -42,6 +45,8 @@ const Home: React.FC = () => {
     return (
         <Page useHeaderHeight>
             <Container flex>
+                <Text>{user.value.firstName}</Text>
+                <Button text="Get User" onPress={() => user.getUser()} />
                 <ActionItem title={<Label type="header" text="Today" />} action={<Link text="View all" onPress={() => {}} />}>
                     <List 
                         items={[

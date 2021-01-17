@@ -1,6 +1,6 @@
 import React, { useState, createContext, useContext, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
-import { deleteAllStorageItems, getItem, setItem, StorageKeys } from "services/internal/storage";
+import { deleteAllStorageItems } from "services/internal/storage";
 import { AlreadyExistsError, NotFoundError, UnauthorizedError } from "services/external/api/models/errors";
 import { Alert } from "react-native";
 import { btoa } from "services/internal/security";
@@ -74,15 +74,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             const authenticationService = AuthenticationService.getInstance();
             const response = await authenticationService.login(email, btoa(password));
             if(response.isEmailVerified) {
-                await setItem(StorageKeys.AccessToken, response.authResponse.accessToken);
-                await setItem(StorageKeys.AccessTokenExpiration, response.authResponse.expires.toString());
-                await setItem(StorageKeys.RefreshToken, response.authResponse.refreshToken);
                 setState(AuthState.SignedIn);
                 return { valid: true, verificationEmailSent: true };
             }
             else {
-                await setItem(StorageKeys.ConfirmationKey, response.confirmationCodeResponse.key);
-                await setItem(StorageKeys.ConfirmationKeyExpiration, response.confirmationCodeResponse.expires.toString());
                 return { valid: true }
             }
         }
@@ -102,8 +97,6 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         try {
             const authenticationService = AuthenticationService.getInstance();
             const response = await authenticationService.register(firstName, lastName, email, btoa(password));
-            await setItem(StorageKeys.ConfirmationKeyExpiration, response.expires);
-            await setItem(StorageKeys.ConfirmationKey, response.key)
             return { valid: true };
         }
         catch(error) {
@@ -119,9 +112,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const forgotPassword = async (email: string): Promise<boolean> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
-            const response = await authenticationService.challenge(email, "passwordReset");
-            await setItem(StorageKeys.ConfirmationKeyExpiration, response.expires.toString());
-            await setItem(StorageKeys.ConfirmationKey, response.key)
+            await authenticationService.challenge(email, "passwordReset");
             return true;
         }
         catch(error) {
@@ -133,11 +124,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const confirmEmailVerification = async (code: number): Promise<boolean> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
-            const key = await getItem(StorageKeys.ConfirmationKey);
-            const response = await authenticationService.confirmChallenge(key, code);
-            await setItem(StorageKeys.AccessToken, response.accessToken);
-            await setItem(StorageKeys.AccessTokenExpiration, response.expires.toString());
-            await setItem(StorageKeys.RefreshToken, response.refreshToken);
+            const response = await authenticationService.confirmChallenge(code);
             setState(AuthState.SignedIn);
             return true;
         }
@@ -153,11 +140,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const confirmPasswordReset = async (code: number): Promise<boolean> => {
         try {
             const authenticationService = AuthenticationService.getInstance();
-            const key = await getItem(StorageKeys.ConfirmationKey);
-            const response = await authenticationService.confirmChallenge(key, code);
-            await setItem(StorageKeys.AccessToken, response.accessToken);
-            await setItem(StorageKeys.AccessTokenExpiration, response.expires.toString());
-            await setItem(StorageKeys.RefreshToken, response.refreshToken);
+            const response = await authenticationService.confirmChallenge(code);
             return true;
         }
         catch(error) {
@@ -173,11 +156,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     const updatePassword = async (password: string): Promise<boolean> => {
         try {
             const userService  = UserService.getInstance();
-            const key = await getItem(StorageKeys.ConfirmationKey);
-            const response = await userService.updatePassword(key, btoa(password));
-            await setItem(StorageKeys.AccessToken, response.accessToken);
-            await setItem(StorageKeys.AccessTokenExpiration, response.expires.toString());
-            await setItem(StorageKeys.RefreshToken, response.refreshToken);
+            const response = await userService.updatePassword(btoa(password));
             setState(AuthState.SignedIn);
             return true;
         }

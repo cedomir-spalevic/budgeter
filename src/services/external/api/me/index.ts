@@ -1,8 +1,9 @@
 import ApiConfig from "../config";
 import { Platform } from "react-native";
 import { GeneralError, InternalServerError, UnauthorizedError } from "../models/errors";
-import { User } from "../models/data";
+import { User } from "../models/data/user";
 import { AuthResponse } from "../models/responses";
+import { getItem, StorageKeys } from "services/internal/storage";
 
 class UserService {
    private resource: string;
@@ -37,12 +38,17 @@ class UserService {
          firstName: body.firstName,
          lastName: body.lastName,
          email: body.email,
+         emailVerified: body.emailVerified,
          createdOn: new Date(body.createdOn),
-         modifiedOn: new Date(body.modified)
+         modifiedOn: new Date(body.modified),
+         device: {
+            os: body.device.os
+         }
       }
    }
 
-   public async updatePassword(key: string, password: string): Promise<AuthResponse> {
+   public async updatePassword(password: string): Promise<AuthResponse> {
+      const key = await getItem(StorageKeys.ConfirmationKey);
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
           method: "POST",
@@ -51,7 +57,7 @@ class UserService {
           },
           body: JSON.stringify({ password })
       }
-      const response = await apiConfig.callApiSpecialKey(`${this.resource}/resetPassword/${key}`, options);
+      const response = await apiConfig.callApi(`${this.resource}/resetPassword/${key}`, options);
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);
@@ -64,11 +70,13 @@ class UserService {
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
+      const authResponse: AuthResponse = {
          expires: body.expires,
          accessToken: body.accessToken,
          refreshToken: body.refreshToken
       }
+      await apiConfig.handleAuthResponse(authResponse);
+      return authResponse;
    }
 
    public async registerDevice(deviceToken: string): Promise<void> {
