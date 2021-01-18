@@ -1,5 +1,5 @@
 import { makeStyles, useTheme } from "context";
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
    View,
    TextInput,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
-   value?: string;
+   value?: number;
    hidden?: boolean;
    errorMessage?: string;
    onChange?: (newText: string) => void;
@@ -40,9 +40,7 @@ interface Props {
 }
 
 const NumberPad: React.FC<Props> = (props: Props) => {
-    const isBackspace = useRef<boolean>(false);
-    const [num, setNum] = useState<string>("");
-    const [enteredValue, setEnteredValue] = useState<string>();
+    const [num, setNum] = useState<string>();
     const styles = useStyles();
     const theme = useTheme();
 
@@ -65,6 +63,11 @@ const NumberPad: React.FC<Props> = (props: Props) => {
         setNum(numStr);
     }
 
+    useEffect(() => {
+        if(props.value && num === undefined)
+            setNum((props.value * 100).toString());
+    })
+
    return (
       <View style={styles.container}>
           {props.preRenderIcon && (
@@ -78,7 +81,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
             contextMenuHidden={true}
             keyboardType="number-pad"
             style={{ width: "80%", color: theme.value.palette.textColor }}
-            value={toCurrency(Number(num)/100)}
+            value={toCurrency(Number(num ?? "")/100)}
             onKeyPress={onKeyPress}
           />
           {props.postRenderIcon && (

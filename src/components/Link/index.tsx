@@ -1,19 +1,20 @@
 import React from "react";
-import { TouchableOpacity, TextStyle } from "react-native";
+import { TouchableOpacity, TextStyle, StyleProp, ViewStyle } from "react-native";
 import { Label } from "components";
 import { useTheme } from "context";
 
 interface Props {
     onPress: () => void;
     text: string;
-    style?: TextStyle;
+    style?: StyleProp<ViewStyle>;
+    labelStyle?: TextStyle;
 }
 
 const Link: React.FC<Props> = (props: Props) => {
     const theme = useTheme();
     return (
-        <TouchableOpacity onPress={props.onPress}>
-            <Label type="regular" text={props.text} color={theme.value.palette.primary} style={props.style} />
+        <TouchableOpacity style={props.style} onPress={props.onPress}>
+            <Label type="regular" text={props.text} color={theme.value.palette.primary} style={props.labelStyle} />
         </TouchableOpacity>
     )
 }

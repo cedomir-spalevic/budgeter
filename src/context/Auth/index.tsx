@@ -46,14 +46,10 @@ export const AuthContext = createContext<Context>(undefined!);
 const AuthProvider: React.FC<Props> = (props: Props) => {
     const [state, setState] = useState<AuthState>(AuthState.SignedOut);
 
-    // TODO: Check for allowing face ID?
-    // const verify = () => {
-    //     const authenticationService = AuthenticationService.getInstance();
-    //     authenticationService.verify().then(x => {
-    //         if(x)
-    //             setState(AuthState.Verified);
-    //     })
-    // }
+    const verify = () => {
+        const authenticationService = AuthenticationService.getInstance();
+        authenticationService.refresh().then(() => setState(AuthState.Verified));
+    }
 
     const tryLocalAuthentication = async (): Promise<boolean> => {
         try {
@@ -176,7 +172,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
     }
 
     useEffect(() => {
-        //verify();
+        verify();
     }, [])
 
     const value: Context = {

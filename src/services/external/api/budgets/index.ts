@@ -1,4 +1,4 @@
-import { Budget } from "../models/data";
+import { Budget } from "../models/data/budget";
 import ApiConfig from "../config";
 import { ListResponse } from "../models/responses";
 import { GeneralError, InternalServerError, NotFoundError } from "../models/errors";
@@ -94,11 +94,7 @@ class BudgetsService {
          endDate: new Date(responseBody.endDate),
          completed: responseBody.completed,
          createdOn: new Date(responseBody.createdOn),
-         modifiedOn: new Date(responseBody.modifiedOn),
-         payments: responseBody.payments.map(y => ({
-            paymentId: y.paymentId,
-            completed: y.paymentId
-         }))
+         modifiedOn: new Date(responseBody.modifiedOn)
       }
    }
 
@@ -137,11 +133,7 @@ class BudgetsService {
          endDate: new Date(responseBody.endDate),
          completed: responseBody.completed,
          createdOn: new Date(responseBody.createdOn),
-         modifiedOn: new Date(responseBody.modifiedOn),
-         payments: responseBody.payments.map(y => ({
-            paymentId: y.paymentId,
-            completed: y.paymentId
-         }))
+         modifiedOn: new Date(responseBody.modifiedOn)
       }
    }
 

@@ -62,6 +62,8 @@ interface Props {
    autoCapitalize?: "none" | "sentences" | "words" | "characters";
    textContentType?: "password" | "newPassword" | "name" | "emailAddress";
    keyboardType?: "email-address";
+   onFocus?: () => void;
+   onBlur?: () => void;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -107,9 +109,21 @@ const TextField: React.FC<Props> = (props: Props) => {
       textInput.current.focus();
    }
 
+   const onFocus = () => {
+      scroll.to(y.current);
+      if(props.onFocus)
+         props.onFocus();
+   }
+
+   const onBlur = () => {
+      if(props.onBlur)
+         props.onBlur();
+   }
+
    useEffect(() => {
-      if (props.value && value === undefined)
+      if (props.value && value === undefined) {
          setValue(props.value);
+      }
    })
 
    return (
@@ -121,6 +135,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                      {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
                   </TouchableOpacity> )}
                <TextInput
+                  value={value}
                   placeholder={props.placeholder}
                   placeholderTextColor={theme.value.palette.gray}
                   autoFocus={props.autoFocus}
@@ -134,7 +149,8 @@ const TextField: React.FC<Props> = (props: Props) => {
                   autoCapitalize={props.autoCapitalize}
                   textContentType={props.textContentType}
                   keyboardType={props.keyboardType}
-                  onFocus={e => scroll.to(y.current)}
+                  onFocus={e => onFocus()}
+                  onBlur={e => onBlur()}
                />
             </View>
             {props.postRenderIcon && (

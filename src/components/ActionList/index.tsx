@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 interface ListItem {
     text: string;
-    note?: { text: string; color: "red" | "greeen"; };
+    note?: { text: string; color: "red" | "green"; };
     onPress: () => void;
     iconName?: string;
     textColor?: string;
@@ -55,7 +55,13 @@ const ActionList: React.FC<Props> = (props: Props) => {
                         <View style={styles.listItemText}>
                             <Label type="regular" text={item.text} color={item.textColor} />
                             {item.note &&
-                                <Label type="subText" text={item.note.text} color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} />}
+                                <Label 
+                                    style={{ paddingLeft: 8 }} 
+                                    type="subText" 
+                                    text={item.note.text} 
+                                    color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} 
+                                />
+                            }
                         </View>
                         {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
                     </TouchableOpacity>

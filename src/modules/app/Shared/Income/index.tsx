@@ -9,35 +9,51 @@ import {
     TextField,
     NumberPad,
     PickerSelect,
-    DatePicker
+    DatePicker,
+    Spacer
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { useAuth } from "context";
+import { Income } from "services/external/api/models/data/income";
+import { RouteProp, useRoute } from "@react-navigation/native";
+
+export interface IncomeParams {
+    income?: Income
+}
+
+type ParamList = {
+    "Income": IncomeParams
+}
+
+type RouteProps = RouteProp<ParamList, "Income">
 
 interface FormProps {
-
+    label: string;
 }
 
 interface FormValues {
-    name: string;
+    title: string;
+    amount: number;
 }
 
 const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
-            <Container flex>
+            <Container allowScroll flex>
+                <Label type="header" text={props.label} />
+                <Spacer />
                 <TextField
                     preRenderIcon={<Icon name="title" />}
-                    errorMessage={props.touched.name && props.errors.name}
-                    onChange={props.handleChange("name")}
-                    value={props.values.name}
-                    placeholder="Name"
+                    errorMessage={props.touched.title && props.errors.title}
+                    onChange={props.handleChange("title")}
+                    value={props.values.title}
+                    placeholder="Title"
                     autoFocus
                 />
                 <NumberPad
                     preRenderIcon={<Icon name="attach-money" />}
                     placeholder="Amount"
+                    value={props.values.amount}
                 />
                 <PickerSelect 
                     preRenderIcon={<Icon name="repeat" />}
@@ -63,13 +79,15 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
 }
 
 const IncomeScreen: React.FC = () => {
-    const auth = useAuth();
+    const route = useRoute<RouteProps>();
 
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
-            name: ""
+            title: route.params?.income?.title,
+            amount: route.params?.income?.amount
         }),
         validationSchema: Yup.object().shape({
+            title: Yup.string().required("Title cannot be blank")
         //    email: Yup.string().required("Email cannot be blank"),
         //    password: Yup.string().required("Password cannot be blank")
         }),
@@ -78,11 +96,10 @@ const IncomeScreen: React.FC = () => {
      })(IncomeForm);
 
     return (
-        <Page useHeaderHeight>
-            <Container horizontallyCenter>
-                <Label style={{ marginBottom: 25 }} type="header" text="Create Income" />
-            </Container>
-            <Form />
+        <Page>
+            <Form
+                label={route.params && route.params.income ? "Update Income" : "Create Income"}
+            />
         </Page>
     )
 }

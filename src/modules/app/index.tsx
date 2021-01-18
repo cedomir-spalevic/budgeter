@@ -3,7 +3,7 @@ import HomeNavigator from "./Home";
 import IncomesNavigator from "./Incomes";
 import PaymentsNavigator from "./Payments";
 import SettingsNavigator from "./Settings";
-import { NavigationHeaderProvider, useTheme } from "context";
+import { NavigationHeaderProvider, useIncomes, useTheme } from "context";
 import { Container, Icon, Page, Progress } from "components";
 import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator, useHeaderHeight } from "@react-navigation/stack";
@@ -83,18 +83,19 @@ const AppNavigator: React.FC = () => {
 const AppLoader: React.FC = () => {
    const [dataLoaded, setDataLoaded] = useState<boolean>(false);
    const user = useUser();
-//    const budgets = useBudgets();
-//    const payments = usePayments();
+   const incomes = useIncomes();
 
    const load = async () => {
-      /** Any app wide data load should go here */
-    //   await budgets.getBudgets();
-    //   await payments.getPayments();
-        await user.getUser();
-      setTimeout(() => {
-        setDataLoaded(true);
-      }, 2000)
-   }
+        try {
+            /** Any app wide data load should go here */
+            await user.getUser();
+            await incomes.get();
+            setDataLoaded(true);
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
 
    useEffect(() => {
       load();
