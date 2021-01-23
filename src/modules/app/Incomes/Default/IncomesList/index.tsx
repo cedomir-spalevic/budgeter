@@ -28,6 +28,7 @@ const IncomesList: React.FC = () => {
                 <Container fullWith>
                     <ActionList
                         items={incomes.values.map(x => ({
+                            id: x.id,
                             text: x.title,
                             note: { text: `$${x.amount}`, color: "green" },
                             onPress: () => navigation.navigate(IncomesRoutes.Income, { income: x })

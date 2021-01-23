@@ -67,6 +67,7 @@ class IncomesService {
    }
 
    public async create(income: Partial<Income>): Promise<Income> {
+      console.log(income);
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",

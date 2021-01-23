@@ -1,31 +1,10 @@
-import { makeStyles, useTheme } from "context";
 import React, { useState, useEffect } from "react";
-import {
-   View,
-   TextInput,
-   TouchableOpacity
-} from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
-const useStyles = makeStyles(theme => ({
-   container: {
-      paddingVertical: 10,
-      borderBottomWidth: 2,
-      borderBottomColor: "#e0e0e0",
-      flexDirection: "row",
-      marginBottom: 10,
-      width: "100%"
-   },
-   icon: {
-      fontSize: 18,
-      width: 25,
-      color: theme.palette.gray,
-      resizeMode: "contain"
-   }
-}))
+import moment from "moment";
+import { TextField } from "components";
 
 interface Props {
-   value?: string;
+   value?: Date;
    hidden?: boolean;
    errorMessage?: string;
    onChange?: (newText: string) => void;
@@ -38,20 +17,14 @@ interface Props {
 }
 
 const DatePicker: React.FC<Props> = (props: Props) => {
-   const [value, setValue] = useState<string>();
+   const [value, setValue] = useState<Date>();
    const [visible, setVisible] = useState<boolean>(false);
-   const styles = useStyles();
-   const theme = useTheme();
 
-   const onChange = (input?: string) => {
-      let newValue = (input === undefined ? "" : input);
-      setValue(newValue);
-      if(props.onChange)
-         props.onChange(newValue);
-   }
-
-   const onConfirm = (d) => {
-       console.log(d);
+   const onConfirm = (d: Date) => {
+       setValue(d);
+       setVisible(false);
+       if(props.onChange)
+         props.onChange(d.toISOString());
    }
 
    useEffect(() => {
@@ -60,32 +33,28 @@ const DatePicker: React.FC<Props> = (props: Props) => {
    })
 
    return (
-      <View style={styles.container}>
-          {props.preRenderIcon && (
-              <TouchableOpacity onPress={props.onPreRenderIconClick}>
-                {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
-              </TouchableOpacity> )}
-          <TextInput
+      <>
+         <TextField
+            preRenderIcon={props.preRenderIcon}
+            onPreRenderIconClick={props.onPreRenderIconClick}
+            postRenderIcon={props.postRenderIcon}
+            onPostRenderIconClick={props.onPostRenderIconClick}
             placeholder={props.placeholder}
-            placeholderTextColor={theme.value.palette.gray}
             autoFocus={props.autoFocus}
-            onChangeText={onChange}
-            style={{ width: "80%" }}
+            contextMenuHidden={true}
             editable={false}
             onTouchStart={() => setVisible(true)}
-          />
-          {props.postRenderIcon && (
-             <TouchableOpacity onPress={props.onPostRenderIconClick}>
-                {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
-             </TouchableOpacity> )}
-         {/* {props.errorMessage &&
-            <Text style={globalStyles.errorMessage}>{props.errorMessage}</Text> } */}
-        <DateTimePickerModal
+            value={value ? moment(value).format("MM/DD/YYYY") : undefined}
+            errorMessage={props.errorMessage}
+            preventOnChange
+            controlled
+         />
+         <DateTimePickerModal
             isVisible={visible}
             onConfirm={d => onConfirm(d)}
             onCancel={() => setVisible(false)}
-        />
-      </View>
+         />
+      </>
    )
 }
 

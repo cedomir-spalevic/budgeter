@@ -36,7 +36,7 @@ type Scene<T> = {
 }
 
 type StackHeaderProps = {
-    mode: 'float' | 'screen';
+    mode: "float" | "screen";
     layout: Layout;
     insets: EdgeInsets;
     scene: Scene<Route<string>>;
@@ -60,16 +60,17 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
+    parentIsModal?: boolean;
     isModal?: boolean;
-    initialRoute: string;
+    initialRoute?: string;
 }
 
 const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderProps) => {
-    const [showBackButton, setShowBackButton] = useState<boolean>(false);
     const styles = useStyles();
     const theme = useTheme();
 
     const closeModal = () => {
+        console.log(props.scene.descriptor.navigation.dangerouslyGetState())
         if(props.navigation.dangerouslyGetState().routeNames.length > 1)
             props.navigation.popToTop();
         if(props.navigation.canGoBack())
@@ -78,13 +79,9 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
 
     const goBack = () => {
         if(props.previous && props.previous.route.name === props.initialRoute)
-            setShowBackButton(false);
+            //setShowBackButton(false);
         props.navigation.goBack();
     }
-
-    useEffect(() => {
-        setShowBackButton(props.scene.route.name !== props.initialRoute);
-    }, [props.scene.route.name])
 
     const headerLeft = props.scene.descriptor.options.headerLeft;
     const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
@@ -97,13 +94,11 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     return (
         <View style={styles.header}>
             <View style={styles.actions}>
-                {showBackButton &&
-                    <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => goBack()} />}
                 {leftActions}
             </View>
             <View style={styles.actions}>
                 {rightActions}
-                {props.isModal &&
+                {props.isModal  &&
                     <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}
             </View>
         </View>

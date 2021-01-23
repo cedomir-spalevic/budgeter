@@ -1,37 +1,14 @@
-import { makeStyles, useTheme } from "context";
-import React, { useState, useRef } from "react";
-import {
-   View,
-   TextInput,
-   TouchableOpacity,
-   NativeSyntheticEvent,
-   TextInputKeyPressEventData
-} from "react-native";
-import { toCurrency } from "services/internal/currency";
-import RNPickerSelect from "react-native-picker-select";
-
-const useStyles = makeStyles(theme => ({
-   container: {
-      paddingVertical: 10,
-      borderBottomWidth: 2,
-      borderBottomColor: "#e0e0e0",
-      flexDirection: "row",
-      marginBottom: 10,
-      width: "100%"
-   },
-   icon: {
-      fontSize: 18,
-      width: 25,
-      color: theme.palette.gray,
-      resizeMode: "contain"
-   }
-}))
+import { TextField } from "components";
+import { useTheme } from "context";
+import React, { useState, useEffect } from "react";
+import Picker from "react-native-picker";
+import { hexToRGBA } from "services/internal/colors";
 
 interface Props {
    value?: string;
    errorMessage?: string;
    placeholder?: string;
-   items: { label: string; value: string }[];
+   items: string[];
    onChange?: (newText: string) => void;
    preRenderIcon?: JSX.Element;
    onPreRenderIconClick?: () => void;
@@ -40,31 +17,55 @@ interface Props {
 }
 
 const PickerSelect: React.FC<Props> = (props: Props) => {
-    const isBackspace = useRef<boolean>(false);
-    const [num, setNum] = useState<string>("");
-    const [enteredValue, setEnteredValue] = useState<string>();
-    const styles = useStyles();
-    const theme = useTheme();
+   const [value, setValue] = useState<string>();
+   const theme = useTheme();
+
+   const onChange = (v: any) => {
+      setValue(v);
+      if(props.onChange)
+         props.onChange(v);
+   }
+
+   const showPicker = () => {
+      Picker.init({
+         pickerTitleText: props.placeholder ?? "",
+         pickerTitleColor: hexToRGBA(theme.value.palette.textColor),
+         pickerData: props.items,
+         selectedValue: value ? [value] : [""],
+         onPickerConfirm: (item: string[]) => {
+            onChange(item[0])
+         },
+         onPickerCancel: (item: string[]) => null,
+         onPickerSelect: (item: string[]) => null,
+         pickerConfirmBtnText: "Select",
+         pickerConfirmBtnColor: hexToRGBA(theme.value.palette.primary),
+         pickerCancelBtnText: "Cancel",
+         pickerCancelBtnColor: hexToRGBA(theme.value.palette.primary),
+         pickerToolBarBg: hexToRGBA(theme.value.palette.cardColor),
+         pickerFontColor: hexToRGBA(theme.value.palette.textColor),
+         pickerFontSize: theme.value.font.regularSize,
+         pickerBg: hexToRGBA(theme.value.palette.tabBarColor)
+      });
+      Picker.show();
+   }
+
+   useEffect(() => {
+      if(props.value && value === undefined)
+         setValue(props.value);
+   })
 
    return (
-      <View style={styles.container}>
-          {props.preRenderIcon && (
-              <TouchableOpacity onPress={props.onPreRenderIconClick}>
-                {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
-              </TouchableOpacity> )}
-          <RNPickerSelect
-            placeholder={{ label: props.placeholder, value: null, color: "#9EA0A4" }}
-            style={{ viewContainer: { width: "80%" }, inputIOS: { color: theme.value.palette.textColor } }}
-            onValueChange={v => console.log(v)}
-            items={props.items}
-          />
-          {props.postRenderIcon && (
-             <TouchableOpacity onPress={props.onPostRenderIconClick}>
-                {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
-             </TouchableOpacity> )}
-         {/* {props.errorMessage &&
-            <Text style={globalStyles.errorMessage}>{props.errorMessage}</Text> } */}
-      </View>
+      <TextField
+         preRenderIcon={props.preRenderIcon}
+         postRenderIcon={props.postRenderIcon}
+         placeholder={props.placeholder}
+         contextMenuHidden={true}
+         editable={false}
+         value={value}
+         returnKeyType="done"
+         onTouchStart={() => showPicker()}
+         errorMessage={props.errorMessage}
+      />
    )
 }
 

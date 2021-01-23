@@ -3,11 +3,10 @@ import HomeNavigator from "./Home";
 import IncomesNavigator from "./Incomes";
 import PaymentsNavigator from "./Payments";
 import SettingsNavigator from "./Settings";
-import { NavigationHeaderProvider, useIncomes, useTheme } from "context";
+import { useIncomes, useTheme } from "context";
 import { Container, Icon, Page, Progress } from "components";
 import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator, useHeaderHeight } from "@react-navigation/stack";
-import IncomeScreen from "./Shared/Income";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useUser } from "context/User";
 
 enum TabRoutes {
@@ -62,16 +61,6 @@ const TabNavigator: React.FC = () => {
 }
 
 const App = createStackNavigator();
-
-const IncomeNavigator: React.FC = () => {
-    const headerHeight = useHeaderHeight();
-    return (
-       <NavigationHeaderProvider headerHeight={headerHeight}>
-          <IncomeScreen />
-       </NavigationHeaderProvider>
-    )
- }
-
 const AppNavigator: React.FC = () => {
     return (
         <App.Navigator initialRouteName="Tab" screenOptions={{ headerShown: false }}>

@@ -7,7 +7,8 @@ import {
    TouchableOpacity,
    Text,
    NativeSyntheticEvent,
-   TextInputSubmitEditingEventData
+   TextInputSubmitEditingEventData,
+   TextInputKeyPressEventData
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -61,9 +62,16 @@ interface Props {
    textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void);
    autoCapitalize?: "none" | "sentences" | "words" | "characters";
    textContentType?: "password" | "newPassword" | "name" | "emailAddress";
-   keyboardType?: "email-address";
+   keyboardType?: "email-address" | "number-pad";
    onFocus?: () => void;
    onBlur?: () => void;
+   editable?: boolean;
+   contextMenuHidden?: boolean;
+   onKeyPress?: (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => void;
+   returnKeyType?: "done";
+   onTouchStart?: () => void;
+   preventOnChange?: boolean;
+   controlled?: boolean;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -121,7 +129,7 @@ const TextField: React.FC<Props> = (props: Props) => {
    }
 
    useEffect(() => {
-      if (props.value && value === undefined) {
+      if (props.controlled || (props.value && value === undefined)) {
          setValue(props.value);
       }
    })
@@ -135,11 +143,13 @@ const TextField: React.FC<Props> = (props: Props) => {
                      {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
                   </TouchableOpacity> )}
                <TextInput
+                  editable={props.editable}
+                  contextMenuHidden={props.contextMenuHidden}
                   value={value}
                   placeholder={props.placeholder}
                   placeholderTextColor={theme.value.palette.gray}
                   autoFocus={props.autoFocus}
-                  onChangeText={onChange}
+                  onChangeText={props.preventOnChange ? undefined : onChange}
                   secureTextEntry={props.hidden}
                   onSubmitEditing={onSubmitEditing}
                   ref={mergedRefs}
@@ -151,6 +161,9 @@ const TextField: React.FC<Props> = (props: Props) => {
                   keyboardType={props.keyboardType}
                   onFocus={e => onFocus()}
                   onBlur={e => onBlur()}
+                  onKeyPress={props.onKeyPress}
+                  returnKeyType={props.returnKeyType}
+                  onTouchStart={props.onTouchStart}
                />
             </View>
             {props.postRenderIcon && (

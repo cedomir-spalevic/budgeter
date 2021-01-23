@@ -12,6 +12,7 @@ interface Props {
 interface Context {
    values: Income[];
    get: () => Promise<void>;
+   create: (income: Partial<Income>) => Promise<void>;
 }
 
 export const IncomesContext = createContext<Context>(undefined!);
@@ -35,8 +36,25 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
         }
     }
 
+    const create = async (income: Partial<Income>) => {
+        try {
+            const incomesService = IncomesService.getInstance();
+            const i = await incomesService.create(income);
+            values.push(i)
+            setValues([...values]);
+        }
+        catch(error) {
+            console.log(error);
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to create Income", "We're having trouble creating your new income at the moment.");
+        }
+    }
+
     return (
-        <IncomesContext.Provider value={{ values, get }}>
+        <IncomesContext.Provider value={{ values, get, create }}>
             {props.children}
         </IncomesContext.Provider>
     )

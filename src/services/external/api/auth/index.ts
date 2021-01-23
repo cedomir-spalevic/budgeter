@@ -89,7 +89,7 @@ class AuthenticationService {
          method: "POST",
          body: JSON.stringify({ refreshToken })
       };
-      const response = await apiConfig.callApiProtected(`${this.resource}/refresh`, options);
+      const response = await apiConfig.callApi(`${this.resource}/refresh`, options);
       if(response.status === 401) {
          throw new UnauthorizedError();
       }

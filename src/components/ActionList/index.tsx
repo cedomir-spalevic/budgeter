@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface ListItem {
+    id: string;
     text: string;
     note?: { text: string; color: "red" | "green"; };
     onPress: () => void;
@@ -51,7 +52,7 @@ const ActionList: React.FC<Props> = (props: Props) => {
                 if(index !== props.items.length-1)
                     listItemStyle.push(styles.listItemBorder)
                 return (
-                    <TouchableOpacity onPress={item.onPress} style={listItemStyle}>
+                    <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
                         <View style={styles.listItemText}>
                             <Label type="regular" text={item.text} color={item.textColor} />
                             {item.note &&

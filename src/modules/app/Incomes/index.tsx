@@ -6,16 +6,28 @@ import { IncomesRoutes } from "./routes";
 import { Header } from "components";
 
 const getHeader = (initialRoute: string): StackNavigationOptions => ({
-   header: (props) => <Header initialRoute={initialRoute} {...props} />
+   header: (props) => <Header isModal={true} initialRoute={initialRoute} {...props} />
 })
 
 const Stack = createStackNavigator();
 
 const IncomesNavigator: React.FC = () => {
    return (
-      <Stack.Navigator initialRouteName={IncomesRoutes.Default} screenOptions={getHeader(IncomesRoutes.Default)} mode="modal">
-         <Stack.Screen name={IncomesRoutes.Default} component={DefaultScreen} />
-         <Stack.Screen name={IncomesRoutes.Income} component={IncomeScreen} />
+      <Stack.Navigator initialRouteName={IncomesRoutes.Default} mode="modal">
+         <Stack.Screen 
+            name={IncomesRoutes.Default} 
+            component={DefaultScreen} 
+            options={{
+               header: (props) => <Header {...props} />
+            }}
+         />
+         <Stack.Screen 
+            name={IncomesRoutes.Income} 
+            component={IncomeScreen} 
+            options={{
+               header: (props) => <Header isModal={true} {...props} />
+            }}
+         />
       </Stack.Navigator>
    )
 }

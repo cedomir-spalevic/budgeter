@@ -48,7 +48,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
 
     const verify = () => {
         const authenticationService = AuthenticationService.getInstance();
-        authenticationService.refresh().then(() => setState(AuthState.Verified));
+        authenticationService.refresh().then(() => {
+            console.log("here");
+            setState(AuthState.Verified);
+        }).catch(e => console.log(e))
     }
 
     const tryLocalAuthentication = async (): Promise<boolean> => {
