@@ -3,7 +3,7 @@ import {
     StackHeaderStyleInterpolator
 } from "@react-navigation/stack";
 import { makeStyles, useTheme } from "context";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
     Animated,
     View
@@ -12,6 +12,7 @@ import { Icon } from "components";
 import { NavigationProp, ParamListBase, Route, StackNavigationState } from "@react-navigation/native";
 import { Layout, StackNavigationOptions } from "@react-navigation/stack/lib/typescript/src/types";
 import { EdgeInsets } from "react-native-safe-area-context";
+import Label from "components/Label";
 
 interface ExtraNavigationProps {
     popToTop?: boolean;
@@ -54,6 +55,14 @@ const useStyles = makeStyles(theme => ({
         paddingHorizontal: theme.size.pagePadding,
         backgroundColor: theme.palette.secondary
     },
+    animationTitle: {
+        paddingTop: 50,
+        position: "relative",
+        width: 150,
+        borderColor: "#ccc",
+        borderWidth: 2,
+        overflow: "hidden"
+    },
     actions: {
         paddingTop: 50
     }
@@ -63,11 +72,21 @@ interface Props {
     parentIsModal?: boolean;
     isModal?: boolean;
     initialRoute?: string;
+    enableTitleScroll?: boolean;
 }
 
 const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderProps) => {
     const styles = useStyles();
     const theme = useTheme();
+    const headerTitle = props.scene.descriptor.options.headerTitle;
+    const headerTitleNode = headerTitle && typeof(headerTitle) === "function" && headerTitle({ onLayout: () => {} });
+    const headerLeft = props.scene.descriptor.options.headerLeft;
+    const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
+    const headerRight = props.scene.descriptor.options.headerRight;
+    const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
+    const popToTop = props.scene.descriptor.options.popToTop;
+    if(popToTop)
+        props.navigation.popToTop();
 
     const closeModal = () => {
         console.log(props.scene.descriptor.navigation.dangerouslyGetState())
@@ -83,18 +102,15 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
         props.navigation.goBack();
     }
 
-    const headerLeft = props.scene.descriptor.options.headerLeft;
-    const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
-    const headerRight = props.scene.descriptor.options.headerRight;
-    const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
-    const popToTop = props.scene.descriptor.options.popToTop;
-    if(popToTop)
-        props.navigation.popToTop();
-
     return (
         <View style={styles.header}>
             <View style={styles.actions}>
                 {leftActions}
+            </View>
+            <View style={styles.animationTitle}>
+                <View>
+                    <Label type="regular" text="Hello" />
+                    </View>
             </View>
             <View style={styles.actions}>
                 {rightActions}

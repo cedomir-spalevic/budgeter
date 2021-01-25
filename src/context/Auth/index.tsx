@@ -41,21 +41,36 @@ interface Context {
     logout: () => void;
 }
 
-export const AuthContext = createContext<Context>(undefined!);
+const AuthContext = createContext<Context>(undefined!);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
+    const [attemptedVerification, setAttemptedVerification] = useState<boolean>(false);
     const [state, setState] = useState<AuthState>(AuthState.SignedOut);
 
     const verify = () => {
         const authenticationService = AuthenticationService.getInstance();
         authenticationService.refresh().then(() => {
-            console.log("here");
             setState(AuthState.Verified);
-        }).catch(e => console.log(e))
+            setAttemptedVerification(true);
+        }).catch(e => {
+            setAttemptedVerification(true);
+        })
     }
 
     const tryLocalAuthentication = async (): Promise<boolean> => {
         try {
+            if(!attemptedVerification) {
+                // If verification is not done, set interval until its done
+                const awaitForAttemptedVerification = new Promise((resolve, reject) => {
+                    const interval = setInterval(() => {
+                        if(attemptedVerification) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 300)
+                });
+                await awaitForAttemptedVerification;
+            }
             if(state !== AuthState.Verified)
                 return;
             const response = await LocalAuthentication.authenticateAsync();

@@ -18,7 +18,7 @@ import { Income } from "services/external/api/models/data/income";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useIncomes } from "context";
 import { TextInput } from "react-native";
-import { RecurrenceLabels } from "services/external/api/models/data/recurrence";
+import { RecurrenceLabels, RecurrenceMap } from "services/external/api/models/data/recurrence";
 
 export interface IncomeParams {
     income?: Income
@@ -82,10 +82,10 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
-                <Button onPress={props.handleSubmit} text="Save" />
+                <Button onPress={props.handleSubmit} text="Save" loading={props.isSubmitting} />
             </KeyboardAccessory>
         </>
-     )
+    )
 }
 
 const IncomeScreen: React.FC = () => {
@@ -100,7 +100,7 @@ const IncomeScreen: React.FC = () => {
         mapPropsToValues: (props: FormProps) => ({
             title: route.params?.income?.title,
             amount: route.params?.income?.amount,
-            repeat: route.params?.income?.recurrence,
+            repeat: route.params?.income?.recurrence && RecurrenceMap[route.params?.income?.recurrence],
             occurrenceDate: route.params?.income?.occurrenceDate.toString()
         }),
         validationSchema: Yup.object().shape({
@@ -109,18 +109,24 @@ const IncomeScreen: React.FC = () => {
             repeat: Yup.string().required("Repeat is required")
                 .test("validRepeat", `Repeat must be one of ${Object.keys(RecurrenceLabels).join(", ")}`, testForValidRepeat),
             occurrenceDate: Yup.string().required("Occurrence Date is required")
-        //    email: Yup.string().required("Email cannot be blank"),
-        //    password: Yup.string().required("Password cannot be blank")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
             const income: Partial<Income> = {
                 title: values.title,
-                amount: values.amount,
+                amount: Number(values.amount)/100,
                 recurrence: RecurrenceLabels[values.repeat],
                 occurrenceDate: new Date(values.occurrenceDate)
             }
-            await incomes.create(income);
-            navigation.goBack();
+            if(route.params?.income?.id) {
+                const updated = await incomes.update(route.params?.income?.id, income);
+                if(updated)
+                    navigation.goBack();
+            }
+            else {
+                const created = await incomes.create(income);
+                if(created)
+                    navigation.goBack();
+            }
         }
      })(IncomeForm);
 

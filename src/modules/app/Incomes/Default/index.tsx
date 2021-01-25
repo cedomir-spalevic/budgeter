@@ -17,7 +17,7 @@ const Incomes: React.FC = () => {
         })
     })
 
-    if(incomes.values.length === 0)
+    if(incomes.empty)
         return <NoIncomes />
     return <IncomesList />
 }

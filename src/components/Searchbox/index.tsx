@@ -16,12 +16,14 @@ const useStyles = makeStyles(theme => ({
    },
    textContainer: {
       padding: 10,
-      marginRight: 10,
       backgroundColor: "#e1e2e3",
       borderRadius: 10,
       flexDirection: "row",
       alignItems: "center",
       flex: 1
+   },
+   linkStyles: {
+      alignItems: "flex-end"
    },
    textInput: {
       flex: 1,
@@ -30,17 +32,20 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
-   onChange?: (newText: string) => void;
+   onChange?: (newText?: string) => void;
    placeholder?: string;
 }
 
 const Searchbox: React.FC<Props> = (props: Props) => {
+   const ref = useRef<TextInput>();
    const [value, setValue] = useState<string>();
    const [showCancel, setShowCancel] = useState<boolean>(false);
    const [showCancelText, setShowCancelText] = useState<boolean>(false);
    const containerWidth = useRef<number>(0);
    const cancelWidthAnimation = useRef<Animated.Value>(new Animated.Value(0));
    const styles = useStyles();
+   const linkStyles = [styles.linkStyles];
+   linkStyles.push({ display: showCancel && showCancelText ? "flex" : "none" })
    const theme = useTheme();
 
    const onChange = (input?: string) => {
@@ -51,7 +56,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
    }
 
    const cancel = () => {
-      setValue("");
+      onChange(undefined);
       setShowCancel(false);
    }
 
@@ -71,7 +76,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
 
    return (
       <View style={styles.container} onLayout={e => containerWidth.current = e.nativeEvent.layout.width}>
-         <View style={styles.textContainer}>
+         <View style={styles.textContainer} onTouchStart={() => ref.current && ref.current.focus()}>
             <Icon size={18} color="#9E9FA4" name="search" />
             <TextInput
                value={value}
@@ -82,11 +87,12 @@ const Searchbox: React.FC<Props> = (props: Props) => {
                onFocus={() => setShowCancel(true)}
                onTouchStart={() => setShowCancel(true)}
                onBlur={() => setShowCancel(false)}
+               ref={ref}
             />
          </View>
          <Animated.View style={{ width: cancelWidthAnimation.current }}>
             <Link
-               style={{ display: showCancel && showCancelText ? "flex" : "none" }}
+               style={linkStyles}
                text="Cancel"
                onPress={() => cancel()}
             />

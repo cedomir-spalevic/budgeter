@@ -1,63 +1,140 @@
-import React from "react";
+import React, { useRef } from "react";
 import { 
     Button, 
     Container, 
+    DatePicker, 
     Icon, 
     KeyboardAccessory, 
     Label, 
+    NumberPad, 
     Page,
+    PickerSelect,
+    Spacer,
     TextField
 } from "components";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Payment } from "services/external/api/models/data/payment";
+import { TextInput } from "react-native";
+import { RecurrenceLabels, RecurrenceMap } from "services/external/api/models/data/recurrence";
+import { usePayments } from "context";
+
+export interface PaymentParams {
+    payment?: Payment;
+}
+
+type ParamList = {
+    "Payment": PaymentParams;
+}
+
+type RouteProps = RouteProp<ParamList, "Payment">
 
 interface FormProps {
-
+    label: string;
+    numberPadRef: React.MutableRefObject<TextInput>;
 }
 
 interface FormValues {
-    name: string;
+    title: string;
+    amount: number;
+    repeat: string;
+    occurrenceDate: string;
 }
 
 const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
             <Container allowScroll flex>
-                <Label style={{ marginBottom: 25 }} type="header" text="Create Payment" />
+                <Label type="header" text={props.label} />
+                <Spacer />
                 <TextField
                     preRenderIcon={<Icon name="title" />}
-                    errorMessage={props.touched.name && props.errors.name}
-                    onChange={props.handleChange("name")}
-                    value={props.values.name}
-                    placeholder="Name"
+                    errorMessage={props.touched.title && props.errors.title}
+                    onChange={props.handleChange("title")}
+                    value={props.values.title}
+                    placeholder="Title"
                     autoFocus
+                    onSubmit={() => props.numberPadRef.current.focus()}
+                />
+                <NumberPad
+                    preRenderIcon={<Icon name="attach-money" />}
+                    placeholder="Amount"
+                    value={props.values.amount}
+                    textInputRef={props.numberPadRef}
+                    onChange={props.handleChange("amount")}
+                    errorMessage={props.touched.amount && props.errors.amount}
+                />
+                <PickerSelect 
+                    preRenderIcon={<Icon name="repeat" />}
+                    placeholder="Repeat?"
+                    items={Object.keys(RecurrenceLabels)}
+                    value={props.values.repeat}
+                    onChange={props.handleChange("repeat")}
+                    errorMessage={props.touched.repeat && props.errors.repeat}
+                />
+                <DatePicker
+                    preRenderIcon={<Icon name="event" />}
+                    placeholder="Occurrence Date"
+                    value={props.values.occurrenceDate ? new Date(props.values.occurrenceDate) : undefined}
+                    onChange={props.handleChange("occurrenceDate")}
+                    errorMessage={props.touched.occurrenceDate && props.errors.occurrenceDate}
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
-                <Button onPress={props.handleSubmit} text="Save" />
+                <Button onPress={props.handleSubmit} text="Save" loading={props.isSubmitting} />
             </KeyboardAccessory>
         </>
-     )
+    )
 }
 
 const PaymentScreen: React.FC = () => {
+    const route = useRoute<RouteProps>();
     const navigation = useNavigation();
+    const payments = usePayments();
+    const numberPadRef = useRef<TextInput>();
 
+    const testForValidRepeat = (repeat: string) => (repeat in RecurrenceLabels)
     const Form = withFormik<FormProps, FormValues>({
         mapPropsToValues: (props: FormProps) => ({
-            name: ""
+            title: route.params?.payment?.title,
+            amount: route.params?.payment?.amount,
+            repeat: route.params?.payment?.recurrence && RecurrenceMap[route.params?.payment?.recurrence],
+            occurrenceDate: route.params?.payment?.occurrenceDate.toString()
         }),
         validationSchema: Yup.object().shape({
-
+            title: Yup.string().required("Title cannot be blank"),
+            amount: Yup.number().required("Amount is required").min(0),
+            repeat: Yup.string().required("Repeat is required")
+                .test("validRepeat", `Repeat must be one of ${Object.keys(RecurrenceLabels).join(", ")}`, testForValidRepeat),
+            occurrenceDate: Yup.string().required("Occurrence Date is required")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
+            const payment: Partial<Payment> = {
+                title: values.title,
+                amount: Number(values.amount)/100,
+                recurrence: RecurrenceLabels[values.repeat],
+                occurrenceDate: new Date(values.occurrenceDate)
+            }
+            if(route.params?.payment?.id) {
+                const updated = await payments.update(route.params?.payment?.id, payment);
+                if(updated)
+                    navigation.goBack();
+            }
+            else {
+                const created = await payments.create(payment);
+                if(created)
+                    navigation.goBack();
+            }
         }
     })(PaymentForm);
 
     return (
         <Page>
-            <Form />
+        <Form
+            label={route.params && route.params.payment ? "Update Payment" : "Create Payment"}
+            numberPadRef={numberPadRef}
+        />
         </Page>
     )
 }

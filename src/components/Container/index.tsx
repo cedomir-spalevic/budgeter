@@ -1,10 +1,15 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Label } from "components";
 import { makeStyles, useScroll } from "context";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { 
     View,
     StyleProp,
     ViewStyle,
-    ScrollView
+    ScrollView,
+    Animated,
+    NativeSyntheticEvent,
+    NativeScrollEvent
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -36,6 +41,7 @@ interface Props {
 }
 
 const Container: React.FC<Props> = (props: Props) => {
+    const scrollY = useRef<Animated.Value>(new Animated.Value(0));
     const scrollView = useRef<ScrollView>();
     const styles = useStyles();
     const scroll = useScroll();
@@ -53,6 +59,27 @@ const Container: React.FC<Props> = (props: Props) => {
     if(props.alignItems)
         style.push({ alignItems: props.alignItems });
 
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        scrollY.current.setValue(event.nativeEvent.contentOffset.y);
+        // navigation.setOptions({
+        //     header: () => (
+        //         <Animated.View
+        //             style={{
+        //                 position: "absolute",
+        //                 top: scrollY.current.interpolate({
+        //                     inputRange: [0, 100],
+        //                     outputRange: [100, 0],
+        //                     extrapolate: "clamp"
+        //                 }),
+        //                 overflow: "hidden"
+        //             }}
+        //         >
+        //             <Label text="Test" type="regular" />
+        //         </Animated.View>
+        //     )
+        // })
+    }
+
     useEffect(() => {
         if(scrollView.current)
             scroll.setRef(scrollView);
@@ -60,7 +87,14 @@ const Container: React.FC<Props> = (props: Props) => {
 
     if(props.allowScroll) {
         return (
-            <ScrollView ref={scrollView} contentContainerStyle={style}>
+            <ScrollView 
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                ref={scrollView} 
+                contentContainerStyle={style} 
+                scrollEnabled={!scroll.isSwiping} 
+                keyboardShouldPersistTaps="handled"
+            >
                 {props.children}
             </ScrollView>
         )

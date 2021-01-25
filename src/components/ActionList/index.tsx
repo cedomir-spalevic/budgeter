@@ -1,7 +1,8 @@
-import React from "react";
-import { makeStyles, useTheme } from "context";
-import { Dimensions, TouchableOpacity, View } from "react-native";
-import { Label, Icon } from "components";
+import React, { useState } from "react";
+import { makeStyles, useScroll, useTheme } from "context";
+import { TouchableOpacity, View } from "react-native";
+import { Label, Icon, SwipeContainer } from "components";
+import Swipeable from "react-native-swipeable";
 
 const useStyles = makeStyles(theme => ({
     container: {
@@ -10,7 +11,7 @@ const useStyles = makeStyles(theme => ({
         marginTop: 5
     },
     listItem: {
-        paddingHorizontal: Dimensions.get("screen").width*.1,
+        paddingHorizontal: theme.size.pagePadding,
         paddingVertical: 20,
         flexDirection: "row",
         justifyContent: "space-between",
@@ -25,24 +26,47 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
+interface SwipeContent {
+    color: string;
+    iconName: string;
+}
+
 interface ListItem {
     id: string;
     text: string;
     note?: { text: string; color: "red" | "green"; };
     onPress: () => void;
-    iconName?: string;
+    postIconName?: string;
     textColor?: string;
-    iconColor?: string;
+    postIconColor?: string;
+    preIcon?: React.ReactNode;
     action?: React.ReactNode;
+    leftSwipeContent?: SwipeContent;
+    rightSwipeContent?: SwipeContent;
+    leftSwipeButtons?: SwipeContent[];
+    rightSwipeButtons?: SwipeContent[];
+    onLeftActionRelease?: () => void;
+    onRightActionRelease?: () => void;
 }
 
 interface Props {
     items: ListItem[];
 }
 
+interface SwipeActivation {
+    [id: string]: boolean;
+}
+
 const ActionList: React.FC<Props> = (props: Props) => {
+    const [itemSwipeActivations, setItemSwipeActivations] = useState<SwipeActivation>({});
     const styles = useStyles();
     const theme = useTheme();
+    const scroll = useScroll();
+
+    const toggleItemSwipeActivations = (id) => {
+        itemSwipeActivations[id] = !itemSwipeActivations[id];
+        setItemSwipeActivations({ ...itemSwipeActivations });
+     }
 
     return (
         <View style={styles.container}>
@@ -50,22 +74,68 @@ const ActionList: React.FC<Props> = (props: Props) => {
                 const listItemStyle = [];
                 listItemStyle.push(styles.listItem);
                 if(index !== props.items.length-1)
-                    listItemStyle.push(styles.listItemBorder)
+                    listItemStyle.push(styles.listItemBorder);
+                let leftSwipeContent = undefined, rightSwipeContent = undefined;
+                if(item.leftSwipeContent) {
+                    leftSwipeContent = (
+                        <SwipeContainer
+                            side="left"
+                            activated={item.id in itemSwipeActivations && itemSwipeActivations[item.id]}
+                            icon={<Icon name={item.leftSwipeContent.iconName} color={theme.value.palette.white} size={28} />}
+                            color={item.leftSwipeContent.color}
+                        />
+                    )
+                }
+                if(item.rightSwipeContent) {
+                    rightSwipeContent = (
+                        <SwipeContainer
+                            side="right"
+                            activated={item.id in itemSwipeActivations && itemSwipeActivations[item.id]}
+                            icon={<Icon name={item.rightSwipeContent.iconName} color={theme.value.palette.white} size={28} />}
+                            color={item.rightSwipeContent.color}
+                        />
+                    )
+                }
                 return (
-                    <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
-                        <View style={styles.listItemText}>
-                            <Label type="regular" text={item.text} color={item.textColor} />
-                            {item.note &&
-                                <Label 
-                                    style={{ paddingLeft: 8 }} 
-                                    type="subText" 
-                                    text={item.note.text} 
-                                    color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} 
-                                />
-                            }
-                        </View>
-                        {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
-                    </TouchableOpacity>
+                    <Swipeable
+                        leftContent={leftSwipeContent}
+                        rightContent={rightSwipeContent}
+                        leftButtons={item.leftSwipeButtons}
+                        rightButtons={item.rightSwipeButtons}
+                        onLeftActionRelease={() => {
+                            if(item.onLeftActionRelease)
+                                item.onLeftActionRelease();
+                            toggleItemSwipeActivations(item.id);
+                        }}
+                        onRightActionRelease={() => {
+                            if(item.onRightActionRelease)
+                                item.onRightActionRelease();
+                            toggleItemSwipeActivations(item.id);
+                        }}
+                        onLeftActionActivate={() => toggleItemSwipeActivations(item.id)}
+                        onRightActionActivate={() => toggleItemSwipeActivations(item.id)}
+                        onLeftActionDeactivate={() => toggleItemSwipeActivations(item.id)}
+                        onRightActionDeactivate={() => toggleItemSwipeActivations(item.id)}
+                        onSwipeStart={() => scroll.setIsSwiping(true)}
+                        onSwipeRelease={() => scroll.setIsSwiping(false)}
+                        useNativeDriver={false}
+                    >
+                        <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
+                            <View style={styles.listItemText}>
+                                {item.preIcon}
+                                <Label type="regular" text={item.text} color={item.textColor} />
+                                {item.note &&
+                                    <Label 
+                                        style={{ paddingLeft: 8 }} 
+                                        type="subText" 
+                                        text={item.note.text} 
+                                        color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} 
+                                    />
+                                }
+                            </View>
+                            {item.action ? item.action : <Icon name={item.postIconName ?? "chevron-right"} size={24} color={item.postIconColor} />}
+                        </TouchableOpacity>
+                    </Swipeable>
                 )
             })}
         </View>

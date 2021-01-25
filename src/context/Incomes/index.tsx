@@ -10,22 +10,27 @@ interface Props {
 }
 
 interface Context {
-   values: Income[];
-   get: () => Promise<void>;
-   create: (income: Partial<Income>) => Promise<void>;
+    empty: boolean;
+    values: Income[];
+    get: (searchValue?: string) => Promise<void>;
+    create: (income: Partial<Income>) => Promise<boolean>;
+    update: (id: string, income: Partial<Income>) => Promise<boolean>;
+    delete: (id: string) => Promise<boolean>;
 }
 
-export const IncomesContext = createContext<Context>(undefined!);
+const IncomesContext = createContext<Context>(undefined!);
 
 const IncomesProvider: React.FC<Props> = (props: Props) => {
+    const [empty, setEmpty] = useState<boolean>(false);
     const [values, setValues] = useState<Income[]>([]);
     const auth = useAuth();
 
-    const get = async () => {
+    const get = async (search?: string) => {
         try {
             const incomesService = IncomesService.getInstance();
-            const incomes = await incomesService.get(5, 0);
-            setValues([...incomes.values])
+            const incomes = await incomesService.get(10, 0, search);
+            setValues([...incomes.values]);
+            setEmpty(!search && incomes.values.length === 0)
         }
         catch(error) {
             if(error instanceof UnauthorizedError) {
@@ -42,19 +47,62 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
             const i = await incomesService.create(income);
             values.push(i)
             setValues([...values]);
+            return true;
         }
         catch(error) {
-            console.log(error);
             if(error instanceof UnauthorizedError) {
                 auth.logout();
                 return;
             }
-            Alert.alert("Unable to create Income", "We're having trouble creating your new income at the moment.");
+            Alert.alert("Unable to create income", "We're having trouble creating your new income at the moment.");
+            return false;
+        }
+    }
+
+    const update = async (id: string, income: Partial<Income>) => {
+        try {
+            const index = values.findIndex(x => x.id === id);
+            if(index === -1)
+                return;
+            const incomesService = IncomesService.getInstance();
+            const i = await incomesService.update(id, income);
+            values[index] = i;
+            setValues([...values]);
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to create income", "We're having trouble creating your new income at the moment.");
+            return false;
+        }
+    }
+
+    const deleteIncome = async (id: string) => {
+        try {
+            const index = values.findIndex(x => x.id === id);
+            if(index === -1)
+                return;
+            const incomesService = IncomesService.getInstance();
+            await incomesService.delete(id);
+            values.splice(index, 1);
+            setValues([...values]);
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to create income", "We're having trouble creating your new income at the moment.");
+            return false;
         }
     }
 
     return (
-        <IncomesContext.Provider value={{ values, get, create }}>
+        <IncomesContext.Provider value={{ empty, values, get, create, update, delete: deleteIncome }}>
             {props.children}
         </IncomesContext.Provider>
     )

@@ -3,6 +3,7 @@ import ActionList from "./ActionList";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 import ConfirmationCodeInput from "./ConfirmationCodeInput";
+import ConfirmDialog from "./ConfirmDialog";
 import Container from "./Container";
 import DatePicker from "./DatePicker";
 import Empty from "./Empty";
@@ -18,6 +19,8 @@ import PickerSelect from "./PickerSelect";
 import Progress from "./Progress";
 import Searchbox from "./Searchbox";
 import Spacer from "./Spacer";
+import SummaryView from "./SummaryView";
+import SwipeContainer from "./SwipeContainer";
 import Switch from "./Switch";
 import TextField from "./TextField";
 import TextFieldSecret from "./TextFieldSecret";
@@ -28,6 +31,7 @@ export {
     Button,
     Checkbox,
     ConfirmationCodeInput,
+    ConfirmDialog,
     Container,
     DatePicker,
     Empty,
@@ -43,6 +47,8 @@ export {
     Progress,
     Searchbox,
     Spacer,
+    SummaryView,
+    SwipeContainer,
     Switch,
     TextField,
     TextFieldSecret

@@ -11,3 +11,11 @@ export const RecurrenceLabels: RecurrenceLabel = {
     "Monthly": "monthly",
     "Yearly": "yearly"
 }
+
+export const RecurrenceMap = {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "biweekly": "Biweekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly"
+}

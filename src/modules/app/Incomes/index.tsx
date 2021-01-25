@@ -1,13 +1,9 @@
 import React from "react";
-import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
+import { createStackNavigator } from "@react-navigation/stack";
 import DefaultScreen from "./Default";
 import IncomeScreen from "modules/app/Shared/Income";
 import { IncomesRoutes } from "./routes";
 import { Header } from "components";
-
-const getHeader = (initialRoute: string): StackNavigationOptions => ({
-   header: (props) => <Header isModal={true} initialRoute={initialRoute} {...props} />
-})
 
 const Stack = createStackNavigator();
 

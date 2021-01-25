@@ -1,3 +1,4 @@
+import { SegmentedControlIOSComponent } from "react-native";
 import { getItem, StorageKeys } from "services/internal/storage";
 import ApiConfig from "../config";
 import { ChallengeType } from "../models/data/challenge";
@@ -90,6 +91,10 @@ class AuthenticationService {
          body: JSON.stringify({ refreshToken })
       };
       const response = await apiConfig.callApi(`${this.resource}/refresh`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
       if(response.status === 401) {
          throw new UnauthorizedError();
       }

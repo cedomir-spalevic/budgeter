@@ -4,6 +4,7 @@ import NavigationHeaderProvider, { useNavigationHeader } from "./NavigationHeade
 import PaymentsProvider, { usePayments } from "./Payments";
 import ScrollProvider, { useScroll } from "./Scroll";
 import ThemeProvider, { useTheme, makeStyles } from "./Theme";
+import UserProvider, { useUser } from "./User";
 
 export {
     AuthProvider,
@@ -19,5 +20,7 @@ export {
     useScroll,
     ThemeProvider,
     useTheme,
-    makeStyles
+    makeStyles,
+    UserProvider,
+    useUser
 }

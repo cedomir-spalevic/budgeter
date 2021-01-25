@@ -3,11 +3,10 @@ import HomeNavigator from "./Home";
 import IncomesNavigator from "./Incomes";
 import PaymentsNavigator from "./Payments";
 import SettingsNavigator from "./Settings";
-import { useIncomes, useTheme } from "context";
+import { useTheme, useIncomes, usePayments, useUser } from "context";
 import { Container, Icon, Page, Progress } from "components";
 import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useUser } from "context/User";
 
 enum TabRoutes {
     Home = "Home",
@@ -73,22 +72,26 @@ const AppLoader: React.FC = () => {
    const [dataLoaded, setDataLoaded] = useState<boolean>(false);
    const user = useUser();
    const incomes = useIncomes();
+   const payments = usePayments();
 
    const load = async () => {
         try {
             /** Any app wide data load should go here */
             await user.getUser();
             await incomes.get();
+            await payments.get();
             setDataLoaded(true);
         }
         catch(error) {
             console.log(error);
+            setDataLoaded(true);
         }
     }
 
    useEffect(() => {
-      load();
-   }, [])
+        if(!dataLoaded && (user && incomes && payments))  
+            load();
+   })
 
    if(!dataLoaded)
       return (

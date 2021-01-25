@@ -14,7 +14,7 @@ interface Context {
     setKind: (kind: Kind) => void;
 }
 
-export const ThemeContext = createContext<Context>(undefined!);
+const ThemeContext = createContext<Context>(undefined!);
 
 const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     const [kind, setKind] = useState<Kind>("auto");

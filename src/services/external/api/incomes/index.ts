@@ -67,14 +67,13 @@ class IncomesService {
    }
 
    public async create(income: Partial<Income>): Promise<Income> {
-      console.log(income);
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ income })
+         body: JSON.stringify(income)
       };
       const response = await apiConfig.callApiProtected(this.resource, options);
       const responseBody = await response.json();
@@ -102,7 +101,7 @@ class IncomesService {
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ income })
+         body: JSON.stringify(income)
       };
       const response = await apiConfig.callApiProtected(`${this.resource}/${incomeId}`, options);
       if(response.status === 400) {

@@ -34,7 +34,8 @@ const useStyles = makeStyles(theme => ({
    textInput: {
       fontSize: theme.font.regularSize,
       fontFamily: theme.font.fontFamily,
-      color: theme.palette.textColor
+      color: theme.palette.textColor,
+      flex: 1
    },
    icon: {
       fontSize: 18,

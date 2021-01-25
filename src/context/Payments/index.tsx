@@ -1,37 +1,108 @@
+import { useAuth } from "context";
 import React, { useState, createContext, useContext } from "react";
-import { Payment } from "services/external/api/models/data";
+import { Alert } from "react-native";
+import { Payment } from "services/external/api/models/data/payment";
+import { UnauthorizedError } from "services/external/api/models/errors";
+import PaymentsService from "services/external/api/payments";
 
 interface Props {
    children: React.ReactNode;
 }
 
 interface Context {
-   values: Payment[];
-   get: () => Promise<void>;
-   create: (payment: Partial<Payment>, budgetId?: string) => Promise<void>;
-   update: (paymentId: string, payment: Partial<Payment>) => Promise<void>;
-   delete: (paymentId: string) => Promise<void>;
+    empty: boolean;
+    values: Payment[];
+    get: (searchValue?: string) => Promise<void>;
+    create: (Payment: Partial<Payment>) => Promise<boolean>;
+    update: (id: string, Payment: Partial<Payment>) => Promise<boolean>;
+    delete: (id: string) => Promise<boolean>;
 }
 
-export const PaymentsContext = createContext<Context>(undefined!);
+const PaymentsContext = createContext<Context>(undefined!);
 
 const PaymentsProvider: React.FC<Props> = (props: Props) => {
+    const [empty, setEmpty] = useState<boolean>(false);
     const [values, setValues] = useState<Payment[]>([]);
+    const auth = useAuth();
 
-    const get = async () => {
+    const get = async (search?: string) => {
+        try {
+            const paymentsService = PaymentsService.getInstance();
+            const p = await paymentsService.get(10, 0, search);
+            setValues([...p.values])
+            setEmpty(!search && p.values.length === 0)
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to get payments", "We're having trouble getting your payments at the moment.");
+        }
     }
 
-    const del = async (paymentId: string) => {
+    const create = async (payment: Partial<Payment>) => {
+        try {
+            const paymentsService = PaymentsService.getInstance();
+            const i = await paymentsService.create(payment);
+            values.push(i)
+            setValues([...values]);
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to create payment", "We're having trouble creating your new payment at the moment.");
+            return false;
+        }
     }
 
-    const create = async (payment: Partial<Payment>, budgetId: string) => {
+    const update = async (id: string, payment: Partial<Payment>) => {
+        try {
+            const index = values.findIndex(x => x.id === id);
+            if(index === -1)
+                return;
+            const paymentsService = PaymentsService.getInstance();
+            const i = await paymentsService.update(id, payment);
+            values[index] = i;
+            setValues([...values]);
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to create Payment", "We're having trouble creating your new Payment at the moment.");
+            return false;
+        }
     }
 
-    const update = async (paymentId: string, payment: Partial<Payment>) => {
+    const deletePayment = async (id: string) => {
+        try {
+            const index = values.findIndex(x => x.id === id);
+            if(index === -1)
+                return;
+            const paymentsService = PaymentsService.getInstance();
+            await paymentsService.delete(id);
+            values.splice(index, 1);
+            setValues([...values]);
+            return true;
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+            Alert.alert("Unable to create payment", "We're having trouble creating your new payment at the moment.");
+            return false;
+        }
     }
 
     return (
-        <PaymentsContext.Provider value={{ values, get, create, update, delete: del }}>
+        <PaymentsContext.Provider value={{ empty, values, get, create, update, delete: deletePayment }}>
             {props.children}
         </PaymentsContext.Provider>
     )
