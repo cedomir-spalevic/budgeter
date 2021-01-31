@@ -38,9 +38,11 @@ interface Props {
     flex?: boolean;
     fullWith?: boolean;
     allowScroll?: boolean;
+    title?: string;
 }
 
 const Container: React.FC<Props> = (props: Props) => {
+    const navigation = useNavigation();
     const scrollY = useRef<Animated.Value>(new Animated.Value(0));
     const scrollView = useRef<ScrollView>();
     const styles = useStyles();
@@ -61,23 +63,25 @@ const Container: React.FC<Props> = (props: Props) => {
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         scrollY.current.setValue(event.nativeEvent.contentOffset.y);
-        // navigation.setOptions({
-        //     header: () => (
-        //         <Animated.View
-        //             style={{
-        //                 position: "absolute",
-        //                 top: scrollY.current.interpolate({
-        //                     inputRange: [0, 100],
-        //                     outputRange: [100, 0],
-        //                     extrapolate: "clamp"
-        //                 }),
-        //                 overflow: "hidden"
-        //             }}
-        //         >
-        //             <Label text="Test" type="regular" />
-        //         </Animated.View>
-        //     )
-        // })
+        navigation.setOptions({
+            top: (scrollY.current as any)._value === 0,
+            headerTitle: () => (
+                <Animated.View
+                    style={{
+                        position: "absolute",
+                        bottom: scrollY.current.interpolate({
+                            inputRange: [0, 10, 26, 33],
+                            outputRange: [-30, -13, -5, 0],
+                            extrapolate: "clamp"
+                        }),
+                        overflow: "hidden",
+                        width: "100%"
+                    }}
+                >
+                    <Label style={{ paddingTop: 10, textAlign: "center" }} text={props.title} type="regular" />
+                </Animated.View>
+            )
+        })
     }
 
     useEffect(() => {

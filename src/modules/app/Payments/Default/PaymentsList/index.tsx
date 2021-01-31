@@ -29,7 +29,7 @@ const PaymentsList: React.FC = () => {
 
     return (
         <Page>
-            <Container allowScroll fullWith>
+            <Container allowScroll fullWith title="Payments">
                 <Container>
                     <ActionItem title={<Label type="header" text="Payments" />}>
                         <Searchbox 

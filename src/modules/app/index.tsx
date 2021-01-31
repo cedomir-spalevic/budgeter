@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import HomeNavigator from "./Home";
 import IncomesNavigator from "./Incomes";
 import PaymentsNavigator from "./Payments";
 import SettingsNavigator from "./Settings";
-import { useTheme, useIncomes, usePayments, useUser } from "context";
-import { Container, Icon, Page, Progress } from "components";
+import { useTheme } from "context";
+import { Icon } from "components";
 import { BottomTabBarOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
+import { AppRoutes } from "./routes";
+import AppLoader from "./Loader";
 
 enum TabRoutes {
     Home = "Home",
@@ -60,48 +62,14 @@ const TabNavigator: React.FC = () => {
 }
 
 const App = createStackNavigator();
+
 const AppNavigator: React.FC = () => {
     return (
-        <App.Navigator initialRouteName="Tab" screenOptions={{ headerShown: false }}>
-            <App.Screen name="Tab" component={TabNavigator} />
+        <App.Navigator initialRouteName={AppRoutes.Loader} screenOptions={{ headerShown: false }}>
+            <App.Screen name={AppRoutes.Loader} component={AppLoader} />
+            <App.Screen name={AppRoutes.App} component={TabNavigator} />
         </App.Navigator>
     )
 }
 
-const AppLoader: React.FC = () => {
-   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
-   const user = useUser();
-   const incomes = useIncomes();
-   const payments = usePayments();
-
-   const load = async () => {
-        try {
-            /** Any app wide data load should go here */
-            await user.getUser();
-            await incomes.get();
-            await payments.get();
-            setDataLoaded(true);
-        }
-        catch(error) {
-            console.log(error);
-            setDataLoaded(true);
-        }
-    }
-
-   useEffect(() => {
-        if(!dataLoaded && (user && incomes && payments))  
-            load();
-   })
-
-   if(!dataLoaded)
-      return (
-            <Page>
-                <Container flex verticallyCenter>
-                    <Progress size="large" />
-                </Container>
-            </Page>
-        )
-   return <AppNavigator />
-}
-
-export default AppLoader;
+export default AppNavigator;
