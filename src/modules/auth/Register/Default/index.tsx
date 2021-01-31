@@ -64,7 +64,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
     const passwordRequirements = props.checkForPasswordRequirements();
     return (
         <>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Create account">
                 <Label type="header" text="Create your account" />
                 <Spacer />
                 <TextField

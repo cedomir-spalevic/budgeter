@@ -5,7 +5,7 @@ import { useAuth, useTheme } from "context";
 const SwipeOptions: React.FC = () => {
     return (
         <Page>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Swipe Options">
                 <ActionItem title={<Label type="header" text="Swipe Options" />}>
                     <List 
                         items={[

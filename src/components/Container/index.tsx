@@ -1,7 +1,7 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { Label } from "components";
 import { makeStyles, useScroll } from "context";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { 
     View,
     StyleProp,
@@ -64,7 +64,13 @@ const Container: React.FC<Props> = (props: Props) => {
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         scrollY.current.setValue(event.nativeEvent.contentOffset.y);
         navigation.setOptions({
-            top: (scrollY.current as any)._value === 0,
+            containerBackground: {
+                opacity: scrollY.current.interpolate({
+                    inputRange: [0, 33],
+                    outputRange: [0, 1],
+                    extrapolate: "clamp"
+                })
+            },
             headerTitle: () => (
                 <Animated.View
                     style={{

@@ -31,7 +31,7 @@ interface FormValues {
 const LoginForm = (props: FormProps & FormikProps<FormValues>) => {
     return (
         <>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Log in">
                 <Label type="header" text="Log in" />
                 <Spacer />
                 <TextField

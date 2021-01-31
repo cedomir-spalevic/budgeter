@@ -11,7 +11,7 @@ const Settings: React.FC = () => {
 
     return (
         <Page>
-            <Container allowScroll justifyContent="space-between" flex>
+            <Container allowScroll justifyContent="space-between" flex title="Settings">
                 <ActionItem title={<Label type="header" text="Settings" />}>
                     <List 
                         items={[

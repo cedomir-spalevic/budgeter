@@ -3,10 +3,12 @@ import {
     StackHeaderStyleInterpolator
 } from "@react-navigation/stack";
 import { makeStyles, useTheme } from "context";
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import {
     Animated,
-    View
+    StyleProp,
+    View,
+    ViewStyle
 } from "react-native";
 import { Icon } from "components";
 import { NavigationProp, ParamListBase, Route, StackNavigationState } from "@react-navigation/native";
@@ -17,7 +19,7 @@ interface ExtraNavigationProps {
     popToTop?: boolean;
     hideHeaderLeft?: boolean;
     hideHeaderRight?: boolean;
-    top?:  boolean;
+    containerBackground?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
 }
 
 type StackDescriptor = {
@@ -47,18 +49,26 @@ type StackHeaderProps = {
 }
 
 const useStyles = makeStyles(theme => ({
+    container: {
+        position: "relative",
+        height: 100,
+        backgroundColor: theme.palette.secondary
+    },
+    containerBackground: {
+        position: "absolute", 
+        height: "100%", 
+        width: "100%", 
+        backgroundColor: theme.palette.white,
+        borderBottomWidth: 0.5,
+        borderBottomColor: "rgba(0,0,0,0.4)",
+        opacity: 0
+    },
     header: {
         height: 100,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingHorizontal: theme.size.pagePadding,
-        backgroundColor: theme.palette.secondary
-    },
-    headerFixed: {
-        backgroundColor: theme.palette.white,
-        borderBottomWidth: 0.5,
-        borderBottomColor: "rgba(0,0,0,0.4)"
+        paddingHorizontal: theme.size.pagePadding
     },
     animationTitle: {
         paddingTop: 50,
@@ -88,10 +98,8 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     const leftActions = headerLeft && headerLeft({ tintColor: theme.value.palette.primary });
     const headerRight = props.scene.descriptor.options.headerRight;
     const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
-    const top = props.scene.descriptor.options.top;
-    const headerStyles = [styles.header];
-    if(!top)
-        headerStyles.push(styles.headerFixed)
+    const extraContainerBackgroundStyle = props.scene.descriptor.options.containerBackground;
+    const containerBackgroundStyles = [styles.containerBackground, extraContainerBackgroundStyle];
     const popToTop = props.scene.descriptor.options.popToTop;
     if(popToTop)
         props.navigation.popToTop();
@@ -110,19 +118,22 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     }
 
     return (
-        <Animated.View style={headerStyles}>
-            <View style={styles.actions}>
-                {leftActions}
+        <View style={styles.container}>
+            <Animated.View style={containerBackgroundStyles}></Animated.View>
+            <View style={styles.header}>
+                <View style={styles.actions}>
+                    {leftActions}
+                </View>
+                <View style={styles.animationTitle}>
+                    {headerTitleNode}
+                </View>
+                <View style={styles.actions}>
+                    {rightActions}
+                    {props.isModal  &&
+                        <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}
+                </View>
             </View>
-            <View style={styles.animationTitle}>
-                {headerTitleNode}
-            </View>
-            <View style={styles.actions}>
-                {rightActions}
-                {props.isModal  &&
-                    <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}
-            </View>
-        </Animated.View>
+        </View>
     )
 }
 

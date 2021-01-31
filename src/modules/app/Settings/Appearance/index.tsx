@@ -7,7 +7,7 @@ const Appearance: React.FC = () => {
 
     return (
         <Page>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Appearance">
                 <ActionItem title={<Label type="header" text="Appearance" />}>
                     <List 
                         items={[

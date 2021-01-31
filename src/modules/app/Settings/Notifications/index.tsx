@@ -5,7 +5,7 @@ import { Switch } from "components";
 const Notifications: React.FC = () => {
     return (
         <Page>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Notifications">
                 <ActionItem title={<Label type="header" text="Notifications" />}>
                     <List 
                         items={[

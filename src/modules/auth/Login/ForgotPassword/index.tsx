@@ -35,7 +35,7 @@ const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
 
     return (
         <>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Forgot Password">
                 <Label type="header" text="Enter your email" />
                 <Spacer />
                 <TextField

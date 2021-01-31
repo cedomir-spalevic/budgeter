@@ -57,7 +57,7 @@ const UpdatePasswordForm = (props: FormProps & FormikProps<FormValues>) => {
     const passwordRequirements = props.checkForPasswordRequirements();
     return (
         <>
-            <Container allowScroll flex>
+            <Container allowScroll flex title="Update password">
                 <Label type="header" text="Update your password" />
                 <Spacer />
                 <TextFieldSecret
