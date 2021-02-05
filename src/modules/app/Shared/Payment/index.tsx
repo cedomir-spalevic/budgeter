@@ -39,7 +39,7 @@ interface FormValues {
     title: string;
     amount: number;
     repeat: string;
-    occurrenceDate: string;
+    initialOccurrenceDate: string;
 }
 
 const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
@@ -75,10 +75,10 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
                 <DatePicker
                     preRenderIcon={<Icon name="event" />}
-                    placeholder="Occurrence Date"
-                    value={props.values.occurrenceDate ? new Date(props.values.occurrenceDate) : undefined}
-                    onChange={props.handleChange("occurrenceDate")}
-                    errorMessage={props.touched.occurrenceDate && props.errors.occurrenceDate}
+                    placeholder="Initial Occurrence Date"
+                    value={props.values.initialOccurrenceDate ? new Date(props.values.initialOccurrenceDate) : undefined}
+                    onChange={props.handleChange("initialOccurrenceDate")}
+                    errorMessage={props.touched.initialOccurrenceDate && props.errors.initialOccurrenceDate}
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
@@ -100,21 +100,25 @@ const PaymentScreen: React.FC = () => {
             title: route.params?.payment?.title,
             amount: route.params?.payment?.amount,
             repeat: route.params?.payment?.recurrence && RecurrenceMap[route.params?.payment?.recurrence],
-            occurrenceDate: route.params?.payment?.occurrenceDate.toString()
+            initialOccurrenceDate: (route.params?.payment ? new Date(route.params.payment.initialYear, route.params.payment.initialMonth, route.params.payment.initialDay).toString() 
+                                        : undefined)
         }),
         validationSchema: Yup.object().shape({
             title: Yup.string().required("Title cannot be blank"),
             amount: Yup.number().required("Amount is required").min(0),
             repeat: Yup.string().required("Repeat is required")
                 .test("validRepeat", `Repeat must be one of ${Object.keys(RecurrenceLabels).join(", ")}`, testForValidRepeat),
-            occurrenceDate: Yup.string().required("Occurrence Date is required")
+            initialOccurrenceDate: Yup.string().required("Initial Occurrence Date is required")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
+            const initialOccurenceDate = new Date(values.initialOccurrenceDate);
             const payment: Partial<Payment> = {
                 title: values.title,
                 amount: Number(values.amount)/100,
                 recurrence: RecurrenceLabels[values.repeat],
-                occurrenceDate: new Date(values.occurrenceDate)
+                initialDay: initialOccurenceDate.getDate(),
+                initialMonth: initialOccurenceDate.getMonth(),
+                initialYear: initialOccurenceDate.getFullYear()
             }
             if(route.params?.payment?.id) {
                 const updated = await payments.update(route.params?.payment?.id, payment);

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Icon } from "components";
-import { useTheme, usePayments } from "context";
+import { useTheme } from "context";
+import { usePayments } from "context/Payments";
 import { useNavigation } from "@react-navigation/native";
 import { PaymentsRoutes } from "../routes";
 import NoPayments from "./NoPayments";

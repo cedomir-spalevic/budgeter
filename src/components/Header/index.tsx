@@ -16,9 +16,6 @@ import { Layout, StackNavigationOptions } from "@react-navigation/stack/lib/type
 import { EdgeInsets } from "react-native-safe-area-context";
 
 interface ExtraNavigationProps {
-    popToTop?: boolean;
-    hideHeaderLeft?: boolean;
-    hideHeaderRight?: boolean;
     containerBackground?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
 }
 
@@ -83,15 +80,13 @@ const useStyles = makeStyles(theme => ({
 }))
 
 interface Props {
-    parentIsModal?: boolean;
     isModal?: boolean;
-    initialRoute?: string;
-    enableTitleScroll?: boolean;
 }
 
 const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderProps) => {
     const styles = useStyles();
     const theme = useTheme();
+    const showBackBtn = props.navigation.dangerouslyGetState().index > 0;
     const headerTitle = props.scene.descriptor.options.headerTitle;
     const headerTitleNode = headerTitle && typeof(headerTitle) === "function" && headerTitle({ onLayout: () => {} });
     const headerLeft = props.scene.descriptor.options.headerLeft;
@@ -100,20 +95,10 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
     const rightActions = headerRight && headerRight({ tintColor: theme.value.palette.primary });
     const extraContainerBackgroundStyle = props.scene.descriptor.options.containerBackground;
     const containerBackgroundStyles = [styles.containerBackground, extraContainerBackgroundStyle];
-    const popToTop = props.scene.descriptor.options.popToTop;
-    if(popToTop)
-        props.navigation.popToTop();
 
     const closeModal = () => {
-        if(props.navigation.dangerouslyGetState().routeNames.length > 1)
+        if(showBackBtn)
             props.navigation.popToTop();
-        if(props.navigation.canGoBack())
-            props.navigation.goBack();
-    }
-
-    const goBack = () => {
-        if(props.previous && props.previous.route.name === props.initialRoute)
-            //setShowBackButton(false);
         props.navigation.goBack();
     }
 
@@ -122,6 +107,8 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
             <Animated.View style={containerBackgroundStyles}></Animated.View>
             <View style={styles.header}>
                 <View style={styles.actions}>
+                    {showBackBtn &&
+                        <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => props.navigation.goBack()} />}
                     {leftActions}
                 </View>
                 <View style={styles.animationTitle}>

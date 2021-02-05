@@ -6,7 +6,7 @@ import { RegisterRoutes } from "./routes";
 import { Header } from "components";
 
 const screenOptions: StackNavigationOptions = {
-    header: (props) => <Header isModal={true} initialRoute={RegisterRoutes.Default} {...props} />
+    header: (props) => <Header isModal={true} {...props} />
 }
 
 const Stack = createStackNavigator();

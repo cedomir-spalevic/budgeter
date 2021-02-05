@@ -1,20 +1,21 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
 import DefaultScreen from "./Default";
 import { HomeRoutes } from "./routes";
 import { Header } from "components";
+
+const screenOptions: StackNavigationOptions = {
+   header: (props) => <Header {...props} />
+}
 
 const Stack = createStackNavigator();
 
 const IncomesNavigator: React.FC = () => {
    return (
-      <Stack.Navigator initialRouteName={HomeRoutes.Default}>
+      <Stack.Navigator initialRouteName={HomeRoutes.Default} screenOptions={screenOptions}>
          <Stack.Screen 
             name={HomeRoutes.Default} 
-            component={DefaultScreen} 
-            options={{
-               header: (props) => <Header {...props} />
-            }}
+            component={DefaultScreen}
          />
       </Stack.Navigator>
    )

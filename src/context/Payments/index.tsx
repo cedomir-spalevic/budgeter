@@ -45,8 +45,11 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
         try {
             const paymentsService = PaymentsService.getInstance();
             const i = await paymentsService.create(payment);
+            const isEmpty = values.length === 0;
             values.push(i)
             setValues([...values]);
+            if(isEmpty)
+                setEmpty(false);
             return true;
         }
         catch(error) {
@@ -87,8 +90,11 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
                 return;
             const paymentsService = PaymentsService.getInstance();
             await paymentsService.delete(id);
+            const willBeEmpty = values.length === 1;
             values.splice(index, 1);
             setValues([...values]);
+            if(willBeEmpty)
+                setEmpty(true);
             return true;
         }
         catch(error) {

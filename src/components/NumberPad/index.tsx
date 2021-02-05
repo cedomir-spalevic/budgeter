@@ -61,39 +61,34 @@ interface Props {
 }
 
 const NumberPad: React.FC<Props> = (props: Props) => {
-    const [num, setNum] = useState<string>();
-    const styles = useStyles();
-    const theme = useTheme();
-    const textInput = useRef<TextInput>();
-    const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
-    const inputStyles = [styles.input];
-    if(props.errorMessage) {
-       inputStyles.push(styles.inputWithError);
-    }
+   const [num, setNum] = useState<string>(toCurrency(0));
+   const styles = useStyles();
+   const theme = useTheme();
+   const textInput = useRef<TextInput>();
+   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
+   const inputStyles = [styles.input];
+   if(props.errorMessage) {
+      inputStyles.push(styles.inputWithError);
+   }
 
     const onKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-        let numStr = num ? num.toString().replace(".", "") : "";
-        while(numStr.charAt(0) === "0")
-            numStr = numStr.substring(1);
-        if(e.nativeEvent.key === "Backspace") {
-            if(!numStr) 
-                return;
-            if(numStr.length === 1) {
-                setNum("")
-                return;
-            }
-            numStr = numStr.substring(0, numStr.length - 1);
-        }
-        else {
-            numStr += e.nativeEvent.key;
-        }
-        setNum(numStr);
-        props.onChange(numStr)
+       if(e.cancelable) {
+         let numStr = num.substr(1).replaceAll(".", "").replaceAll(",", "");
+         if(numStr === "000" && e.nativeEvent.key === "Backspace") {
+            e.preventDefault();
+            e.stopPropagation();
+         }
+      }
+    }
+
+    const onChange = (newValue: string) => {
+      let numStr = newValue.substr(1).replaceAll(".", "").replaceAll(",", "");
+      setNum(toCurrency(Number(numStr ?? "")/100))
     }
 
     useEffect(() => {
         if(props.value && num === undefined)
-            setNum((props.value * 100).toString());
+            setNum(toCurrency(Number(props.value ?? "")/100));
     })
 
    return (
@@ -107,12 +102,12 @@ const NumberPad: React.FC<Props> = (props: Props) => {
             contextMenuHidden={true}
             keyboardType="number-pad"
             errorMessage={props.errorMessage}
-            value={toCurrency(Number(num ?? "")/100)}
+            value={num}
+            onChange={onChange}
             onKeyPress={onKeyPress}
             ref={mergedRefs}
             onSubmit={() => props.onSubmit && props.onSubmit()}
             returnKeyType="done"
-            preventOnChange
             controlled
        />
    )

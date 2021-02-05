@@ -9,7 +9,8 @@ import {
     SummaryView,
     ConfirmDialog
 } from "components";
-import { useIncomes, useTheme } from "context";
+import { useTheme } from "context";
+import { useIncomes } from "context/Incomes";
 import { useNavigation } from "@react-navigation/native";
 import { IncomesRoutes } from "../../routes";
 import { View } from "react-native";
@@ -29,7 +30,7 @@ const IncomesList: React.FC = () => {
 
     return (
         <Page>
-            <Container allowScroll fullWith>
+            <Container title="Incomes" allowScroll fullWith>
                 <Container>
                     <ActionItem title={<Label type="header" text="Incomes" />}>
                         <Searchbox 

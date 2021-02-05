@@ -6,46 +6,32 @@ import {
     ActionItem,
     Icon,
     List,
-    Link
+    Link,
+    Spacer
 } from "components";
-import { makeStyles, useTheme } from "context";
+import { useBudgets, useTheme } from "context";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 
-const useStyles = makeStyles(() => ({
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        height: "100%",
-        justifyContent: "center"
-    },
-    spacer: {
-        height: 20
-    }
-}))
-
 const Home: React.FC = () => {
-    const styles = useStyles();
     const navigation = useNavigation();
     const theme = useTheme();
+    const budgets = useBudgets();
 
     useEffect(() => {
         navigation.setOptions({
-            headerTitle: () => (
-                <View style={styles.header}>
-                    <Icon name="chevron-left" size={32} color={theme.value.palette.primary} />
-                    <Label type="header" text={moment().format("MMMM YYYY")} />
-                    <Icon name="chevron-right" size={32} color={theme.value.palette.primary} />
-                </View>
-            )
+            headerLeft: () => <Icon onPress={() => budgets.getPrevious()} name="chevron-left" color={theme.value.palette.primary} size={32} />,
+            headerRight: () => <Icon onPress={() => budgets.getNext()} name="chevron-right" color={theme.value.palette.primary} size={32} />
         })
     })
 
     return (
         <Page>
-            <Container allowScroll flex>
-                <ActionItem title={<Label type="regular" text="Today" />} action={<Link text="View all" onPress={() => {}} />}>
+            <Container title={budgets.date.format("MMMM YYYY")} allowScroll flex>
+                <Label type="header" text={budgets.date.format("MMMM YYYY")} />
+                <Spacer />
+                <ActionItem title={<Label type="regular" text="Due Today" />} action={<Link text="View all" onPress={() => {}} />}>
                     <List 
                         items={[
                             { text: "Netflix", onPress: () => {} },
@@ -54,7 +40,7 @@ const Home: React.FC = () => {
                         ]} 
                     />
                 </ActionItem>
-                <View style={styles.spacer} />
+                <Spacer />
                 <ActionItem title={<Label type="regular" text="Incomes" />} action={<Link text="View all" onPress={() => {}} />}>
                     <List 
                         items={[
@@ -64,7 +50,7 @@ const Home: React.FC = () => {
                         ]} 
                     />
                 </ActionItem>
-                <View style={styles.spacer} />
+                <Spacer />
                 <ActionItem title={<Label type="regular" text="Payments" />} action={<Link text="View all" onPress={() => {}} />}>
                     <List 
                         items={[

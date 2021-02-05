@@ -7,14 +7,14 @@ import SwipeOptionsScreen from "./SwipeOptions";
 import { SettingsRoutes } from "./routes";
 import { Header } from "components";
 
-const getHeader = (initialRoute: string): StackNavigationOptions => ({
-   header: (props) => <Header initialRoute={initialRoute} {...props} />
-})
+const screenOptions: StackNavigationOptions = {
+   header: (props) => <Header {...props} />
+}
 
 const Stack = createStackNavigator();
 
 const SettingsNavigator: React.FC = () => (
-   <Stack.Navigator initialRouteName={SettingsRoutes.Default} screenOptions={getHeader(SettingsRoutes.Default)}>
+   <Stack.Navigator initialRouteName={SettingsRoutes.Default} screenOptions={screenOptions}>
       <Stack.Screen name={SettingsRoutes.Default} component={DefaultScreen} />
       <Stack.Screen name={SettingsRoutes.Appearance} component={AppearanceScreen} />
       <Stack.Screen name={SettingsRoutes.Notifications} component={NotificationsScreen} />

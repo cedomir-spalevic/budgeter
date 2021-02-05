@@ -8,14 +8,14 @@ import { LoginRoutes } from "./routes";
 import { Header } from "components";
 
 const screenOptions: StackNavigationOptions = {
-    header: (props) => <Header isModal={true} initialRoute={LoginRoutes.Default} {...props} />
+    header: (props) => <Header isModal={true} {...props} />
 }
 
 const Stack = createStackNavigator();
 
 const LoginNavigator: React.FC = () => (
     <Stack.Navigator initialRouteName={LoginRoutes.Default} screenOptions={screenOptions}>
-        <Stack.Screen name={LoginRoutes.Default} component={LoginScreen} options={screenOptions} />
+        <Stack.Screen name={LoginRoutes.Default} component={LoginScreen} />
         <Stack.Screen name={LoginRoutes.ForgotPassword} component={ForgotPasswordScreen} />
         <Stack.Screen name={LoginRoutes.ConfirmationCode} component={ConfirmationCodeScreen} />
         <Stack.Screen name={LoginRoutes.UpdatePassword} component={UpdatePasswordScreen} />

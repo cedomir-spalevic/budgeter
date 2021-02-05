@@ -1,10 +1,11 @@
-export type Recurrence = "daily" | "weekly" | "biweekly" | "monthly" | "yearly";
+export type Recurrence = "oneTime" | "daily" | "weekly" | "biweekly" | "monthly" | "yearly";
 
 interface RecurrenceLabel {
     [label: string]: Recurrence;
 }
 
 export const RecurrenceLabels: RecurrenceLabel = {
+    "One Time": "oneTime",
     "Daily": "daily",
     "Weekly": "weekly",
     "Biweekly": "biweekly",
@@ -13,6 +14,7 @@ export const RecurrenceLabels: RecurrenceLabel = {
 }
 
 export const RecurrenceMap = {
+    "oneTime": "One Time",
     "daily": "Daily",
     "weekly": "Weekly",
     "biweekly": "Biweekly",

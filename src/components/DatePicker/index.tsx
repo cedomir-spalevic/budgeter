@@ -44,7 +44,7 @@ const DatePicker: React.FC<Props> = (props: Props) => {
             contextMenuHidden={true}
             editable={false}
             onTouchStart={() => setVisible(true)}
-            value={value ? moment(value).format("MM/DD/YYYY") : undefined}
+            value={value ? moment(value).format("MMMM Do YYYY") : undefined}
             errorMessage={props.errorMessage}
             preventOnChange
             controlled

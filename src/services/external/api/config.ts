@@ -31,7 +31,6 @@ class ApiConfig {
 
    public async handleAuthResponse(authResponse: AuthResponse): Promise<void> {
       const expiration = Date.now() + authResponse.expires;
-      console.log(authResponse)
       await setItem(StorageKeys.AccessToken, authResponse.accessToken);
       await setItem(StorageKeys.AccessTokenExpiration, expiration.toString());
       await setItem(StorageKeys.RefreshToken, authResponse.refreshToken);

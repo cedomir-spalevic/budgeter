@@ -1,4 +1,5 @@
 import AuthProvider, { AuthState, useAuth } from "./Auth";
+import BudgetsProvider, { useBudgets } from "./Budget";
 import IncomesProvider, { useIncomes } from "./Incomes";
 import NavigationHeaderProvider, { useNavigationHeader } from "./NavigationHeader";
 import PaymentsProvider, { usePayments } from "./Payments";
@@ -9,6 +10,8 @@ import UserProvider, { useUser } from "./User";
 export {
     AuthProvider,
     useAuth,
+    BudgetsProvider,
+    useBudgets,
     IncomesProvider,
     useIncomes,
     AuthState,

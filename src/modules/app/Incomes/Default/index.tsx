@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Icon } from "components";
-import { useTheme, useIncomes } from "context";
+import { useTheme } from "context";
+import { useIncomes } from "context/Incomes";
 import { useNavigation } from "@react-navigation/native";
 import { IncomesRoutes } from "../routes";
 import NoIncomes from "./NoIncomes";

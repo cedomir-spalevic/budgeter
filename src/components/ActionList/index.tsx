@@ -102,6 +102,9 @@ const ActionList: React.FC<Props> = (props: Props) => {
                         rightContent={rightSwipeContent}
                         leftButtons={item.leftSwipeButtons}
                         rightButtons={item.rightSwipeButtons}
+                        leftActionActivationDistance={75}
+                        leftButtonWidth={75}
+                        rightActionActivationDistance={75}
                         onLeftActionRelease={() => {
                             if(item.onLeftActionRelease)
                                 item.onLeftActionRelease();

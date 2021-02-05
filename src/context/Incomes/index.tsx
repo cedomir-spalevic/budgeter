@@ -45,6 +45,8 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
         try {
             const incomesService = IncomesService.getInstance();
             const i = await incomesService.create(income);
+            if(values.length === 0)
+                setEmpty(false);
             values.push(i)
             setValues([...values]);
             return true;
@@ -87,6 +89,8 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
                 return;
             const incomesService = IncomesService.getInstance();
             await incomesService.delete(id);
+            if(values.length === 0)
+                setEmpty(true);
             values.splice(index, 1);
             setValues([...values]);
             return true;

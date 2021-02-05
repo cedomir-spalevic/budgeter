@@ -16,7 +16,7 @@ import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { Income } from "services/external/api/models/data/income";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useIncomes } from "context";
+import { useIncomes } from "context/Incomes";
 import { TextInput } from "react-native";
 import { RecurrenceLabels, RecurrenceMap } from "services/external/api/models/data/recurrence";
 
@@ -39,7 +39,7 @@ interface FormValues {
     title: string;
     amount: number;
     repeat: string;
-    occurrenceDate: string;
+    initialOccurrenceDate: string;
 }
 
 const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
@@ -75,10 +75,10 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
                 />
                 <DatePicker
                     preRenderIcon={<Icon name="event" />}
-                    placeholder="Occurrence Date"
-                    value={props.values.occurrenceDate ? new Date(props.values.occurrenceDate) : undefined}
-                    onChange={props.handleChange("occurrenceDate")}
-                    errorMessage={props.touched.occurrenceDate && props.errors.occurrenceDate}
+                    placeholder="Initial Occurrence Date"
+                    value={props.values.initialOccurrenceDate ? new Date(props.values.initialOccurrenceDate) : undefined}
+                    onChange={props.handleChange("initialOccurrenceDate")}
+                    errorMessage={props.touched.initialOccurrenceDate && props.errors.initialOccurrenceDate}
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
@@ -101,21 +101,25 @@ const IncomeScreen: React.FC = () => {
             title: route.params?.income?.title,
             amount: route.params?.income?.amount,
             repeat: route.params?.income?.recurrence && RecurrenceMap[route.params?.income?.recurrence],
-            occurrenceDate: route.params?.income?.occurrenceDate.toString()
+            initialOccurrenceDate: (route.params?.income ? new Date(route.params.income.initialYear, route.params.income.initialMonth, route.params.income.initialDay).toString() 
+                                        : undefined)
         }),
         validationSchema: Yup.object().shape({
             title: Yup.string().required("Title cannot be blank"),
             amount: Yup.number().required("Amount is required").min(0),
             repeat: Yup.string().required("Repeat is required")
                 .test("validRepeat", `Repeat must be one of ${Object.keys(RecurrenceLabels).join(", ")}`, testForValidRepeat),
-            occurrenceDate: Yup.string().required("Occurrence Date is required")
+            initialOccurrenceDate: Yup.string().required("Initial Occurrence Date is required")
         }),
         handleSubmit: async (values: FormValues, formikBag: FormikBag<FormProps, FormValues>)  => {
+            const initialOccurenceDate = new Date(values.initialOccurrenceDate);
             const income: Partial<Income> = {
                 title: values.title,
                 amount: Number(values.amount)/100,
                 recurrence: RecurrenceLabels[values.repeat],
-                occurrenceDate: new Date(values.occurrenceDate)
+                initialDay: initialOccurenceDate.getDate(),
+                initialMonth: initialOccurenceDate.getMonth(),
+                initialYear: initialOccurenceDate.getFullYear()
             }
             if(route.params?.income?.id) {
                 const updated = await incomes.update(route.params?.income?.id, income);

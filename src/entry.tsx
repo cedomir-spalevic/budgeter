@@ -6,7 +6,8 @@ import {
     useAuth, 
     PaymentsProvider, 
     IncomesProvider,
-    UserProvider
+    UserProvider,
+    BudgetsProvider
 } from "context";
 
 const Entry: React.FC = () => {
@@ -16,11 +17,13 @@ const Entry: React.FC = () => {
         case AuthState.SignedIn:
             return (
                 <UserProvider>
-                    <IncomesProvider>
-                        <PaymentsProvider>
-                            <AppLoader />
-                        </PaymentsProvider>
-                    </IncomesProvider>
+                    <BudgetsProvider>
+                        <IncomesProvider>
+                            <PaymentsProvider>
+                                <AppLoader />
+                            </PaymentsProvider>
+                        </IncomesProvider>
+                    </BudgetsProvider>
                 </UserProvider>
             )
         default: 

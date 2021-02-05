@@ -39,7 +39,9 @@ class IncomesService {
             id: x.id,
             title: x.title,
             amount: x.amount,
-            occurrenceDate: new Date(x.occurrenceDate),
+            initialDay: x.initialDay,
+            initialMonth: x.initialMonth,
+            initialYear: x.initialYear,
             recurrence: x.recurrence,
             createdOn: new Date(x.createdOn),
             modifiedOn: new Date(x.modifiedOn)
@@ -87,7 +89,9 @@ class IncomesService {
         id: responseBody.id,
         title: responseBody.title,
         amount: responseBody.amount,
-        occurrenceDate: new Date(responseBody.occurrenceDate),
+        initialDay: responseBody.initialDay,
+        initialMonth: responseBody.initialMonth,
+        initialYear: responseBody.initialYear,
         recurrence: responseBody.recurrence,
         createdOn: new Date(responseBody.createdOn),
         modifiedOn: new Date(responseBody.modifiedOn)
@@ -120,7 +124,9 @@ class IncomesService {
         id: responseBody.id,
         title: responseBody.title,
         amount: responseBody.amount,
-        occurrenceDate: new Date(responseBody.occurrenceDate),
+        initialDay: responseBody.initialDay,
+        initialMonth: responseBody.initialMonth,
+        initialYear: responseBody.initialYear,
         recurrence: responseBody.recurrence,
         createdOn: new Date(responseBody.createdOn),
         modifiedOn: new Date(responseBody.modifiedOn)
