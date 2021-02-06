@@ -24,11 +24,9 @@ const UserProvider: React.FC<Props & any> = (props: Props) => {
         try {
             const userService  = UserService.getInstance();
             const user = await userService.get();
-            console.log(user);
             setValue(user);
         }
         catch(error) {
-            console.log(error);
             if(error instanceof UnauthorizedError) {
                 auth.logout();
                 return;

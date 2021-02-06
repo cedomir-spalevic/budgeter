@@ -19,6 +19,8 @@ import { Payment } from "services/external/api/models/data/payment";
 import { TextInput } from "react-native";
 import { RecurrenceLabels, RecurrenceMap } from "services/external/api/models/data/recurrence";
 import { usePayments } from "context";
+import { PickerSelectRef } from "components/PickerSelect";
+import { DatePickerRef } from "components/DatePicker";
 
 export interface PaymentParams {
     payment?: Payment;
@@ -33,6 +35,8 @@ type RouteProps = RouteProp<ParamList, "Payment">
 interface FormProps {
     label: string;
     numberPadRef: React.MutableRefObject<TextInput>;
+    repeatRef: React.MutableRefObject<PickerSelectRef>;
+    initialOccurrenceRef: React.MutableRefObject<DatePickerRef>;
 }
 
 interface FormValues {
@@ -64,14 +68,20 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
                     textInputRef={props.numberPadRef}
                     onChange={props.handleChange("amount")}
                     errorMessage={props.touched.amount && props.errors.amount}
+                    onSubmit={() => props.repeatRef.current.showPicker()}
                 />
                 <PickerSelect 
                     preRenderIcon={<Icon name="repeat" />}
                     placeholder="Repeat?"
                     items={Object.keys(RecurrenceLabels)}
                     value={props.values.repeat}
-                    onChange={props.handleChange("repeat")}
+                    onChange={newValue => {
+                        props.handleChange("repeat")(newValue);
+                        props.initialOccurrenceRef.current.showPicker();
+                    }}
                     errorMessage={props.touched.repeat && props.errors.repeat}
+                    pickerSelectRef={props.repeatRef}
+                    
                 />
                 <DatePicker
                     preRenderIcon={<Icon name="event" />}
@@ -79,6 +89,7 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.initialOccurrenceDate ? new Date(props.values.initialOccurrenceDate) : undefined}
                     onChange={props.handleChange("initialOccurrenceDate")}
                     errorMessage={props.touched.initialOccurrenceDate && props.errors.initialOccurrenceDate}
+                    datePickerRef={props.initialOccurrenceRef}
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
@@ -93,6 +104,8 @@ const PaymentScreen: React.FC = () => {
     const navigation = useNavigation();
     const payments = usePayments();
     const numberPadRef = useRef<TextInput>();
+    const repeatRef = useRef<PickerSelectRef>();
+    const initialOccurrenceRef = useRef<DatePickerRef>();
 
     const testForValidRepeat = (repeat: string) => (repeat in RecurrenceLabels)
     const Form = withFormik<FormProps, FormValues>({
@@ -138,6 +151,8 @@ const PaymentScreen: React.FC = () => {
         <Form
             label={route.params && route.params.payment ? "Update Payment" : "Create Payment"}
             numberPadRef={numberPadRef}
+            repeatRef={repeatRef}
+            initialOccurrenceRef={initialOccurrenceRef}
         />
         </Page>
     )

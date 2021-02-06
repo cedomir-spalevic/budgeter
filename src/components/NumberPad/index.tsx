@@ -1,5 +1,5 @@
 import useMergedRef from "@react-hook/merged-ref";
-import { TextField } from "components";
+import { Label, TextField } from "components";
 import { makeStyles, useTheme } from "context";
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import {
@@ -7,6 +7,7 @@ import {
    NativeSyntheticEvent,
    TextInputKeyPressEventData
 } from "react-native";
+import Animated from "react-native-reanimated";
 import { toCurrency } from "services/internal/currency";
 
 const useStyles = makeStyles(theme => ({
@@ -92,24 +93,25 @@ const NumberPad: React.FC<Props> = (props: Props) => {
     })
 
    return (
-       <TextField
-            preRenderIcon={props.preRenderIcon}
-            onPreRenderIconClick={props.onPreRenderIconClick}
-            postRenderIcon={props.postRenderIcon}
-            onPostRenderIconClick={props.onPostRenderIconClick}
-            placeholder={props.placeholder}
-            autoFocus={props.autoFocus}
-            contextMenuHidden={true}
-            keyboardType="number-pad"
-            errorMessage={props.errorMessage}
-            value={num}
-            onChange={onChange}
-            onKeyPress={onKeyPress}
-            ref={mergedRefs}
-            onSubmit={() => props.onSubmit && props.onSubmit()}
-            returnKeyType="done"
-            controlled
-       />
+      <TextField
+         preRenderIcon={props.preRenderIcon}
+         onPreRenderIconClick={props.onPreRenderIconClick}
+         postRenderIcon={props.postRenderIcon}
+         onPostRenderIconClick={props.onPostRenderIconClick}
+         placeholder={props.placeholder}
+         autoFocus={props.autoFocus}
+         contextMenuHidden={true}
+         keyboardType="number-pad"
+         errorMessage={props.errorMessage}
+         value={num}
+         onChange={onChange}
+         onKeyPress={onKeyPress}
+         ref={mergedRefs}
+         onSubmit={() => props.onSubmit && props.onSubmit()}
+         returnKeyType="done"
+         controlled
+         renderInput={() => <Label type="regular" text={num} />}
+      />
    )
 }
 

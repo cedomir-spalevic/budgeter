@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
-import { Appearance, StyleSheet } from "react-native";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { Appearance, StyleSheet, useColorScheme } from "react-native";
 import { Theme, lightTheme, darkTheme } from "styles-new";
+import App from "../../../App";
 
 type Kind = "auto" | "light" | "dark";
 
@@ -18,9 +19,10 @@ const ThemeContext = createContext<Context>(undefined!);
 
 const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     const [kind, setKind] = useState<Kind>("auto");
+    const deviceColorScheme = useColorScheme();
 
     let theme = lightTheme;
-    if(kind === "dark" || (kind === "auto" && Appearance.getColorScheme() === "dark"))
+    if(kind === "dark" || (kind === "auto" && deviceColorScheme === "dark"))
         theme = darkTheme;
 
     return (

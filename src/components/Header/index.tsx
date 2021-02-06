@@ -75,7 +75,16 @@ const useStyles = makeStyles(theme => ({
         marginTop: 30
     },
     actions: {
-        paddingTop: 50
+        paddingTop: 50,
+        width: 75
+    },
+    actionLeft: {
+        alignItems: "flex-start",
+        justifyContent: "flex-start"
+    },
+    actionRight: {
+        alignItems: "flex-end",
+        justifyContent: "flex-end"
     }
 }))
 
@@ -106,7 +115,7 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
         <View style={styles.container}>
             <Animated.View style={containerBackgroundStyles}></Animated.View>
             <View style={styles.header}>
-                <View style={styles.actions}>
+                <View style={[styles.actions, styles.actionLeft]}>
                     {showBackBtn &&
                         <Icon name="chevron-left" size={32} color={theme.value.palette.primary} onPress={() => props.navigation.goBack()} />}
                     {leftActions}
@@ -114,7 +123,7 @@ const Header: React.FC<Props & StackHeaderProps> = (props: Props & StackHeaderPr
                 <View style={styles.animationTitle}>
                     {headerTitleNode}
                 </View>
-                <View style={styles.actions}>
+                <View style={[styles.actions, styles.actionRight]}>
                     {rightActions}
                     {props.isModal  &&
                         <Icon name="close" size={32} color={theme.value.palette.primary} onPress={() => closeModal()}  />}

@@ -4,6 +4,7 @@ import { Alert } from "react-native";
 import { Income } from "services/external/api/models/data/income";
 import { UnauthorizedError } from "services/external/api/models/errors";
 import IncomesService from "services/external/api/incomes";
+import { useBudgets } from "context/Budgets";
 
 interface Props {
    children: React.ReactNode;
@@ -24,6 +25,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
     const [empty, setEmpty] = useState<boolean>(false);
     const [values, setValues] = useState<Income[]>([]);
     const auth = useAuth();
+    const budgets = useBudgets();
 
     const get = async (search?: string) => {
         try {
@@ -45,10 +47,13 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
         try {
             const incomesService = IncomesService.getInstance();
             const i = await incomesService.create(income);
-            if(values.length === 0)
-                setEmpty(false);
+            const isEmpty = values.length === 0;
             values.push(i)
             setValues([...values]);
+            if(isEmpty)
+                setEmpty(false);
+            // Update budget
+            budgets.get();
             return true;
         }
         catch(error) {
@@ -70,6 +75,8 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
             const i = await incomesService.update(id, income);
             values[index] = i;
             setValues([...values]);
+            // Update budget
+            budgets.get();
             return true;
         }
         catch(error) {
@@ -89,10 +96,13 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
                 return;
             const incomesService = IncomesService.getInstance();
             await incomesService.delete(id);
-            if(values.length === 0)
-                setEmpty(true);
+            const willBeEmpty = values.length === 1;
             values.splice(index, 1);
             setValues([...values]);
+            if(willBeEmpty)
+                setEmpty(true);
+            // Update budget
+            budgets.get();
             return true;
         }
         catch(error) {

@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef, useRef } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { TextField } from "components";
+
+export interface DatePickerRef {
+   showPicker: () => void;
+}
 
 interface Props {
    value?: Date;
@@ -14,11 +18,13 @@ interface Props {
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
+   datePickerRef?: React.Ref<DatePickerRef>;
 }
 
 const DatePicker: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<Date>();
    const [visible, setVisible] = useState<boolean>(false);
+   const datePickerRef = useRef<DatePickerRef>({ showPicker: () => setVisible(true) });
 
    const onConfirm = (d: Date) => {
        setValue(d);
@@ -30,6 +36,9 @@ const DatePicker: React.FC<Props> = (props: Props) => {
    useEffect(() => {
       if (props.value && value === undefined)
          setValue(props.value);
+      if(props.datePickerRef) {
+         (props.datePickerRef as React.MutableRefObject<DatePickerRef>).current = datePickerRef.current;
+      }
    })
 
    return (
@@ -58,4 +67,4 @@ const DatePicker: React.FC<Props> = (props: Props) => {
    )
 }
 
-export default DatePicker;
+export default forwardRef<DatePickerRef, Props>((props, ref) => <DatePicker datePickerRef={ref} {...props} />);

@@ -91,6 +91,8 @@ class AuthenticationService {
          body: JSON.stringify({ refreshToken })
       };
       const response = await apiConfig.callApi(`${this.resource}/refresh`, options);
+      console.log("Refresh API Response")
+      console.log(response.status);
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);
@@ -100,6 +102,7 @@ class AuthenticationService {
       }
       if(response.status >= 500) {
          const body = await response.json();
+         console.log(body)
          throw new InternalServerError(body.message);
       }
       const body = await response.json();

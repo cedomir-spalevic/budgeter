@@ -1,5 +1,5 @@
 import AuthProvider, { AuthState, useAuth } from "./Auth";
-import BudgetsProvider, { useBudgets } from "./Budget";
+import BudgetsProvider, { useBudgets } from "./Budgets";
 import IncomesProvider, { useIncomes } from "./Incomes";
 import NavigationHeaderProvider, { useNavigationHeader } from "./NavigationHeader";
 import PaymentsProvider, { usePayments } from "./Payments";

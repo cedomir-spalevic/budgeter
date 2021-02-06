@@ -1,4 +1,5 @@
 import { useAuth } from "context";
+import { useBudgets } from "context/Budgets";
 import React, { useState, createContext, useContext } from "react";
 import { Alert } from "react-native";
 import { Payment } from "services/external/api/models/data/payment";
@@ -24,6 +25,7 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
     const [empty, setEmpty] = useState<boolean>(false);
     const [values, setValues] = useState<Payment[]>([]);
     const auth = useAuth();
+    const budgets = useBudgets();
 
     const get = async (search?: string) => {
         try {
@@ -50,6 +52,8 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             setValues([...values]);
             if(isEmpty)
                 setEmpty(false);
+            // Update budget
+            budgets.get();
             return true;
         }
         catch(error) {
@@ -71,6 +75,8 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             const i = await paymentsService.update(id, payment);
             values[index] = i;
             setValues([...values]);
+            // Update budget
+            budgets.get();
             return true;
         }
         catch(error) {
@@ -95,6 +101,8 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             setValues([...values]);
             if(willBeEmpty)
                 setEmpty(true);
+            // Update budget
+            budgets.get();
             return true;
         }
         catch(error) {

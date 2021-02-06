@@ -1,68 +1,42 @@
 import React, { useEffect } from "react";
 import { 
-    Page, 
-    Label, 
-    Container, 
-    ActionItem,
-    Icon,
-    List,
-    Link,
-    Spacer
+    Icon
 } from "components";
-import { useBudgets, useTheme } from "context";
-import { View } from "react-native";
+import { useTheme } from "context";
+import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
+import EmptyBudget from "./EmptyBudget";
+import BudgetList from "./BudgetList";
+import { DueTodayItem } from "services/external/api/models/data/budget";
+import { View } from "react-native";
 
 const Home: React.FC = () => {
     const navigation = useNavigation();
     const theme = useTheme();
     const budgets = useBudgets();
+    const incomes = budgets.value.incomes.slice(0, 3);
+    const payments = budgets.value.payments.slice(0, 3);
+    const dueToday = [
+        ...budgets.value.incomes.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "income", item: x })),
+        ...budgets.value.payments.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "payment", item: x}))
+    ].slice(0, 2);
 
     useEffect(() => {
         navigation.setOptions({
-            headerLeft: () => <Icon onPress={() => budgets.getPrevious()} name="chevron-left" color={theme.value.palette.primary} size={32} />,
-            headerRight: () => <Icon onPress={() => budgets.getNext()} name="chevron-right" color={theme.value.palette.primary} size={32} />
+            headerRight: () => <Icon onPress={() => {}} name="add-circle" color={theme.value.palette.primary} size={32} />
         })
     })
 
+    if(incomes.length === 0 && payments.length === 0)
+        return <EmptyBudget />
     return (
-        <Page>
-            <Container title={budgets.date.format("MMMM YYYY")} allowScroll flex>
-                <Label type="header" text={budgets.date.format("MMMM YYYY")} />
-                <Spacer />
-                <ActionItem title={<Label type="regular" text="Due Today" />} action={<Link text="View all" onPress={() => {}} />}>
-                    <List 
-                        items={[
-                            { text: "Netflix", onPress: () => {} },
-                            { text: "Spray", onPress: () => {} },
-                            { text: "", onPress: () => {} }
-                        ]} 
-                    />
-                </ActionItem>
-                <Spacer />
-                <ActionItem title={<Label type="regular" text="Incomes" />} action={<Link text="View all" onPress={() => {}} />}>
-                    <List 
-                        items={[
-                            { text: "Netflix", onPress: () => {} },
-                            { text: "Spray", onPress: () => {} },
-                            { text: "", onPress: () => {} }
-                        ]} 
-                    />
-                </ActionItem>
-                <Spacer />
-                <ActionItem title={<Label type="regular" text="Payments" />} action={<Link text="View all" onPress={() => {}} />}>
-                    <List 
-                        items={[
-                            { text: "Netflix", onPress: () => {} },
-                            { text: "Spray", onPress: () => {} },
-                            { text: "", onPress: () => {} }
-                        ]} 
-                    />
-                </ActionItem>
-            </Container>
-        </Page>
+        <BudgetList 
+            dueTodayItems={dueToday}
+            incomeItems={incomes}
+            paymentItems={payments}
+        />
     )
+
 }
 
 export default Home;

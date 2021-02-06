@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "context";
+import { makeStyles, useTheme } from "context";
 import { TouchableOpacity, View } from "react-native";
 import { Label, Icon } from "components";
 
@@ -20,11 +20,16 @@ const useStyles = makeStyles(theme => ({
     listItemBorder: {
         borderBottomColor: theme.palette.gray,
         borderBottomWidth: 1
+    },
+    listItemText: {
+        flexDirection: "row"
     }
 }))
 
 interface ListItem {
+    id: string;
     text: string;
+    note?: { text: string; color: "red" | "green"; };
     onPress: () => void;
     iconName?: string;
     textColor?: string;
@@ -38,6 +43,7 @@ interface Props {
 
 const List: React.FC<Props> = (props: Props) => {
     const styles = useStyles();
+    const theme = useTheme();
 
     return (
         <View style={styles.container}>
@@ -47,8 +53,18 @@ const List: React.FC<Props> = (props: Props) => {
                 if(index !== props.items.length-1)
                     listItemStyle.push(styles.listItemBorder)
                 return (
-                    <TouchableOpacity onPress={item.onPress} style={listItemStyle}>
-                        <Label type="regular" text={item.text} color={item.textColor} />
+                    <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
+                        <View style={styles.listItemText}>
+                                <Label type="regular" text={item.text} color={item.textColor} />
+                                {item.note &&
+                                    <Label 
+                                        style={{ paddingLeft: 8 }} 
+                                        type="subText" 
+                                        text={item.note.text} 
+                                        color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} 
+                                    />
+                                }
+                        </View>
                         {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
                     </TouchableOpacity>
                 )

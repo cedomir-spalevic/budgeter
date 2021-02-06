@@ -3,6 +3,11 @@ import { createStackNavigator, StackNavigationOptions } from "@react-navigation/
 import DefaultScreen from "./Default";
 import { HomeRoutes } from "./routes";
 import { Header } from "components";
+import BudgetIncomesList from "./BudgetIncomesList";
+import BudgetPaymentsList from "./BudgetPaymentsList";
+import BudgetDueTodayList from "./BudgetDueTodayList";
+import IncomeScreen from "../Shared/Income";
+import PaymentScreen from "../Shared/Payment";
 
 const screenOptions: StackNavigationOptions = {
    header: (props) => <Header {...props} />
@@ -16,6 +21,26 @@ const IncomesNavigator: React.FC = () => {
          <Stack.Screen 
             name={HomeRoutes.Default} 
             component={DefaultScreen}
+         />
+         <Stack.Screen
+            name={HomeRoutes.BudgetIncomesList}
+            component={BudgetIncomesList}
+         />
+         <Stack.Screen
+            name={HomeRoutes.BudgetPaymentsList}
+            component={BudgetPaymentsList}
+         />
+         <Stack.Screen
+            name={HomeRoutes.BudgetDueTodayList}
+            component={BudgetDueTodayList}
+         />
+         <Stack.Screen
+            name={HomeRoutes.Income}
+            component={IncomeScreen}
+         />
+         <Stack.Screen
+            name={HomeRoutes.Payment}
+            component={PaymentScreen}
          />
       </Stack.Navigator>
    )

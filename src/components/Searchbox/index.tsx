@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import {
    View,
    TextInput,
-   Animated
+   Animated,
+   Keyboard
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -58,6 +59,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
    const cancel = () => {
       onChange(undefined);
       setShowCancel(false);
+      Keyboard.dismiss();
    }
 
    useEffect(() => {

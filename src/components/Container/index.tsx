@@ -39,6 +39,7 @@ interface Props {
     fullWith?: boolean;
     allowScroll?: boolean;
     title?: string;
+    preventTitleAnimation?: boolean;
 }
 
 const Container: React.FC<Props> = (props: Props) => {
@@ -63,6 +64,19 @@ const Container: React.FC<Props> = (props: Props) => {
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         scrollY.current.setValue(event.nativeEvent.contentOffset.y);
+        if(props.preventTitleAnimation) {
+            navigation.setOptions({
+                containerBackground: {
+                    opacity: scrollY.current.interpolate({
+                        inputRange: [0, 33],
+                        outputRange: [0, 1],
+                        extrapolate: "clamp"
+                    })
+                }
+            });
+            return;
+        }
+
         navigation.setOptions({
             containerBackground: {
                 opacity: scrollY.current.interpolate({
@@ -81,7 +95,8 @@ const Container: React.FC<Props> = (props: Props) => {
                             extrapolate: "clamp"
                         }),
                         overflow: "hidden",
-                        width: "100%"
+                        width: "100%",
+                        textAlign: "center"
                     }}
                 >
                     <Label style={{ paddingTop: 10, textAlign: "center" }} text={props.title} type="regular" />
