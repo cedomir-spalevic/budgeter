@@ -4,6 +4,7 @@ import { Switch as RNSwitch } from "react-native";
 
 interface Props {
     value: boolean;
+    onChange: () => void;
 }
 
 const Switch: React.FC<Props> = (props: Props) => {
@@ -11,7 +12,8 @@ const Switch: React.FC<Props> = (props: Props) => {
     return (
         <RNSwitch 
             trackColor={{ false: theme.value.palette.primary, true: theme.value.palette.primary }}
-            value={props.value} 
+            value={props.value}
+            onValueChange={() => props.onChange()}
         />
     )
 }

@@ -15,14 +15,15 @@ const Settings: React.FC = () => {
                 <ActionItem title={<Label type="header" text="Settings" />}>
                     <List 
                         items={[
-                            { text: "Appearance", onPress: () => navigation.navigate(SettingsRoutes.Appearance) },
-                            { text: "Notifications", onPress: () => navigation.navigate(SettingsRoutes.Notifications) },
-                            { text: "Swipe Options", onPress: () => navigation.navigate(SettingsRoutes.SwipeOptions) }
+                            { id: "apperance", text: "Appearance", onPress: () => navigation.navigate(SettingsRoutes.Appearance) },
+                            { id: "notifications", text: "Notifications", onPress: () => navigation.navigate(SettingsRoutes.Notifications) },
+                            { id: "swipeOptions", text: "Swipe Options", onPress: () => navigation.navigate(SettingsRoutes.SwipeOptions) }
                         ]} 
                     />
                 </ActionItem>
                 <List 
                     items={[{ 
+                        id: "log out",
                         text: "Log out", 
                         textColor: theme.value.palette.error, 
                         iconColor:  theme.value.palette.error,

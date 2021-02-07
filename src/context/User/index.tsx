@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { User } from "services/external/api/models/data/user";
 import UserService from "services/external/api/me";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { useAuth } from "context";
 import { UnauthorizedError } from "services/external/api/models/errors";
 
@@ -12,6 +12,7 @@ interface Props {
 interface Context {
     value: User;
     getUser: () => Promise<void>;
+    registerDevice: (deviceToken: string) => Promise<void>;
 }
 
 const UserContext = createContext<Context>(undefined!);
@@ -24,6 +25,7 @@ const UserProvider: React.FC<Props & any> = (props: Props) => {
         try {
             const userService  = UserService.getInstance();
             const user = await userService.get();
+            console.log(user)
             setValue(user);
         }
         catch(error) {
@@ -35,8 +37,23 @@ const UserProvider: React.FC<Props & any> = (props: Props) => {
         }
     }
 
+    const registerDevice = async (deviceToken: string) => {
+        try {
+            const userService  = UserService.getInstance();
+            await userService.registerDevice(deviceToken);
+            value.device.os = Platform.OS;
+            setValue({...value});
+        }
+        catch(error) {
+            if(error instanceof UnauthorizedError) {
+                auth.logout();
+                return;
+            }
+        }
+    }
+
     return (
-        <UserContext.Provider value={{ value, getUser }}>
+        <UserContext.Provider value={{ value, getUser, registerDevice }}>
             {props.children}
         </UserContext.Provider>
     )

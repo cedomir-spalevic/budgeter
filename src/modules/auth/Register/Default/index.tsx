@@ -128,7 +128,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                         <Icon name="check-circle" style={[styles.iconStyles, styles.valid]} />
                             : <Icon name="error" style={[styles.iconStyles, styles.invalid]} /> }
                     <Text style={passwordRequirements.containsUpperCase ? styles.valid : styles.invalid}>
-                    Have at least one upper case character
+                        Have at least one upper case character
                     </Text>
                 </View>
                 <View style={styles.passwordRequirement}>

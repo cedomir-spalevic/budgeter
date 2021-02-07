@@ -6,6 +6,10 @@ export interface User {
     createdOn: Date;
     modifiedOn: Date;
     device: {
-        os: string | null;
+        os: string | null
+    },
+    notificationPreferences: {
+       incomeNotifications: boolean;
+       paymentNotifications: boolean;
     }
 }

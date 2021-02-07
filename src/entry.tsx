@@ -7,7 +7,8 @@ import {
     PaymentsProvider, 
     IncomesProvider,
     UserProvider,
-    BudgetsProvider
+    BudgetsProvider,
+    NotificationsProvider
 } from "context";
 
 const Entry: React.FC = () => {
@@ -20,7 +21,9 @@ const Entry: React.FC = () => {
                     <BudgetsProvider>
                         <IncomesProvider>
                             <PaymentsProvider>
-                                <AppLoader />
+                                <NotificationsProvider>
+                                    <AppLoader />
+                                </NotificationsProvider>
                             </PaymentsProvider>
                         </IncomesProvider>
                     </BudgetsProvider>

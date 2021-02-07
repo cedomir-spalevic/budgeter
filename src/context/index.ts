@@ -1,7 +1,7 @@
 import AuthProvider, { AuthState, useAuth } from "./Auth";
 import BudgetsProvider, { useBudgets } from "./Budgets";
 import IncomesProvider, { useIncomes } from "./Incomes";
-import NavigationHeaderProvider, { useNavigationHeader } from "./NavigationHeader";
+import NotificationsProvider, { useNotifications } from "./Notifications";
 import PaymentsProvider, { usePayments } from "./Payments";
 import ScrollProvider, { useScroll } from "./Scroll";
 import ThemeProvider, { useTheme, makeStyles } from "./Theme";
@@ -14,9 +14,9 @@ export {
     useBudgets,
     IncomesProvider,
     useIncomes,
+    NotificationsProvider, 
+    useNotifications,
     AuthState,
-    NavigationHeaderProvider,
-    useNavigationHeader,
     PaymentsProvider,
     usePayments,
     ScrollProvider,

@@ -40,7 +40,7 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
     const theme = useTheme();
     return (
         <>
-            <Container allowScroll flex title="Confirmation Code">
+            <Container allowScroll flex preventTitleAnimation>
                 <Label type="header" text="Enter confirmation code" />
                 <Spacer />
                 {props.message && (
@@ -90,10 +90,9 @@ const ConfirmationCodeScreen: React.FC = () => {
         }
      })(ConfirmationCodeForm);
 
-    // TODO: Message here?
     return (
         <Page>
-            <Form message={""} /> 
+            <Form message="We sent a confirmation code to your email. Please enter it here" /> 
         </Page>
     )
 }

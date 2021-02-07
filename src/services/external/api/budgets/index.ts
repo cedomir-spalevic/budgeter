@@ -20,11 +20,13 @@ class BudgetsService {
       const apiConfig = ApiConfig.getInstance();
       const url = `${this.resource}?day=${day}&month=${month}&year=${year}`
       const response = await apiConfig.callApiProtected(url);
+      console.log(response.status)
       const responseBody = await response.json();
       if(response.status === 400) {
          throw new GeneralError(responseBody.message);
       }
       if(response.status === 500) {
+         console.log(responseBody)
          throw new InternalServerError(responseBody.message);
       }
       return {

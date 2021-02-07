@@ -43,6 +43,10 @@ class UserService {
          modifiedOn: new Date(body.modified),
          device: {
             os: body.device.os
+         },
+         notificationPreferences: {
+            paymentNotifications: body.notificationPreferences.paymentNotifications,
+            incomeNotifications: body.notificationPreferences.incomeNotifications
          }
       }
    }
@@ -93,8 +97,17 @@ class UserService {
             body: JSON.stringify(body)
         }
         const response = await apiConfig.callApiProtected(`${this.resource}/registerDevice`, options);
-        if (response.status !== 200)
-            throw "Unable to register device";
+        if(response.status === 400) {
+            const body = await response.json();
+            throw new GeneralError(body.message);
+         }
+         if(response.status === 401) {
+            throw new UnauthorizedError();
+         }
+         if(response.status >= 500) {
+            const body = await response.json();
+            throw new InternalServerError(body.message);
+         }
    }
 }
 
