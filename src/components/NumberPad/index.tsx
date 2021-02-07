@@ -7,7 +7,6 @@ import {
    NativeSyntheticEvent,
    TextInputKeyPressEventData
 } from "react-native";
-import Animated from "react-native-reanimated";
 import { toCurrency } from "services/internal/currency";
 
 const useStyles = makeStyles(theme => ({
@@ -50,7 +49,7 @@ interface Props {
    value?: number;
    hidden?: boolean;
    errorMessage?: string;
-   onChange: (num: string) => void;
+   onChange: (num: number) => void;
    autoFocus?: boolean;
    placeholder?: string;
    preRenderIcon?: JSX.Element;
@@ -84,13 +83,17 @@ const NumberPad: React.FC<Props> = (props: Props) => {
 
     const onChange = (newValue: string) => {
       let numStr = newValue.substr(1).replaceAll(".", "").replaceAll(",", "");
-      setNum(toCurrency(Number(numStr ?? "")/100))
+      const amount = Number(numStr ?? "")/100;
+      setNum(toCurrency(amount))
+      props.onChange(amount);
     }
 
-    useEffect(() => {
-        if(props.value && num === undefined)
-            setNum(toCurrency(Number(props.value ?? "")/100));
-    })
+   useEffect(() => {
+      if(props.value)
+         setNum(toCurrency(props.value))
+      else
+         setNum(toCurrency(0))
+   }, [])
 
    return (
       <TextField

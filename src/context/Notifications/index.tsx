@@ -1,6 +1,6 @@
-import { useUser } from "context";
 import React, { createContext, useContext } from "react";
 import { Notification, Notifications, Registered, RegistrationError } from "react-native-notifications";
+import UserService from "services/external/api/me";
 
 interface Props {
    children: React.ReactNode;
@@ -13,7 +13,6 @@ interface Context {
 const NotificationsContext = createContext<Context>(undefined!);
 
 const NotificationsProvider: React.FC<Props & any> = (props: Props) => {
-    const user = useUser();
 
     const askForPermissions = () => {
         return new Promise((resolve, reject) => {
@@ -21,10 +20,12 @@ const NotificationsProvider: React.FC<Props & any> = (props: Props) => {
     
             Notifications.events().registerRemoteNotificationsRegistered(async (event: Registered) => {
                 try {
-                    await user.registerDevice(event.deviceToken);
+                    const userService = UserService.getInstance();
+                    await userService.registerDevice(event.deviceToken);
                     resolve();
                 }
                 catch(error) {
+                    console.log(error);
                     reject();
                 }
             })

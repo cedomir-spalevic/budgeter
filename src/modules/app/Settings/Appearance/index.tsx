@@ -12,16 +12,19 @@ const Appearance: React.FC = () => {
                     <List 
                         items={[
                             { 
+                                id: "auto",
                                 text: "Automatic", 
                                 action:<Checkbox checked={theme.kind === "auto"} />, 
                                 onPress: () => theme.setKind("auto")
                             },
                             { 
+                                id: "dark",
                                 text: "Dark", 
                                 action:<Checkbox checked={theme.kind === "dark"} />, 
                                 onPress: () => theme.setKind("dark")
                             },
                             { 
+                                id: "light",
                                 text: "Light", 
                                 action:<Checkbox checked={theme.kind === "light"} />, 
                                 onPress: () => theme.setKind("light")

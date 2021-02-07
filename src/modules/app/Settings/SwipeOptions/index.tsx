@@ -1,8 +1,11 @@
 import React from "react";
 import { Container, Page, Label, List, ActionItem } from "components";
-import { useAuth, useTheme } from "context";
+import { useNavigation } from "@react-navigation/native";
+import { SettingsRoutes } from "../routes";
 
 const SwipeOptions: React.FC = () => {
+    const navigation = useNavigation();
+
     return (
         <Page>
             <Container allowScroll flex title="Swipe Options">
@@ -10,12 +13,20 @@ const SwipeOptions: React.FC = () => {
                     <List 
                         items={[
                             { 
-                                text: "Left swipe", 
-                                onPress: () => {}
+                                id: "delete-income-swipe-option",
+                                text: "Delete Income", 
+                                onPress: () => navigation.navigate(SettingsRoutes.SwipeOptionPreference, { 
+                                    title: "Delete Income",
+                                    swipeOptionKey: "deleteIncome"
+                                })
                             },
                             { 
-                                text: "Right swipe", 
-                                onPress: () => {}
+                                id: "delete-payment-swipe-option",
+                                text: "Delete Payment", 
+                                onPress: () => navigation.navigate(SettingsRoutes.SwipeOptionPreference, { 
+                                    title: "Delete Payment",
+                                    swipeOptionKey: "deletePayment"
+                                })
                             }
                         ]} 
                     />

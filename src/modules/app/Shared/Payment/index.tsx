@@ -66,7 +66,7 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
                     placeholder="Amount"
                     value={props.values.amount}
                     textInputRef={props.numberPadRef}
-                    onChange={props.handleChange("amount")}
+                    onChange={n => props.setFieldValue("amount", n, true)}
                     errorMessage={props.touched.amount && props.errors.amount}
                     onSubmit={() => props.repeatRef.current.showPicker()}
                 />
@@ -75,9 +75,9 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
                     placeholder="Repeat?"
                     items={Object.keys(RecurrenceLabels)}
                     value={props.values.repeat}
-                    onChange={newValue => {
-                        props.handleChange("repeat")(newValue);
-                        props.initialOccurrenceRef.current.showPicker();
+                    onChange={repeat => {
+                        props.setFieldValue("repeat", repeat, true);
+                        props.initialOccurrenceRef.current.showPicker()
                     }}
                     errorMessage={props.touched.repeat && props.errors.repeat}
                     pickerSelectRef={props.repeatRef}
@@ -113,7 +113,7 @@ const PaymentScreen: React.FC = () => {
             title: route.params?.payment?.title,
             amount: route.params?.payment?.amount,
             repeat: route.params?.payment?.recurrence && RecurrenceMap[route.params?.payment?.recurrence],
-            initialOccurrenceDate: (route.params?.payment ? new Date(route.params.payment.initialYear, route.params.payment.initialMonth, route.params.payment.initialDay).toString() 
+            initialOccurrenceDate: (route.params?.payment ? new Date(route.params.payment.initialYear, route.params.payment.initialMonth, route.params.payment.initialDate).toString() 
                                         : undefined)
         }),
         validationSchema: Yup.object().shape({
@@ -130,6 +130,7 @@ const PaymentScreen: React.FC = () => {
                 amount: Number(values.amount)/100,
                 recurrence: RecurrenceLabels[values.repeat],
                 initialDay: initialOccurenceDate.getDate(),
+                initialDate: initialOccurenceDate.getDate(),
                 initialMonth: initialOccurenceDate.getMonth(),
                 initialYear: initialOccurenceDate.getFullYear()
             }

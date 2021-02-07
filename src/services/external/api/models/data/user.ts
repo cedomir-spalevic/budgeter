@@ -13,3 +13,10 @@ export interface User {
        paymentNotifications: boolean;
     }
 }
+
+export interface UpdateUserBody {
+    firstName: string;
+    lastName: string;
+    incomeNotifications: boolean;
+    paymentNotifications: boolean;
+}

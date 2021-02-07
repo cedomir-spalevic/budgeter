@@ -41,7 +41,7 @@ const BudgetIncomesList: React.FC = () => {
                         items={budgets.value.incomes.map(x => ({
                             id: x.id,
                             text: x.title,
-                            note: { text: `$${x.amount}`, color: "green" },
+                            note: { text: toCurrency(x.amount), color: "green" },
                             onPress: () => {},
                             //onPress: () => navigation.navigate(IncomesRoutes.Income, { income: x }),
                             //leftSwipeContent: { color: theme.value.palette.error, iconName: "delete" },

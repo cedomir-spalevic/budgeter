@@ -31,6 +31,7 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
             const year = today.get("year")
             const budgetsService = BudgetsService.getInstance();
             const budget = await budgetsService.getBudget(day, month, year);
+            console.log(budget)
             setTitle(`${today.format("MMMM")} ${year}`)
             setValue({...budget});
         }

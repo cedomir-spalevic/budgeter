@@ -1,7 +1,7 @@
 import ApiConfig from "../config";
 import { Platform } from "react-native";
 import { GeneralError, InternalServerError, UnauthorizedError } from "../models/errors";
-import { User } from "../models/data/user";
+import { UpdateUserBody, User } from "../models/data/user";
 import { AuthResponse } from "../models/responses";
 import { getItem, StorageKeys } from "services/internal/storage";
 
@@ -84,30 +84,69 @@ class UserService {
    }
 
    public async registerDevice(deviceToken: string): Promise<void> {
-        const apiConfig = ApiConfig.getInstance();
-        const body = {
-            device: Platform.OS,
-            token: deviceToken
-        }
-        const options: RequestInit = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        }
-        const response = await apiConfig.callApiProtected(`${this.resource}/registerDevice`, options);
-        if(response.status === 400) {
-            const body = await response.json();
-            throw new GeneralError(body.message);
+      const apiConfig = ApiConfig.getInstance();
+      const body = {
+         device: Platform.OS,
+         token: deviceToken
+      }
+      const options: RequestInit = {
+         method: "POST",
+         headers: {
+               "Content-Type": "application/json"
+         },
+         body: JSON.stringify(body)
+      }
+      const response = await apiConfig.callApiProtected(`${this.resource}/registerDevice`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 401) {
+         throw new UnauthorizedError();
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+   }
+
+   public async update(user: Partial<UpdateUserBody>): Promise<User> {
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "PATCH",
+         headers: {
+               "Content-Type": "application/json"
+         },
+         body: JSON.stringify(user)
+      }
+      const response = await apiConfig.callApiProtected(`${this.resource}`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 401) {
+         throw new UnauthorizedError();
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const responseBody = await response.json()
+      return {
+         firstName: responseBody.firstName,
+         lastName: responseBody.lastName,
+         email: responseBody.email,
+         emailVerified: responseBody.emailVerified,
+         createdOn: new Date(responseBody.createdOn),
+         modifiedOn: new Date(responseBody.modified),
+         device: {
+            os: responseBody.device.os
+         },
+         notificationPreferences: {
+            paymentNotifications: responseBody.notificationPreferences.paymentNotifications,
+            incomeNotifications: responseBody.notificationPreferences.incomeNotifications
          }
-         if(response.status === 401) {
-            throw new UnauthorizedError();
-         }
-         if(response.status >= 500) {
-            const body = await response.json();
-            throw new InternalServerError(body.message);
-         }
+      }
    }
 }
 

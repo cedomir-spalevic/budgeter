@@ -5,6 +5,7 @@ export interface Income {
     title: string;
     amount: number;
     initialDay: number;
+    initialDate: number;
     initialMonth: number;
     initialYear: number;
     recurrence: Recurrence;
@@ -12,10 +13,7 @@ export interface Income {
     modifiedOn: Date;
 }
 
-export interface BudgetIncome {
-    id: string;
-    title: string;
-    amount: number;
+export interface BudgetIncome extends Income {
     dueToday: boolean;
     totalAmount: number;
 }

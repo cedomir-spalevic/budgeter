@@ -5,6 +5,7 @@ export interface Payment {
     title: string;
     amount: number;
     initialDay: number;
+    initialDate: number;
     initialMonth: number;
     initialYear: number;
     recurrence: Recurrence;
@@ -12,10 +13,7 @@ export interface Payment {
     modifiedOn: Date;
 }
 
-export interface BudgetPayment {
-    id: string;
-    title: string;
-    amount: number;
+export interface BudgetPayment extends Payment {
     dueToday: boolean;
     totalAmount: number;
 }

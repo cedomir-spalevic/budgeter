@@ -9,7 +9,7 @@ import {
     SummaryView,
     ConfirmDialog
 } from "components";
-import { useTheme } from "context";
+import { useTheme, useUser } from "context";
 import { useIncomes } from "context/Incomes";
 import { useNavigation } from "@react-navigation/native";
 import { IncomesRoutes } from "../../routes";
@@ -22,6 +22,7 @@ const IncomesList: React.FC = () => {
     const incomes = useIncomes();
     const navigation = useNavigation();
     const theme = useTheme();
+    const user = useUser();
 
     const deleteIncome = async () => {
         await incomes.delete(incomeToDelete.id);
@@ -41,14 +42,22 @@ const IncomesList: React.FC = () => {
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={incomes.values.map(x => ({
-                            id: x.id,
-                            text: x.title,
-                            note: { text: `$${x.amount}`, color: "green" },
-                            onPress: () => navigation.navigate(IncomesRoutes.Income, { income: x }),
-                            leftSwipeContent: { color: theme.value.palette.error, iconName: "delete" },
-                            onLeftActionRelease: () => setIncomeToDelete(x)
-                        }))}
+                        items={incomes.values.map(x => {
+                            let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
+                            if(user.swipeOptions.deleteIncome === "right") {
+                                swipeContentKey = "rightSwipeContent";
+                                actionReleaseKey = "onRightActionRelease";
+                            }
+
+                            return ({
+                                id: x.id,
+                                text: x.title,
+                                note: { text: toCurrency(x.amount), color: "green" },
+                                onPress: () => navigation.navigate(IncomesRoutes.Income, { income: x }),
+                                [swipeContentKey]: { color: theme.value.palette.error, iconName: "delete" },
+                                [actionReleaseKey]: () => setIncomeToDelete(x)
+                            })
+                        })}
                     />
                 </Container>
             </Container>

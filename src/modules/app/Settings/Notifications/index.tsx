@@ -10,7 +10,23 @@ const Notifications: React.FC = () => {
 
     const togglePaymentNotificationSetting = async () => {
         if(!user.value.notificationPreferences.paymentNotifications) {
-            await notifications.askForPermissions();
+            notifications.askForPermissions().then(() => {
+                user.update({ paymentNotifications: true })
+            })
+        }
+        else {
+            user.update({ paymentNotifications: false })
+        }
+    }
+
+    const toggleIncomeNotificationSetting = async () => {
+        if(!user.value.notificationPreferences.incomeNotifications) {
+            notifications.askForPermissions().then(() => {
+                user.update({ incomeNotifications: true })
+            })
+        }
+        else {
+            user.update({ incomeNotifications: false })
         }
     }
 
@@ -29,7 +45,7 @@ const Notifications: React.FC = () => {
                             { 
                                 id: "income-reminder",
                                 text: "Income Reminder", 
-                                action: <Switch onChange={() => {}} value={user.value.notificationPreferences.incomeNotifications} />, 
+                                action: <Switch onChange={() => toggleIncomeNotificationSetting()} value={user.value.notificationPreferences.incomeNotifications} />, 
                                 onPress: () => {}
                             }
                         ]} 

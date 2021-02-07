@@ -9,7 +9,7 @@ import {
     SummaryView,
     ConfirmDialog
 } from "components";
-import { usePayments, useTheme } from "context";
+import { usePayments, useTheme, useUser } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { PaymentsRoutes } from "../../routes";
 import { View } from "react-native";
@@ -21,6 +21,7 @@ const PaymentsList: React.FC = () => {
     const payments = usePayments();
     const navigation = useNavigation();
     const theme = useTheme();
+    const user = useUser();
 
     const deletePayment = async () => {
         await payments.delete(paymentToDelete.id);
@@ -40,14 +41,21 @@ const PaymentsList: React.FC = () => {
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={payments.values.map(x => ({
-                            id: x.id,
-                            text: x.title,
-                            note: { text: `$${x.amount}`, color: "green" },
-                            onPress: () => navigation.navigate(PaymentsRoutes.Payment, { income: x }),
-                            leftSwipeContent: { color: theme.value.palette.error, iconName: "delete" },
-                            onLeftActionRelease: () => setPaymentToDelete(x)
-                        }))}
+                        items={payments.values.map(x => {
+                            let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
+                            if(user.swipeOptions.deleteIncome === "right") {
+                                swipeContentKey = "rightSwipeContnet";
+                                actionReleaseKey = "onRightActionRelease";
+                            }
+                            return ({
+                                id: x.id,
+                                text: x.title,
+                                note: { text: toCurrency(x.amount), color: "green" },
+                                onPress: () => navigation.navigate(PaymentsRoutes.Payment, { income: x }),
+                                [swipeContentKey]: { color: theme.value.palette.error, iconName: "delete" },
+                                [actionReleaseKey]: () => setPaymentToDelete(x)
+                            })
+                    })}
                     />
                 </Container>
             </Container>

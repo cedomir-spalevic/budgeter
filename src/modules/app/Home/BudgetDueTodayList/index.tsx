@@ -46,7 +46,7 @@ const BudgetDueTodayList: React.FC = () => {
                         items={dueTodayItems.map(x => ({
                             id: x.item.id,
                             text: x.item.title,
-                            note: { text: `$${x.item.amount}`, color: x.type === "income" ? "green" : "red" },
+                            note: { text: toCurrency(x.item.amount), color: x.type === "income" ? "green" : "red" },
                             onPress: () => {
                                 if(x.type === "income")
                                     navigation.navigate(HomeRoutes.Income)

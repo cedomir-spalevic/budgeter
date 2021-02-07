@@ -19,6 +19,8 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useIncomes } from "context/Incomes";
 import { TextInput } from "react-native";
 import { RecurrenceLabels, RecurrenceMap } from "services/external/api/models/data/recurrence";
+import { PickerSelectRef } from "components/PickerSelect";
+import { DatePickerRef } from "components/DatePicker";
 
 export interface IncomeParams {
     income?: Income
@@ -33,6 +35,8 @@ type RouteProps = RouteProp<ParamList, "Income">
 interface FormProps {
     label: string;
     numberPadRef: React.MutableRefObject<TextInput>;
+    repeatRef: React.MutableRefObject<PickerSelectRef>;
+    initialOccurrenceRef: React.MutableRefObject<DatePickerRef>;
 }
 
 interface FormValues {
@@ -62,7 +66,8 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
                     placeholder="Amount"
                     value={props.values.amount}
                     textInputRef={props.numberPadRef}
-                    onChange={props.handleChange("amount")}
+                    onChange={n => props.setFieldValue("amount", n, true)}
+                    onSubmit={() => props.repeatRef.current.showPicker()}
                     errorMessage={props.touched.amount && props.errors.amount}
                 />
                 <PickerSelect 
@@ -70,8 +75,12 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
                     placeholder="Repeat?"
                     items={Object.keys(RecurrenceLabels)}
                     value={props.values.repeat}
-                    onChange={props.handleChange("repeat")}
+                    onChange={repeat => {
+                        props.setFieldValue("repeat", repeat, true);
+                        props.initialOccurrenceRef.current.showPicker()
+                    }}
                     errorMessage={props.touched.repeat && props.errors.repeat}
+                    pickerSelectRef={props.repeatRef}
                 />
                 <DatePicker
                     preRenderIcon={<Icon name="event" />}
@@ -79,6 +88,7 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => {
                     value={props.values.initialOccurrenceDate ? new Date(props.values.initialOccurrenceDate) : undefined}
                     onChange={props.handleChange("initialOccurrenceDate")}
                     errorMessage={props.touched.initialOccurrenceDate && props.errors.initialOccurrenceDate}
+                    datePickerRef={props.initialOccurrenceRef}
                 />
             </Container>
             <KeyboardAccessory justifyContent="flex-end">
@@ -93,6 +103,8 @@ const IncomeScreen: React.FC = () => {
     const navigation = useNavigation();
     const incomes = useIncomes();
     const numberPadRef = useRef<TextInput>();
+    const repeatRef = useRef<PickerSelectRef>();
+    const initialOccurrenceRef = useRef<DatePickerRef>();
 
     const testForValidRepeat = (repeat: string) => (repeat in RecurrenceLabels)
 
@@ -101,7 +113,7 @@ const IncomeScreen: React.FC = () => {
             title: route.params?.income?.title,
             amount: route.params?.income?.amount,
             repeat: route.params?.income?.recurrence && RecurrenceMap[route.params?.income?.recurrence],
-            initialOccurrenceDate: (route.params?.income ? new Date(route.params.income.initialYear, route.params.income.initialMonth, route.params.income.initialDay).toString() 
+            initialOccurrenceDate: (route.params?.income ? new Date(route.params.income.initialYear, route.params.income.initialMonth, route.params.income.initialDate).toString() 
                                         : undefined)
         }),
         validationSchema: Yup.object().shape({
@@ -115,9 +127,10 @@ const IncomeScreen: React.FC = () => {
             const initialOccurenceDate = new Date(values.initialOccurrenceDate);
             const income: Partial<Income> = {
                 title: values.title,
-                amount: Number(values.amount)/100,
+                amount: values.amount,
                 recurrence: RecurrenceLabels[values.repeat],
-                initialDay: initialOccurenceDate.getDate(),
+                initialDay: initialOccurenceDate.getDay(),
+                initialDate: initialOccurenceDate.getDate(),
                 initialMonth: initialOccurenceDate.getMonth(),
                 initialYear: initialOccurenceDate.getFullYear()
             }
@@ -139,6 +152,8 @@ const IncomeScreen: React.FC = () => {
             <Form
                 label={route.params && route.params.income ? "Update Income" : "Create Income"}
                 numberPadRef={numberPadRef}
+                repeatRef={repeatRef}
+                initialOccurrenceRef={initialOccurrenceRef}
             />
         </Page>
     )

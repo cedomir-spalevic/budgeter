@@ -1,11 +1,15 @@
 import SecureStorage from "react-native-secure-storage";
 
+export type SwipeOption = "left" | "right";
+
 export enum StorageKeys {
     AccessToken = "BudgeterAPIAccessToken",
     RefreshToken = "BudgeterAPIRefreshToken",
     AccessTokenExpiration = "BudgeterAPIAccessTokenExpiration",
     ConfirmationKey = "BudgeterAPIConfirmationKey",
-    ConfirmationKeyExpiration = "BudgeterAPIConfirmationExpiration"
+    ConfirmationKeyExpiration = "BudgeterAPIConfirmationExpiration",
+    DeleteIncomeSwipeOption = "BudgeterAPIDeleteIncomeSwipeOption",
+    DeletePaymentSwipeOption = "BudgeterAPIDeletePaymentSwipeOption"
 }
 
 export const getItem = async (key: string) => await SecureStorage.getItem(key);
