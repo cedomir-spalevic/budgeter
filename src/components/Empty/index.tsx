@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { globalStyles, colors } from "styles";
 import { NoData } from "assets/svg";
-import { Icon } from "components";
+import { Icon, Label } from "components";
 
 const styles = StyleSheet.create({
    textView: {
@@ -45,9 +45,7 @@ const Empty: React.FC<Props> = (props: Props) => {
    return (
       <View style={globalStyles.centeredScreen}>
          <View style={styles.textView}>
-            <Text style={styles.text}>
-               {props.message}
-            </Text>
+            <Label text={props.message} type="regular" />
             {props.addCreateNew &&
                <TouchableOpacity style={styles.linkView} onPress={() => props.onCreateNewClick && props.onCreateNewClick()}>
                   <Text style={styles.link}>

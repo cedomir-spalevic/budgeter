@@ -1,29 +1,21 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { globalStyles } from "styles";
-import RegisterForm from "./RegisterForm";
-import PressPlay from "assets/svg/PressPlay";
-import { TypingView } from "components";
-import { useHeaderHeight } from "@react-navigation/stack";
+import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack"
+import ConfirmationCodeScreen from "./ConfirmationCode";
+import LoginScreen from "./Default";
+import { RegisterRoutes } from "./routes";
+import { Header } from "components";
 
-const styles = StyleSheet.create({
-   containerSecond: {
-      paddingTop: "5%"
-   }
-})
-
-const RegisterScreen: React.FC = () => {
-   const headerHeight = useHeaderHeight();
-   return (
-      <TypingView style={[globalStyles.container, styles.containerSecond]} verticalOffset={-headerHeight}>
-         <React.Fragment>
-            <View style={{ alignItems: "center" }}>
-               <PressPlay />
-            </View>
-            <RegisterForm />
-         </React.Fragment>
-      </TypingView>
-   )
+const screenOptions: StackNavigationOptions = {
+    header: (props) => <Header isModal={true} {...props} />
 }
 
-export default RegisterScreen;
+const Stack = createStackNavigator();
+
+const RegisterNavigator: React.FC = () => (
+    <Stack.Navigator initialRouteName={RegisterRoutes.Default} screenOptions={screenOptions}>
+        <Stack.Screen name={RegisterRoutes.Default} component={LoginScreen} />
+        <Stack.Screen name={RegisterRoutes.ConfirmationCode} component={ConfirmationCodeScreen} />
+    </Stack.Navigator>
+)
+
+export default RegisterNavigator;

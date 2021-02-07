@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 import { Notification, Notifications, Registered, RegistrationError } from "react-native-notifications";
 import UserService from "services/external/api/me";
 
@@ -7,46 +7,42 @@ interface Props {
 }
 
 interface Context {
+    askForPermissions: () => Promise<unknown>;
 }
 
 const NotificationsContext = createContext<Context>(undefined!);
 
-const NotificationsProvider: React.FC<Props> = (props: Props) => {
+const NotificationsProvider: React.FC<Props & any> = (props: Props) => {
 
-    useEffect(() => {
-        Notifications.registerRemoteNotifications();
-
-        Notifications.events().registerRemoteNotificationsRegistered(async (event: Registered) => {
-            // Send the device token to API, so it can send push notifications
-            const userService = UserService.getInstance();
-            await userService.registerDevice(event.deviceToken);
-        });
-
-        Notifications.events().registerRemoteNotificationsRegistrationFailed((event: RegistrationError) => {
-            console.error(event);
-        });
-
-        Notifications.events().registerNotificationReceivedForeground((notification: Notification, completion) => {
-            console.log(`Notification received in foreground: ${notification.title} : ${notification.body}`);
-            completion({ alert: false, sound: false, badge: false });
-        });
-
-        Notifications.events().registerNotificationOpened((notification: Notification, completion) => {
-            console.log(`Notification opened: ${notification.payload}`);
-            completion();
+    const askForPermissions = () => {
+        return new Promise((resolve, reject) => {
+            Notifications.registerRemoteNotifications();
+    
+            Notifications.events().registerRemoteNotificationsRegistered(async (event: Registered) => {
+                try {
+                    const userService = UserService.getInstance();
+                    await userService.registerDevice(event.deviceToken);
+                    resolve();
+                }
+                catch(error) {
+                    console.log(error);
+                    reject();
+                }
+            })
+            
+            Notifications.events().registerRemoteNotificationsRegistrationFailed(event => {
+                reject();
+            })
         })
-    }, [])
+    }
 
-   return (
-      <NotificationsContext.Provider value={{}}>
-         {props.children}
-      </NotificationsContext.Provider>
-   )
+    return (
+        <NotificationsContext.Provider value={{ askForPermissions }}>
+            {props.children}
+        </NotificationsContext.Provider>
+    )
 };
 
-export const useNotifications = (): Context => {
-    const notifications = useContext<Context>(NotificationsContext);
-    return notifications;
-}
+export const useNotifications = (): Context => useContext<Context>(NotificationsContext);
 
 export default NotificationsProvider;

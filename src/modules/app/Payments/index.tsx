@@ -1,17 +1,29 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import PaymentsHomeScreen from "./Home";
+import { createStackNavigator, StackNavigationOptions } from "@react-navigation/stack";
+import DefaultScreen from "./Default";
 import PaymentScreen from "modules/app/Shared/Payment";
-import { PaymentsRoute } from "./routes";
-import { defaultScreenOptions } from "modules";
+import { PaymentsRoutes } from "./routes";
+import { Header } from "components";
+
+const screenOptions: StackNavigationOptions = {
+   header: (props) => <Header {...props} />
+}
 
 const Stack = createStackNavigator();
 
-const PaymentsNavigator: React.FC = () => (
-   <Stack.Navigator initialRouteName={PaymentsRoute.Home} screenOptions={defaultScreenOptions}>
-      <Stack.Screen name={PaymentsRoute.Home} component={PaymentsHomeScreen} />
-      <Stack.Screen name={PaymentsRoute.Payment} component={PaymentScreen} />
-   </Stack.Navigator>
-)
+const PaymentsNavigator: React.FC = () => {
+   return (
+      <Stack.Navigator initialRouteName={PaymentsRoutes.Default} screenOptions={screenOptions}>
+         <Stack.Screen 
+            name={PaymentsRoutes.Default} 
+            component={DefaultScreen}
+         />
+         <Stack.Screen 
+            name={PaymentsRoutes.Payment} 
+            component={PaymentScreen}
+         />
+      </Stack.Navigator>
+   )
+}
 
 export default PaymentsNavigator;

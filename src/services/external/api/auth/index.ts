@@ -1,12 +1,21 @@
+import { SegmentedControlIOSComponent } from "react-native";
+import { getItem, StorageKeys } from "services/internal/storage";
 import ApiConfig from "../config";
+import { ChallengeType } from "../models/data/challenge";
 import { 
-   AlreadyExistsError, 
+   AlreadyExistsError,
    GeneralError, 
    InternalServerError, 
    NotFoundError, 
    UnauthorizedError 
 } from "../models/errors";
-import { AuthResponse } from "../models/responses";
+import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
+
+interface LoginResponse {
+   isEmailVerified: boolean;
+   confirmationCodeResponse?: ConfirmationCodeResponse;
+   authResponse?: AuthResponse;
+}
 
 class AuthenticationService {
    private resource: string;
@@ -22,7 +31,8 @@ class AuthenticationService {
       return AuthenticationService.instance;
    }
 
-   async signin(email: string, password: string): Promise<AuthResponse> {
+   
+   public async login(email: string, password: string): Promise<LoginResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
@@ -31,7 +41,7 @@ class AuthenticationService {
          },
          body: JSON.stringify({ email, password })
       };
-      const response = await apiConfig.callApi(`${this.resource}/signin`, options);
+      const response = await apiConfig.callApi(`${this.resource}/login`, options);
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);
@@ -42,41 +52,77 @@ class AuthenticationService {
       if(response.status === 404) {
          throw new NotFoundError();
       }
-      if(response.status === 500) {
+      if(response.status >= 500) {
          const body = await response.json();
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
-         token: body.token,
-         user: {
-            _id: body.user._id,
-            email: body.user.email,
-            isAdmin: body.user.isAdmin,
-            isService: body.user.isService,
-            createdOn: new Date(body.user.createdOn),
-            modifiedOn: new Date(body.user.modifiedOn)
+      let authResponse = undefined;
+      let confirmationCodeResponse = undefined;
+      let isEmailVerified = true;
+      if(response.status === 202) {
+         isEmailVerified = false;
+         confirmationCodeResponse = {
+            key: body.key,
+            expires: body.expires
          }
+         await apiConfig.handleConfirmationCodeResponse(confirmationCodeResponse)
+      }
+      else {
+         authResponse = {
+            expires: body.expires,
+            accessToken: body.accessToken,
+            refreshToken: body.refreshToken
+         }
+         await apiConfig.handleAuthResponse(authResponse);
+      }
+      return {
+         isEmailVerified,
+         authResponse,
+         confirmationCodeResponse
       }
    }
 
-   async verify(): Promise<boolean> {
+   public async refresh(): Promise<AuthResponse> {
+      const refreshToken = await getItem(StorageKeys.RefreshToken);
+      console.log(refreshToken)
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
-         method: "POST"
+         method: "POST",
+         body: JSON.stringify({ refreshToken })
       };
-      const response = await apiConfig.callApiProtected(`${this.resource}/verify`, options);
-      return response.status === 200;
+      const response = await apiConfig.callApi(`${this.resource}/refresh`, options);
+      console.log(response.status)
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 401) {
+         throw new UnauthorizedError();
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         console.log(body)
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      const authResponse: AuthResponse = {
+         expires: body.expires,
+         accessToken: body.accessToken,
+         refreshToken: body.refreshToken
+      }
+      await apiConfig.handleAuthResponse(authResponse);
+      return authResponse;
    }
 
-   async register(email: string, password: string): Promise<AuthResponse> {
+   public async register(firstName: string, lastName: string, email: string, password: string): Promise<ConfirmationCodeResponse> {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ email, password })
+         body: JSON.stringify({ firstName, lastName, email, password })
       };
       const response = await apiConfig.callApi(`${this.resource}/register`, options);
       if(response.status === 400) {
@@ -86,22 +132,76 @@ class AuthenticationService {
       if(response.status === 409) {
          throw new AlreadyExistsError();
       }
-      if(response.status === 500) {
+      if(response.status >= 500) {
          const body = await response.json();
          throw new InternalServerError(body.message);
       }
       const body = await response.json();
-      return {
-         token: body.token,
-         user: {
-            _id: body.user._id,
-            email: body.user.email,
-            isAdmin: body.user.isAdmin,
-            isService: body.user.isService,
-            createdOn: new Date(body.user.createdOn),
-            modifiedOn: new Date(body.user.modifiedOn)
-         }
+      const confirmationCodeResponse: ConfirmationCodeResponse = {
+         key: body.key,
+         expires: body.expires
       }
+      await apiConfig.handleConfirmationCodeResponse(confirmationCodeResponse);
+      return confirmationCodeResponse;
+   }
+
+   public async challenge(email: string, type: ChallengeType): Promise<ConfirmationCodeResponse> {
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({ email, type })
+      };
+      const response = await apiConfig.callApi(`${this.resource}/challenge`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      const confirmationCodeResponse: ConfirmationCodeResponse = {
+         key: body.key,
+         expires: body.expires
+      }
+      await apiConfig.handleConfirmationCodeResponse(confirmationCodeResponse);
+      return confirmationCodeResponse;
+   }
+
+   public async confirmChallenge(code: number): Promise<AuthResponse> {
+      const key = await getItem(StorageKeys.ConfirmationKey);
+      const apiConfig = ApiConfig.getInstance();
+      const options: RequestInit = {
+         method: "POST",
+         headers: {
+            "Content-Type": "application/json"
+         },
+         body: JSON.stringify({ code })
+      };
+      const response = await apiConfig.callApi(`${this.resource}/challenge/${key}`, options);
+      if(response.status === 400) {
+         const body = await response.json();
+         throw new GeneralError(body.message);
+      }
+      if(response.status === 401) {
+         throw new UnauthorizedError();
+      }
+      if(response.status >= 500) {
+         const body = await response.json();
+         throw new InternalServerError(body.message);
+      }
+      const body = await response.json();
+      const authResponse: AuthResponse = {
+         expires: body.expires,
+         accessToken: body.accessToken,
+         refreshToken: body.refreshToken
+      }
+      await apiConfig.handleAuthResponse(authResponse);
+      return authResponse;
    }
 }
 

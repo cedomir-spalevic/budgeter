@@ -1,55 +1,48 @@
 import React from "react";
-import {
-   TouchableOpacity,
-   Text,
-   StyleSheet,
-   ViewStyle
-} from "react-native";
-import { colors } from "styles";
+import { TouchableOpacity } from "react-native";
+import { makeStyles, useTheme } from "context";
+import { Progress, Label } from "components";
 
-const styles = StyleSheet.create({
-   buttonStyles: {
-      paddingTop: 10,
-      paddingBottom: 10,
-      paddingLeft: 30,
-      paddingRight: 30,
-      borderRadius: 5,
-      shadowColor: colors.secondaryDarker,
-      shadowOffset: { width: 0, height: 5 },
-      shadowOpacity: 0.8,
-      shadowRadius: 3
-   },
-   textStyles: {
-      color: colors.white,
-      fontSize: 22,
-      textAlign: "center"
-   }
-})
+const useStyles = makeStyles(theme => ({
+    button: {
+        borderRadius: 20,
+        backgroundColor: theme.palette.primary,
+        alignItems: "center"
+    },
+    buttonSmall: {
+        paddingVertical: 10,
+        paddingHorizontal: 10
+    },
+    buttonLarge: {
+        paddingVertical: 15,
+        paddingHorizontal: 15
+    }
+}))
 
 interface Props {
-   onPress: () => void;
-   text?: string;
-   children?: React.ReactNode;
-   theme?: "primary" | "secondary" | "error";
+    onPress: () => void;
+    text: string;
+    loading?: boolean;
+    size?: "small" | "large"
 }
 
 const Button: React.FC<Props> = (props: Props) => {
-   let themeStyles: ViewStyle = {};
-   if (props.theme === undefined || props.theme === "primary") {
-      themeStyles.backgroundColor = colors.primary;
-   }
-   else if (props.theme === "error") {
-      themeStyles.backgroundColor = colors.red;
-   }
-   return (
-      <TouchableOpacity style={[styles.buttonStyles, themeStyles]} onPress={props.onPress}>
-         {props.text &&
-            <Text style={styles.textStyles}>
-               {props.text}
-            </Text>}
-         {props.children}
-      </TouchableOpacity>
-   )
+    const styles = useStyles();
+    const theme = useTheme();
+    const buttonStyles = [styles.button];
+    buttonStyles.push(props.size === "large" ? styles.buttonLarge : styles.buttonSmall)
+
+    return (
+        <TouchableOpacity style={buttonStyles} onPress={props.onPress}>
+            {props.loading ? <Progress size="small" color={theme.value.palette.white} /> : (
+                <Label 
+                    type="regular" 
+                    text={props.text} 
+                    color={theme.value.palette.white} 
+                />
+            )}
+        </TouchableOpacity>
+    )
 }
 
 export default Button;

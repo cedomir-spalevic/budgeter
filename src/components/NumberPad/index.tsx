@@ -1,64 +1,121 @@
-import React, { useState, useEffect } from "react";
-import { toCurrency, toNumber } from "services/internal/currency";
-import { View, TextInput, Text } from "react-native";
-import { globalStyles } from "styles";
-import { Icon } from "components";
+import useMergedRef from "@react-hook/merged-ref";
+import { Label, TextField } from "components";
+import { makeStyles, useTheme } from "context";
+import React, { useState, useEffect, forwardRef, useRef } from "react";
+import {
+   TextInput,
+   NativeSyntheticEvent,
+   TextInputKeyPressEventData
+} from "react-native";
+import { toCurrency } from "services/internal/currency";
+
+const useStyles = makeStyles(theme => ({
+   container: {
+      flexDirection: "column",
+      width: "100%"
+   },
+   input: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingVertical: 10,
+      borderBottomWidth: 2,
+      borderBottomColor: "#e0e0e0",
+      marginBottom: 5,
+   },
+   inputWithError: {
+      borderBottomColor: theme.palette.error
+   },
+   inputContainer: {
+      flexDirection: "row",
+      flex: 1
+   },
+   textInput: {
+      fontSize: theme.font.regularSize,
+      fontFamily: theme.font.fontFamily,
+      color: theme.palette.textColor
+   },
+   icon: {
+      fontSize: 18,
+      width: 25,
+      color: theme.palette.gray,
+      resizeMode: "contain"
+   },
+   errorText: {
+      color: theme.palette.error
+   }
+}))
 
 interface Props {
    value?: number;
-   preRenderIcon?: JSX.Element;
-   postRenderIcon?: JSX.Element;
-   placeholder?: string;
+   hidden?: boolean;
    errorMessage?: string;
-   onChange?: (newNumber: number) => void;
+   onChange: (num: number) => void;
+   autoFocus?: boolean;
+   placeholder?: string;
+   preRenderIcon?: JSX.Element;
+   onPreRenderIconClick?: () => void;
+   postRenderIcon?: JSX.Element;
+   onPostRenderIconClick?: () => void;
+   textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void);
+   onSubmit?: () => void;
 }
 
 const NumberPad: React.FC<Props> = (props: Props) => {
-   const [value, setValue] = useState<number>();
-   const [formattedValue, setFormattedValue] = useState<string>();
-
-   const format = () => {
-      if (formattedValue) {
-         let number = toNumber(formattedValue);
-         let currency = toCurrency(number);
-         setValue(number);
-         setFormattedValue(currency);
-         if (props.onChange)
-            props.onChange(number);
-      }
+   const [num, setNum] = useState<string>(toCurrency(0));
+   const styles = useStyles();
+   const theme = useTheme();
+   const textInput = useRef<TextInput>();
+   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
+   const inputStyles = [styles.input];
+   if(props.errorMessage) {
+      inputStyles.push(styles.inputWithError);
    }
 
-   useEffect(() => {
-      if (props.value && !value) {
-         setValue(props.value);
-         setFormattedValue(toCurrency(props.value));
+    const onKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+       if(e.cancelable) {
+         let numStr = num.substr(1).replaceAll(".", "").replaceAll(",", "");
+         if(numStr === "000" && e.nativeEvent.key === "Backspace") {
+            e.preventDefault();
+            e.stopPropagation();
+         }
       }
-   })
+    }
+
+    const onChange = (newValue: string) => {
+      let numStr = newValue.substr(1).replaceAll(".", "").replaceAll(",", "");
+      const amount = Number(numStr ?? "")/100;
+      setNum(toCurrency(amount))
+      props.onChange(amount);
+    }
+
+   useEffect(() => {
+      if(props.value)
+         setNum(toCurrency(props.value))
+      else
+         setNum(toCurrency(0))
+   }, [])
 
    return (
-      <View>
-         <View style={globalStyles.textInputContainer}>
-            {props.preRenderIcon &&
-               React.cloneElement(props.preRenderIcon, { style: globalStyles.textInputIconStyles })}
-            <TextInput
-               placeholder={props.placeholder}
-               keyboardAppearance="dark"
-               keyboardType="numeric"
-               style={globalStyles.textInput}
-               value={formattedValue}
-               onChangeText={nv => setFormattedValue((nv === undefined ? "" : nv))}
-               onBlur={() => format()}
-               returnKeyType="done"
-            />
-            {props.postRenderIcon &&
-               React.cloneElement(props.postRenderIcon, { style: globalStyles.textInputIconStyles })}
-            {props.errorMessage &&
-               <Icon name="error" style={globalStyles.errorIcon} />}
-         </View>
-         {props.errorMessage &&
-            <Text style={globalStyles.errorMessage}>{props.errorMessage}</Text>}
-      </View>
+      <TextField
+         preRenderIcon={props.preRenderIcon}
+         onPreRenderIconClick={props.onPreRenderIconClick}
+         postRenderIcon={props.postRenderIcon}
+         onPostRenderIconClick={props.onPostRenderIconClick}
+         placeholder={props.placeholder}
+         autoFocus={props.autoFocus}
+         contextMenuHidden={true}
+         keyboardType="number-pad"
+         errorMessage={props.errorMessage}
+         value={num}
+         onChange={onChange}
+         onKeyPress={onKeyPress}
+         ref={mergedRefs}
+         onSubmit={() => props.onSubmit && props.onSubmit()}
+         returnKeyType="done"
+         controlled
+         renderInput={() => <Label type="regular" text={num} />}
+      />
    )
 }
 
-export default NumberPad;
+export default forwardRef<TextInput, Props>((props, ref) => <NumberPad textInputRef={ref} {...props} />);

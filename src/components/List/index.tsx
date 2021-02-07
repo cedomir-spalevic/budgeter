@@ -1,62 +1,76 @@
-import React, { useState } from "react";
-import {
-   FlatList,
-   RefreshControl
-} from "react-native";
-import ListItem, { Item } from "../ListItem";
+import React from "react";
+import { makeStyles, useTheme } from "context";
+import { TouchableOpacity, View } from "react-native";
+import { Label, Icon } from "components";
 
-interface Props {
-   items: Item[];
-   onRefresh: () => void;
+const useStyles = makeStyles(theme => ({
+    container: {
+        width: "100%",
+        backgroundColor: theme.palette.cardColor,
+        borderRadius: 10,
+        marginTop: 5
+    },
+    listItem: {
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    listItemBorder: {
+        borderBottomColor: theme.palette.gray,
+        borderBottomWidth: 1
+    },
+    listItemText: {
+        flexDirection: "row"
+    }
+}))
+
+interface ListItem {
+    id: string;
+    text: string;
+    note?: { text: string; color: "red" | "green"; };
+    onPress: () => void;
+    iconName?: string;
+    textColor?: string;
+    iconColor?: string;
+    action?: React.ReactNode;
 }
 
-interface SwipeActivation {
-   [name: string]: boolean;
+interface Props {
+    items: ListItem[];
 }
 
 const List: React.FC<Props> = (props: Props) => {
-   const [itemSwipeActivations, setItemSwipeActivations] = useState<SwipeActivation>({});
-   const [isSwiping, setIsSwiping] = useState<boolean>(false);
-   const [refreshing, setRefreshing] = useState<boolean>(false);
+    const styles = useStyles();
+    const theme = useTheme();
 
-   const toggleItemSwipeActivations = (id) => {
-      itemSwipeActivations[id] = !itemSwipeActivations[id];
-      setItemSwipeActivations({ ...itemSwipeActivations });
-   }
-
-   const getItems = async () => {
-      setRefreshing(true);
-      await props.onRefresh();
-   }
-
-   return (
-      <FlatList
-         data={props.items}
-         scrollEnabled={!isSwiping}
-         refreshControl={(
-            <RefreshControl
-               refreshing={refreshing}
-               onRefresh={() => getItems()}
-            />
-         )}
-         renderItem={({ item }) => {
-            if (item.leftSwipeContent)
-               item.leftSwipeContent.activated = itemSwipeActivations[item.id];
-            if (item.rightSwipeContent)
-               item.rightSwipeContent.activated = itemSwipeActivations[item.id];
-            return (
-               <ListItem
-                  onSwipeStart={() => setIsSwiping(true)}
-                  onSwipeRelease={() => setIsSwiping(false)}
-                  onLeftActionActivated={() => toggleItemSwipeActivations(item.id)}
-                  onLeftActionDeactivated={() => toggleItemSwipeActivations(item.id)}
-                  onRightActionActivated={() => toggleItemSwipeActivations(item.id)}
-                  onRightActionDeactivated={() => toggleItemSwipeActivations(item.id)}
-                  item={item}
-               />
-         )}}
-      />
-   )
+    return (
+        <View style={styles.container}>
+            {props.items.map((item, index) => {
+                const listItemStyle = [];
+                listItemStyle.push(styles.listItem);
+                if(index !== props.items.length-1)
+                    listItemStyle.push(styles.listItemBorder)
+                return (
+                    <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
+                        <View style={styles.listItemText}>
+                                <Label type="regular" text={item.text} color={item.textColor} />
+                                {item.note &&
+                                    <Label 
+                                        style={{ paddingLeft: 8 }} 
+                                        type="subText" 
+                                        text={item.note.text} 
+                                        color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} 
+                                    />
+                                }
+                        </View>
+                        {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
+                    </TouchableOpacity>
+                )
+            })}
+        </View>
+    )
 }
 
 export default List;

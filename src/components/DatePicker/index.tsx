@@ -1,68 +1,70 @@
-import React, { useState, useEffect } from "react";
-import {
-   View,
-   Text,
-   TextInput
-} from "react-native";
-import { globalStyles } from "styles";
+import React, { useState, useEffect, forwardRef, useRef } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { formatDate } from "services/internal/datetime";
-import { Icon } from "components";
+import moment from "moment";
+import { TextField } from "components";
+
+export interface DatePickerRef {
+   showPicker: () => void;
+}
 
 interface Props {
-   preRenderIcon?: JSX.Element;
-   postRenderIcon?: JSX.Element;
-   placeholder: string;
+   value?: Date;
+   hidden?: boolean;
    errorMessage?: string;
-   date?: Date;
-   onChange?: (newDate: Date) => void;
+   onChange?: (newText: string) => void;
+   autoFocus?: boolean;
+   placeholder?: string;
+   preRenderIcon?: JSX.Element;
+   onPreRenderIconClick?: () => void;
+   postRenderIcon?: JSX.Element;
+   onPostRenderIconClick?: () => void;
+   datePickerRef?: React.Ref<DatePickerRef>;
 }
 
 const DatePicker: React.FC<Props> = (props: Props) => {
+   const [value, setValue] = useState<Date>();
    const [visible, setVisible] = useState<boolean>(false);
-   const [date, setDate] = useState<Date>();
+   const datePickerRef = useRef<DatePickerRef>({ showPicker: () => setVisible(true) });
 
-   const onConfirm = (newDate: Date) => {
-      setDate(newDate);
-      setVisible(false);
-      if (props.onChange)
-         props.onChange(newDate);
+   const onConfirm = (d: Date) => {
+       setValue(d);
+       setVisible(false);
+       if(props.onChange)
+         props.onChange(d.toISOString());
    }
 
    useEffect(() => {
-      if (props.date && date === undefined)
-         setDate(props.date);
+      if (props.value && value === undefined)
+         setValue(props.value);
+      if(props.datePickerRef) {
+         (props.datePickerRef as React.MutableRefObject<DatePickerRef>).current = datePickerRef.current;
+      }
    })
+
    return (
-      <View>
-         <View style={globalStyles.textInputContainer}>
-            {props.preRenderIcon &&
-               React.cloneElement(props.preRenderIcon, { style: globalStyles.textInputIconStyles })}
-            <TextInput
-               style={date === undefined ? globalStyles.textInput : globalStyles.textInput}
-               placeholder={props.placeholder}
-               value={date === undefined ? "" : formatDate(date)}
-               editable={false}
-               onTouchStart={() => setVisible(true)}
-            />
-            {props.postRenderIcon &&
-               React.cloneElement(props.postRenderIcon, { style: globalStyles.textInputIconStyles })}
-            {props.errorMessage &&
-               <Icon
-                  name="error"
-                  style={globalStyles.errorIcon}
-               />}
-         </View>
-         {props.errorMessage &&
-            <Text style={globalStyles.errorMessage}>{props.errorMessage}</Text>}
+      <>
+         <TextField
+            preRenderIcon={props.preRenderIcon}
+            onPreRenderIconClick={props.onPreRenderIconClick}
+            postRenderIcon={props.postRenderIcon}
+            onPostRenderIconClick={props.onPostRenderIconClick}
+            placeholder={props.placeholder}
+            autoFocus={props.autoFocus}
+            contextMenuHidden={true}
+            editable={false}
+            onTouchStart={() => setVisible(true)}
+            value={value ? moment(value).format("MMMM Do YYYY") : undefined}
+            errorMessage={props.errorMessage}
+            preventOnChange
+            controlled
+         />
          <DateTimePickerModal
-            date={date}
             isVisible={visible}
-            onConfirm={(d) => onConfirm(d)}
+            onConfirm={d => onConfirm(d)}
             onCancel={() => setVisible(false)}
          />
-      </View>
+      </>
    )
 }
 
-export default DatePicker;
+export default forwardRef<DatePickerRef, Props>((props, ref) => <DatePicker datePickerRef={ref} {...props} />);
