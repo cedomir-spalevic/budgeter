@@ -1,3 +1,7 @@
+/**
+ * NOTE: All these colors should stay in rgb format for consistency 
+ * There are pieces in place that require rgb format. This is to save your own time
+ */
 export const light: Palette = {
     primary: "rgb(24,130,196)",
     textColor: "rgb(0,0,0)",
@@ -7,11 +11,11 @@ export const light: Palette = {
     systemGray4: "rgb(209,209,214)",
     systemGray5: "rgb(229,229,234)",
     systemGray6: "rgb(242,242,247)",
-    appBackground: "#ededed",
+    appBackground: "rgb(237,237,237)",
     secondaryBackground: "rgb(255,255,255)",
     tabBarBackground: "rgb(255,255,255)",
-    searchBoxContainer: "#e1e2e3",
-    searchBoxText: "#9E9FA4",
+    searchBoxContainer: "rgb(225, 226, 227)",
+    searchBoxText: "rgb(158,159,164)",
     red: "rgb(255,59,48)",
     green: "rgb(52,199,89)",
     white: "rgb(255,255,255)",

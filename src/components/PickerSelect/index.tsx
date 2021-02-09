@@ -2,7 +2,7 @@ import { TextField } from "components";
 import { useTheme } from "context";
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import Picker from "react-native-picker";
-import { hexToRGBA } from "services/internal/colors";
+import { rgbToRGBA } from "services/internal/colors";
 
 export interface PickerSelectRef {
    showPicker: () => void;
@@ -38,20 +38,20 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
    const showPicker = () => {
       Picker.init({
          pickerTitleText: props.placeholder ?? "",
-         pickerTitleColor: hexToRGBA(theme.value.palette.textColor),
+         pickerTitleColor: rgbToRGBA(theme.value.palette.textColor),
          pickerData: props.items,
          selectedValue: value ? [value] : [""],
          onPickerConfirm: (item: string[]) => onConfirm(item[0]),
          onPickerCancel: (item: string[]) => selected.current = null,
          onPickerSelect: (item: string[]) => selected.current = item[0],
          pickerConfirmBtnText: "Select",
-         pickerConfirmBtnColor: hexToRGBA(theme.value.palette.primary),
+         pickerConfirmBtnColor: rgbToRGBA(theme.value.palette.primary),
          pickerCancelBtnText: "Cancel",
-         pickerCancelBtnColor: hexToRGBA(theme.value.palette.primary),
-         pickerToolBarBg: hexToRGBA(theme.value.palette.secondaryBackground),
-         pickerFontColor: hexToRGBA(theme.value.palette.textColor),
+         pickerCancelBtnColor: rgbToRGBA(theme.value.palette.primary),
+         pickerToolBarBg: rgbToRGBA(theme.value.palette.secondaryBackground),
+         pickerFontColor: rgbToRGBA(theme.value.palette.textColor),
          pickerFontSize: theme.value.font.regularSize,
-         pickerBg: hexToRGBA(theme.value.palette.secondaryBackground)
+         pickerBg: rgbToRGBA(theme.value.palette.appBackground)
       });
       Picker.show();
    }

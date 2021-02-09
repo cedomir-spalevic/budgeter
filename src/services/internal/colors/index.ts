@@ -10,3 +10,8 @@ export const hexToRGBA = (hex: string) => {
     }
     throw new Error("Bad Hex");
 }
+
+export const rgbToRGBA = (rgb: string) => {
+    let colors = rgb.slice(4, rgb.length-1).split(",").map(x => Number(x.trim()))
+    return [...colors, 1]
+}
