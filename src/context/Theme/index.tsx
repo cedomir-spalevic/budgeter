@@ -21,9 +21,11 @@ const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     const [kind, setKind] = useState<Kind>("auto");
     const deviceColorScheme = useColorScheme();
 
-    let theme = lightTheme;
-    if(kind === "dark" || (kind === "auto" && deviceColorScheme === "dark"))
+    let theme = lightTheme, isDarkTheme = false;
+    if(kind === "dark" || (kind === "auto" && deviceColorScheme === "dark")) {
         theme = darkTheme;
+        isDarkTheme = true;
+    }
 
     const updateKind = async (k: Kind) => {
         await setItem(StorageKeys.Theme, k);
@@ -35,7 +37,7 @@ const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     }, [])
 
     return (
-        <ThemeContext.Provider value={{ value: theme, kind, setKind: updateKind }}>
+        <ThemeContext.Provider value={{ value: theme, kind: isDarkTheme ? "dark" : "light", setKind: updateKind }}>
             {props.children}
         </ThemeContext.Provider>
     )

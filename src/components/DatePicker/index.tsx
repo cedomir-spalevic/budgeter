@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useRef } from "react";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import { TextField } from "components";
+import { useTheme } from "context";
 
 export interface DatePickerRef {
    showPicker: () => void;
@@ -25,6 +26,7 @@ const DatePicker: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<Date>();
    const [visible, setVisible] = useState<boolean>(false);
    const datePickerRef = useRef<DatePickerRef>({ showPicker: () => setVisible(true) });
+   const theme = useTheme();
 
    const onConfirm = (d: Date) => {
        setValue(d);
@@ -62,6 +64,8 @@ const DatePicker: React.FC<Props> = (props: Props) => {
             isVisible={visible}
             onConfirm={d => onConfirm(d)}
             onCancel={() => setVisible(false)}
+            isDarkModeEnabled={theme.kind === "dark"}
+            textColor={theme.value.palette.textColor}
          />
       </>
    )
