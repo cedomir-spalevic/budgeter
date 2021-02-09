@@ -42,7 +42,7 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
     const theme = useTheme();
     return (
         <>
-            <Container allowScroll flex title="Enter confirmation code">
+            <Container allowScroll flex title="Confirmation code">
                 <Label type="header" text="Enter confirmation code" />
                 <Spacer />
                 {props.message && (

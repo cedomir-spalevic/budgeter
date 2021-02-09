@@ -85,14 +85,12 @@ class AuthenticationService {
 
    public async refresh(): Promise<AuthResponse> {
       const refreshToken = await getItem(StorageKeys.RefreshToken);
-      console.log(refreshToken)
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
-         body: JSON.stringify({ refreshToken })
+         body: JSON.stringify({ refreshToken: "" })
       };
       const response = await apiConfig.callApi(`${this.resource}/refresh`, options);
-      console.log(response.status)
       if(response.status === 400) {
          const body = await response.json();
          throw new GeneralError(body.message);

@@ -1,13 +1,9 @@
 import { makeStyles, useTheme } from "context";
 import React, { useEffect, useState } from "react";
-import {
-   View,
-   Text
-} from "react-native";
+import { View } from "react-native";
 import {
   CodeField,
   Cursor,
-  useBlurOnFulfill,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 import { Label } from "components";
@@ -34,6 +30,7 @@ const CELL_COUNT = 6;
 
 const ConfirmationCodeInput: React.FC<Props> = (props: Props) => {
     const [value, setValue] = useState<string>("");
+    const theme = useTheme();
     const [p, getCellOnLayoutHandler] = useClearByFocusCell({
         value,
         setValue,
@@ -58,6 +55,7 @@ const ConfirmationCodeInput: React.FC<Props> = (props: Props) => {
                 onChangeText={onChange}
                 cellCount={CELL_COUNT}
                 keyboardType="number-pad"
+                keyboardAppearance={theme.kind === "dark" ? "dark" : "light"}
                 textContentType="oneTimeCode"
                 renderCell={({index, symbol, isFocused}) => (
                     <View key={index} style={[styles.cell, isFocused && styles.focusCell]} onLayout={getCellOnLayoutHandler(index)}>
