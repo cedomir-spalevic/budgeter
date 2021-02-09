@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     menuOptionBorder: {
         borderBottomColor: theme.palette.systemGray,
         borderBottomWidth: 1
+    },
+    menuAnchor: {
+        backgroundColor: theme.palette.secondaryBackground
     }
 }))
 
@@ -39,7 +42,7 @@ const Menu: React.FC<Props> = (props: Props) => {
     const theme = useTheme();
 
     return (
-        <RNMenu renderer={Popover} rendererProps={{ placement: "bottom" }}>
+        <RNMenu renderer={Popover} rendererProps={{ placement: "bottom", anchorStyle: styles.menuAnchor }}>
             <MenuTrigger>
                 {props.children}
             </MenuTrigger>
