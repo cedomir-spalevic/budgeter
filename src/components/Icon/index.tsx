@@ -19,7 +19,7 @@ const Icon: React.FC<Props> = (props: Props) => {
             size={props.size}
             style={props.style}
             onPress={props.onPress}
-            color={props.color ?? theme.value.palette.gray}
+            color={props.color ?? theme.value.palette.systemGray}
         />
     )
 }

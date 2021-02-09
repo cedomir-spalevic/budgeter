@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
       marginBottom: 5,
    },
    inputWithError: {
-      borderBottomColor: theme.palette.error
+      borderBottomColor: theme.palette.red
    },
    inputContainer: {
       flexDirection: "row",
@@ -37,11 +37,11 @@ const useStyles = makeStyles(theme => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: theme.palette.gray,
+      color: theme.palette.systemGray,
       resizeMode: "contain"
    },
    errorText: {
-      color: theme.palette.error
+      color: theme.palette.red
    }
 }))
 

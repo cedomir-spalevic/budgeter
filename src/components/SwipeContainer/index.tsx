@@ -4,7 +4,7 @@ import {
    TextStyle,
    ActivityIndicator
 } from "react-native";
-import { colors } from "styles";
+import { useTheme } from "context";
 
 interface Props {
    activated?: boolean;
@@ -14,6 +14,7 @@ interface Props {
 }
 
 const SwipeContainer: React.FC<Props> = (props: Props) => {
+   const theme = useTheme();
    let styles: TextStyle = {
       height: 65,
       backgroundColor: props.color,
@@ -31,7 +32,7 @@ const SwipeContainer: React.FC<Props> = (props: Props) => {
    return (
       <View style={styles}>
          {props.activated ?
-            <ActivityIndicator color={colors.white} /> :
+            <ActivityIndicator color={theme.value.palette.white} /> :
             props.icon}
       </View>
    )

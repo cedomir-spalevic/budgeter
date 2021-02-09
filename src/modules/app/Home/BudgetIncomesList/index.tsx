@@ -9,14 +9,14 @@ import {
     SummaryView,
     ConfirmDialog
 } from "components";
-import { useTheme } from "context";
+import { useTheme, useUser } from "context";
 import { useIncomes } from "context/Incomes";
 import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
-//import { IncomesRoutes } from "../../routes";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
 import { Income } from "services/external/api/models/data/income";
+import { HomeRoutes } from "../routes";
 
 const BudgetIncomesList: React.FC = () => {
     const [incomeToDelete, setIncomeToDelete] = useState<Income>();
@@ -24,6 +24,7 @@ const BudgetIncomesList: React.FC = () => {
     const incomes = useIncomes();
     const navigation = useNavigation();
     const theme = useTheme();
+    const user = useUser();
 
     const deleteIncome = async () => {
         await incomes.delete(incomeToDelete.id);
@@ -38,15 +39,21 @@ const BudgetIncomesList: React.FC = () => {
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={budgets.value.incomes.map(x => ({
-                            id: x.id,
-                            text: x.title,
-                            note: { text: toCurrency(x.amount), color: "green" },
-                            onPress: () => {},
-                            //onPress: () => navigation.navigate(IncomesRoutes.Income, { income: x }),
-                            //leftSwipeContent: { color: theme.value.palette.error, iconName: "delete" },
-                            //onLeftActionRelease: () => setIncomeToDelete(x)
-                        }))}
+                        items={budgets.value.incomes.map(x => {
+                            let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
+                            if(user.swipeOptions.deleteIncome === "right") {
+                                swipeContentKey = "rightSwipeContent";
+                                actionReleaseKey = "onRightActionRelease";
+                            }
+                            return ({
+                                id: x.id,
+                                text: x.title,
+                                note: { text: toCurrency(x.amount), color: "green" },
+                                onPress: () => navigation.navigate(HomeRoutes.Income, { income: x }),
+                                [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
+                                [actionReleaseKey]: () => setIncomeToDelete(x)
+                            })
+                        })}
                     />
                 </Container>
             </Container>

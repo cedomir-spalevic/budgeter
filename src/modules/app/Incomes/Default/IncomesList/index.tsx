@@ -54,7 +54,7 @@ const IncomesList: React.FC = () => {
                                 text: x.title,
                                 note: { text: toCurrency(x.amount), color: "green" },
                                 onPress: () => navigation.navigate(IncomesRoutes.Income, { income: x }),
-                                [swipeContentKey]: { color: theme.value.palette.error, iconName: "delete" },
+                                [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
                                 [actionReleaseKey]: () => setIncomeToDelete(x)
                             })
                         })}

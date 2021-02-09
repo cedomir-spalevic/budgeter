@@ -21,11 +21,11 @@ const useStyles = makeStyles(theme => ({
       justifyContent: "space-between",
       paddingVertical: 10,
       borderBottomWidth: 2,
-      borderBottomColor: "#e0e0e0",
+      borderBottomColor: theme.palette.systemGray4,
       marginBottom: 5,
    },
    inputWithError: {
-      borderBottomColor: theme.palette.error
+      borderBottomColor: theme.palette.red
    },
    inputContainer: {
       flexDirection: "row",
@@ -40,11 +40,11 @@ const useStyles = makeStyles(theme => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: theme.palette.gray,
+      color: theme.palette.systemGray,
       resizeMode: "contain"
    },
    errorText: {
-      color: theme.palette.error
+      color: theme.palette.red
    }
 }))
 
@@ -149,7 +149,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                   contextMenuHidden={props.contextMenuHidden}
                   value={value}
                   placeholder={props.placeholder}
-                  placeholderTextColor={theme.value.palette.gray}
+                  placeholderTextColor={theme.value.palette.systemGray}
                   autoFocus={props.autoFocus}
                   onChangeText={props.preventOnChange ? undefined : onChange}
                   secureTextEntry={props.hidden}

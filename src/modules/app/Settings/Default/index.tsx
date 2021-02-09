@@ -25,8 +25,8 @@ const Settings: React.FC = () => {
                     items={[{ 
                         id: "log out",
                         text: "Log out", 
-                        textColor: theme.value.palette.error, 
-                        iconColor:  theme.value.palette.error,
+                        textColor: theme.value.palette.red, 
+                        iconColor:  theme.value.palette.red,
                         iconName: "exit-to-app",
                         onPress: () => auth.logout()
                     }]} 

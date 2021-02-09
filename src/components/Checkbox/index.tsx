@@ -11,7 +11,7 @@ const Checkbox: React.FC<Props> = (props: Props) => {
     const theme = useTheme();
     return (
         <RNCheckbox 
-            onCheckColor={theme.value.palette.tabBarColor}
+            onCheckColor={theme.value.palette.secondaryBackground}
             tintColor={theme.value.palette.textColor}
             onFillColor={theme.value.palette.primary}
             animationDuration={0}

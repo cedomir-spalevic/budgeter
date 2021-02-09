@@ -1,12 +1,11 @@
 import React from "react";
 import { makeStyles, useTheme } from "context";
-import { TouchableOpacity, View } from "react-native";
-import { Label, Icon } from "components";
+import { View } from "react-native";
 
 const useStyles = makeStyles(theme => ({
     container: {
         width: "100%",
-        backgroundColor: theme.palette.gray,
+        backgroundColor: theme.palette.secondaryBackground,
         borderRadius: 10,
         marginTop: 5,
         paddingHorizontal: 20,

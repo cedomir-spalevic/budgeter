@@ -4,7 +4,9 @@ import UserService from "services/external/api/me";
 import { Alert, Platform } from "react-native";
 import { useAuth } from "context";
 import { UnauthorizedError } from "services/external/api/models/errors";
-import { getItem, setItem, StorageKeys, SwipeOption } from "services/internal/storage";
+import { getItem, setItem, StorageKeys } from "services/internal/storage";
+
+export type SwipeOption = "left" | "right";
 
 interface UserSwipeOptions {
     deleteIncome: SwipeOption;

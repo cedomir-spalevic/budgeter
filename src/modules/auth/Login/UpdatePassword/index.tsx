@@ -12,11 +12,10 @@ import {
 import { Text, TextInput, View } from "react-native";
 import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { colors } from "styles";
 import { makeStyles, useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 
-const useStyles = makeStyles(palette => ({
+const useStyles = makeStyles(theme => ({
     passwordRequirement: {
        flexDirection: "row",
        alignItems: "stretch"
@@ -25,10 +24,10 @@ const useStyles = makeStyles(palette => ({
        paddingRight: 10
     },
     invalid: {
-       color: colors.red
+       color: theme.palette.red
     },
     valid: {
-       color: colors.green
+       color: theme.palette.green
     }
 }))
 

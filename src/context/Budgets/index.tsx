@@ -20,7 +20,7 @@ const BudgetContext = createContext<Context>(undefined!);
 
 const BudgetsProvider: React.FC<Props> = (props: Props) => {
     const [title, setTitle] = useState<string>();
-    const [value, setValue] = useState<Budget>();
+    const [value, setValue] = useState<Budget>({ incomes: [], payments: [] });
     const auth = useAuth();
 
     const get = async () => {

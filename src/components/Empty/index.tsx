@@ -2,14 +2,13 @@ import React from "react";
 import {
    View,
    Text,
-   StyleSheet,
    TouchableOpacity
 } from "react-native";
-import { globalStyles, colors } from "styles";
 import { NoData } from "assets/svg";
-import { Icon, Label } from "components";
+import { Icon, Label, Container } from "components";
+import { makeStyles } from "context";
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
    textView: {
       paddingBottom: 20
    },
@@ -22,18 +21,18 @@ const styles = StyleSheet.create({
    text: {
       fontSize: 20,
       fontFamily: "Helvetica Neue",
-      color: colors.black
+      color: theme.palette.black
    },
    link: {
       fontSize: 18,
-      color: colors.blue
+      color: theme.palette.primary
    },
    linkIcon: {
       fontSize: 21,
-      color: colors.blue,
+      color: theme.palette.primary,
       marginLeft: 5
    }
-})
+}))
 
 interface Props {
    message: string;
@@ -42,8 +41,9 @@ interface Props {
 }
 
 const Empty: React.FC<Props> = (props: Props) => {
+   const styles = useStyles();
    return (
-      <View style={globalStyles.centeredScreen}>
+      <Container flex verticallyCenter>
          <View style={styles.textView}>
             <Label text={props.message} type="regular" />
             {props.addCreateNew &&
@@ -55,7 +55,7 @@ const Empty: React.FC<Props> = (props: Props) => {
                </TouchableOpacity>}
          </View>
          <NoData />
-      </View>
+      </Container>
    )
 }
 

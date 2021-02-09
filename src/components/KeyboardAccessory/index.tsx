@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
         paddingHorizontal: theme.size.pagePadding,
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: theme.palette.secondary
+        backgroundColor: theme.palette.tabBarBackground
     }
 }))
 

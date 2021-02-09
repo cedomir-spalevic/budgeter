@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     shadow: {
         fontFamily: theme.font.fontFamily,
         fontSize: 18,
-        color: theme.palette.darkBlue,
+        color: theme.palette.systemGray,
         shadowOpacity: 0.2,
         shadowRadius: 2,
         shadowOffset: { width: 2, height: 2},

@@ -6,7 +6,7 @@ import { Label, Icon } from "components";
 const useStyles = makeStyles(theme => ({
     container: {
         width: "100%",
-        backgroundColor: theme.palette.cardColor,
+        backgroundColor: theme.palette.secondaryBackground,
         borderRadius: 10,
         marginTop: 5
     },
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
         alignItems: "center"
     },
     listItemBorder: {
-        borderBottomColor: theme.palette.gray,
+        borderBottomColor: theme.palette.systemGray4,
         borderBottomWidth: 1
     },
     listItemText: {
@@ -61,7 +61,7 @@ const List: React.FC<Props> = (props: Props) => {
                                         style={{ paddingLeft: 8 }} 
                                         type="subText" 
                                         text={item.note.text} 
-                                        color={item.note.color === "red" ? theme.value.palette.error : theme.value.palette.success} 
+                                        color={item.note.color === "red" ? theme.value.palette.red : theme.value.palette.green} 
                                     />
                                 }
                         </View>

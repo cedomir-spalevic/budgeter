@@ -49,15 +49,15 @@ const useStyles = makeStyles(theme => ({
     container: {
         position: "relative",
         height: 100,
-        backgroundColor: theme.palette.secondary
+        backgroundColor: theme.palette.appBackground
     },
     containerBackground: {
         position: "absolute", 
         height: "100%", 
         width: "100%", 
-        backgroundColor: theme.palette.white,
+        backgroundColor: theme.palette.secondaryBackground,
         borderBottomWidth: 0.5,
-        borderBottomColor: "rgba(0,0,0,0.4)",
+        borderBottomColor: theme.palette.appBackground,
         opacity: 0
     },
     header: {

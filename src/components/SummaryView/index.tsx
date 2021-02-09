@@ -6,17 +6,17 @@ import { makeStyles } from "context";
 
 const useStyles = makeStyles(theme => ({
     container: {
-        backgroundColor: theme.palette.cardColor,
+        backgroundColor: theme.palette.secondaryBackground,
         paddingVertical: 20,
         paddingHorizontal: theme.size.pagePadding,
         justifyContent: "center",
         alignItems: "center",
         borderTopLeftRadius: 15,
         borderTopRightRadius: 15,
-        shadowColor: theme.palette.gray,
+        shadowColor: theme.palette.systemGray6,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.6,
-        shadowRadius: 5,  
+        shadowRadius: 1,  
         elevation: 5
     }
 }))

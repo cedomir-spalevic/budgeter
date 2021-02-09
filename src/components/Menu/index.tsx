@@ -11,7 +11,7 @@ import {
 
 const useStyles = makeStyles(theme => ({
     menuContainer: {
-        backgroundColor: theme.palette.cardColor,
+        backgroundColor: theme.palette.secondaryBackground,
         borderRadius: 10
     },
     menuOptionText: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
         marginHorizontal: 5
     },
     menuOptionBorder: {
-        borderBottomColor: theme.palette.gray,
+        borderBottomColor: theme.palette.systemGray,
         borderBottomWidth: 1
     }
 }))

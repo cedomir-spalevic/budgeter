@@ -7,14 +7,13 @@ import {
     SummaryView,
     ConfirmDialog
 } from "components";
-import { useTheme } from "context";
+import { useTheme, useUser } from "context";
 import { useIncomes } from "context/Incomes";
 import { usePayments } from "context/Payments";
 import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { Income } from "services/external/api/models/data/income";
 import { DueTodayItem } from "services/external/api/models/data/budget";
 import { HomeRoutes } from "../routes";
 
@@ -25,14 +24,21 @@ const BudgetDueTodayList: React.FC = () => {
     const payments = usePayments();
     const navigation = useNavigation();
     const theme = useTheme();
+    const user = useUser();
     const dueTodayItems = [
         ...budgets.value.incomes.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "income", item: x })),
         ...budgets.value.payments.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "payment", item: x}))
     ]
 
     const deleteItem = async () => {
-        // await incomes.delete(incomeToDelete.id);
-        // setIncomeToDelete(undefined);
+        if(itemToDelete.type === "payment") {
+            await payments.delete(itemToDelete.item.id);
+            setItemToDelete(undefined);
+        }
+        else {
+            await incomes.delete(itemToDelete.item.id);
+            setItemToDelete(undefined);
+        }
     }
 
     return (
@@ -43,19 +49,27 @@ const BudgetDueTodayList: React.FC = () => {
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={dueTodayItems.map(x => ({
-                            id: x.item.id,
-                            text: x.item.title,
-                            note: { text: toCurrency(x.item.amount), color: x.type === "income" ? "green" : "red" },
-                            onPress: () => {
-                                if(x.type === "income")
-                                    navigation.navigate(HomeRoutes.Income)
-                                else
-                                    navigation.navigate(HomeRoutes.Payment)
-                            },
-                            //leftSwipeContent: { color: theme.value.palette.error, iconName: "delete" },
-                            //onLeftActionRelease: () => setIncomeToDelete(x)
-                        }))}
+                        items={dueTodayItems.map(x => {
+                            let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
+                            if((x.type === "income" && user.swipeOptions.deleteIncome === "right") ||
+                                (x.type === "payment" && user.swipeOptions.deletePayment === "right")) {
+                                swipeContentKey = "rightSwipeContnet";
+                                actionReleaseKey = "onRightActionRelease";
+                            }
+                            return ({
+                                id: x.item.id,
+                                text: x.item.title,
+                                note: { text: toCurrency(x.item.amount), color: x.type === "income" ? "green" : "red" },
+                                onPress: () => {
+                                    if(x.type === "income")
+                                        navigation.navigate(HomeRoutes.Income)
+                                    else
+                                        navigation.navigate(HomeRoutes.Payment)
+                                },
+                                [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
+                                [actionReleaseKey]: () => setItemToDelete(x)
+                            })
+                        })}
                     />
                 </Container>
             </Container>
@@ -72,7 +86,7 @@ const BudgetDueTodayList: React.FC = () => {
                     visible={true}
                     title={`Delete ${itemToDelete.item.title}?`}
                     onTouchOutside={() => setItemToDelete(undefined)}
-                    message="Are you sure want to delete this income? This will be removed from all of your budgets."
+                    message={`Are you sure want to delete this ${(itemToDelete.type === "payment" ? "Payment" : "Income")}? This will be removed from all of your budgets.`}
                     positiveButton={{
                         title: "Yes",
                         onPress: () => deleteItem()

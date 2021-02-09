@@ -20,27 +20,39 @@ class BudgetsService {
       const apiConfig = ApiConfig.getInstance();
       const url = `${this.resource}?day=${day}&month=${month}&year=${year}`
       const response = await apiConfig.callApiProtected(url);
-      console.log(response.status)
       const responseBody = await response.json();
       if(response.status === 400) {
          throw new GeneralError(responseBody.message);
       }
       if(response.status === 500) {
-         console.log(responseBody)
          throw new InternalServerError(responseBody.message);
       }
       return {
          incomes: responseBody.incomes.map(x => ({
-            id: x.id,
-            title: x.title,
-            amount: x.amount,
+            id: responseBody.id,
+            title: responseBody.title,
+            amount: responseBody.amount,
+            initialDay: responseBody.initialDay,
+            initialDate: responseBody.initialDate,
+            initialMonth: responseBody.initialMonth,
+            initialYear: responseBody.initialYear,
+            recurrence: responseBody.recurrence,
+            createdOn: new Date(responseBody.createdOn),
+            modifiedOn: new Date(responseBody.modifiedOn),
             dueToday: x.dueToday,
             totalAmount: x.totalAmount
          })),
          payments: responseBody.payments.map(x => ({
-            id: x.id,
-            title: x.title,
-            amount: x.amount,
+            id: responseBody.id,
+            title: responseBody.title,
+            amount: responseBody.amount,
+            initialDay: responseBody.initialDay,
+            initialDate: responseBody.initialDate,
+            initialMonth: responseBody.initialMonth,
+            initialYear: responseBody.initialYear,
+            recurrence: responseBody.recurrence,
+            createdOn: new Date(responseBody.createdOn),
+            modifiedOn: new Date(responseBody.modifiedOn),
             dueToday: x.dueToday,
             totalAmount: x.totalAmount
          }))

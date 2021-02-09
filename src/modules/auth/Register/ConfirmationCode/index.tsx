@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     iconStyles: {
        paddingRight: 10,
        fontSize: 24,
-       color: theme.palette.error
+       color: theme.palette.red
     }
 }))
 
@@ -58,7 +58,7 @@ const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
                         <Spacer />
                         <View style={styles.errorView}>
                             <Icon name="error" style={styles.iconStyles} />
-                            <Label text={props.errors.code} color={theme.value.palette.error} type="regular" />
+                            <Label text={props.errors.code} color={theme.value.palette.red} type="regular" />
                         </View>
                     </>
                 )}

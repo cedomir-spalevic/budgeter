@@ -9,7 +9,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props: ConfirmDialogProps) 
         <RNConfirmDialog
             {...props}
             dialogStyle={{
-                backgroundColor: theme.value.palette.cardColor
+                backgroundColor: theme.value.palette.secondaryBackground
             }}
             titleStyle={{
                 fontFamily: theme.value.font.fontFamily,
@@ -17,7 +17,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props: ConfirmDialogProps) 
             }}
             messageStyle={{
                 fontFamily: theme.value.font.fontFamily,
-                color: theme.value.palette.gray
+                color: theme.value.palette.systemGray
             }}
             positiveButton={{
                 ...props.positiveButton,
@@ -29,7 +29,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (props: ConfirmDialogProps) 
             negativeButton={{
                 ...props.negativeButton,
                 titleStyle: {
-                    color: theme.value.palette.error,
+                    color: theme.value.palette.red,
                     fontFamily: theme.value.font.fontFamily
                 }
             }}

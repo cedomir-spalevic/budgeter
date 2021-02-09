@@ -1,8 +1,6 @@
-import useMergedRef from "@react-hook/merged-ref";
 import { TextField } from "components";
 import { useTheme } from "context";
-import React, { useState, useEffect, useRef, forwardRef, createRef } from "react";
-import { TextInput } from "react-native";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import Picker from "react-native-picker";
 import { hexToRGBA } from "services/internal/colors";
 
@@ -50,10 +48,10 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
          pickerConfirmBtnColor: hexToRGBA(theme.value.palette.primary),
          pickerCancelBtnText: "Cancel",
          pickerCancelBtnColor: hexToRGBA(theme.value.palette.primary),
-         pickerToolBarBg: hexToRGBA(theme.value.palette.cardColor),
+         pickerToolBarBg: hexToRGBA(theme.value.palette.secondaryBackground),
          pickerFontColor: hexToRGBA(theme.value.palette.textColor),
          pickerFontSize: theme.value.font.regularSize,
-         pickerBg: hexToRGBA(theme.value.palette.tabBarColor)
+         pickerBg: hexToRGBA(theme.value.palette.secondaryBackground)
       });
       Picker.show();
    }

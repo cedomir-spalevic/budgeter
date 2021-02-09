@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { Appearance, StyleSheet, useColorScheme } from "react-native";
-import { Theme, lightTheme, darkTheme } from "styles-new";
-import App from "../../../App";
+import { StyleSheet, useColorScheme } from "react-native";
+import { getItem, setItem, StorageKeys } from "services/internal/storage";
+import { Theme, lightTheme, darkTheme } from "styles";
 
 type Kind = "auto" | "light" | "dark";
 
@@ -25,8 +25,17 @@ const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     if(kind === "dark" || (kind === "auto" && deviceColorScheme === "dark"))
         theme = darkTheme;
 
+    const updateKind = async (k: Kind) => {
+        await setItem(StorageKeys.Theme, k);
+        setKind(k);
+    }
+
+    useEffect(() => {
+        getItem(StorageKeys.Theme).then(x => x && setKind(x))
+    }, [])
+
     return (
-        <ThemeContext.Provider value={{ value: theme, kind, setKind }}>
+        <ThemeContext.Provider value={{ value: theme, kind, setKind: updateKind }}>
             {props.children}
         </ThemeContext.Provider>
     )

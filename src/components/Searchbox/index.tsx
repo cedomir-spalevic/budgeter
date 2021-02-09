@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
    },
    textContainer: {
       padding: 10,
-      backgroundColor: "#e1e2e3",
+      backgroundColor: theme.palette.searchBoxContainer,
       borderRadius: 10,
       flexDirection: "row",
       alignItems: "center",
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
    },
    textInput: {
       flex: 1,
-      color: "#9E9FA4"
+      color: theme.palette.searchBoxText
    }
 }))
 

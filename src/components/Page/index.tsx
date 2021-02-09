@@ -4,12 +4,12 @@ import {
     StyleProp,
     ViewStyle
 } from "react-native";
-import { makeStyles, useNavigationHeader } from "context";
+import { makeStyles } from "context";
 
 const useStyles = makeStyles(theme => ({
     container: {
         flex: 1,
-        backgroundColor: theme.palette.secondary
+        backgroundColor: theme.palette.appBackground
     }
 }))
 
@@ -22,10 +22,6 @@ const Page: React.FC<Props> = (props: Props) => {
     const styles = useStyles();
     const style: StyleProp<ViewStyle> = [];
     style.push(styles.container);
-    if(props.useHeaderHeight) {
-        const navigationHeader = useNavigationHeader();
-        style.push({ paddingTop: navigationHeader.headerHeight })
-    }
 
     return (
         <View style={style}>
