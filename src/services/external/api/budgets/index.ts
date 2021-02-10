@@ -21,6 +21,7 @@ class BudgetsService {
       const url = `${this.resource}?day=${day}&month=${month}&year=${year}`
       const response = await apiConfig.callApiProtected(url);
       const responseBody = await response.json();
+      console.log(responseBody)
       if(response.status === 400) {
          throw new GeneralError(responseBody.message);
       }
@@ -29,30 +30,30 @@ class BudgetsService {
       }
       return {
          incomes: responseBody.incomes.map(x => ({
-            id: responseBody.id,
-            title: responseBody.title,
-            amount: responseBody.amount,
-            initialDay: responseBody.initialDay,
-            initialDate: responseBody.initialDate,
-            initialMonth: responseBody.initialMonth,
-            initialYear: responseBody.initialYear,
-            recurrence: responseBody.recurrence,
-            createdOn: new Date(responseBody.createdOn),
-            modifiedOn: new Date(responseBody.modifiedOn),
+            id: x.id,
+            title: x.title,
+            amount: x.amount,
+            initialDay: x.initialDay,
+            initialDate: x.initialDate,
+            initialMonth: x.initialMonth,
+            initialYear: x.initialYear,
+            recurrence: x.recurrence,
+            createdOn: new Date(x.createdOn),
+            modifiedOn: new Date(x.modifiedOn),
             dueToday: x.dueToday,
             totalAmount: x.totalAmount
          })),
          payments: responseBody.payments.map(x => ({
-            id: responseBody.id,
-            title: responseBody.title,
-            amount: responseBody.amount,
-            initialDay: responseBody.initialDay,
-            initialDate: responseBody.initialDate,
-            initialMonth: responseBody.initialMonth,
-            initialYear: responseBody.initialYear,
-            recurrence: responseBody.recurrence,
-            createdOn: new Date(responseBody.createdOn),
-            modifiedOn: new Date(responseBody.modifiedOn),
+            id: x.id,
+            title: x.title,
+            amount: x.amount,
+            initialDay: x.initialDay,
+            initialDate: x.initialDate,
+            initialMonth: x.initialMonth,
+            initialYear: x.initialYear,
+            recurrence: x.recurrence,
+            createdOn: new Date(x.createdOn),
+            modifiedOn: new Date(x.modifiedOn),
             dueToday: x.dueToday,
             totalAmount: x.totalAmount
          }))
