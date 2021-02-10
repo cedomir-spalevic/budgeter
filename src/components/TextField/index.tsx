@@ -157,7 +157,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                   ref={mergedRefs}
                   style={!props.renderInput ? styles.textInput : { display: "none" }}
                   blurOnSubmit={false}
-                  keyboardAppearance={theme.kind === "dark" ? "dark" : "light"}
+                  keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
                   autoCapitalize={props.autoCapitalize}
                   textContentType={props.textContentType}
                   keyboardType={props.keyboardType}

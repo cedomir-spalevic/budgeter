@@ -90,6 +90,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
                onTouchStart={() => setShowCancel(true)}
                onBlur={() => setShowCancel(false)}
                ref={ref}
+               keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
             />
          </View>
          <Animated.View style={{ width: cancelWidthAnimation.current }}>

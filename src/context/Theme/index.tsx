@@ -11,6 +11,7 @@ interface Props {
 
 interface Context {
     value: Theme;
+    isDarkTheme:  boolean;
     kind: Kind;
     setKind: (kind: Kind) => void;
 }
@@ -37,7 +38,7 @@ const ThemeProvider: React.FC<Props & any> = (props: Props) => {
     }, [])
 
     return (
-        <ThemeContext.Provider value={{ value: theme, kind: isDarkTheme ? "dark" : "light", setKind: updateKind }}>
+        <ThemeContext.Provider value={{ value: theme, kind, isDarkTheme, setKind: updateKind }}>
             {props.children}
         </ThemeContext.Provider>
     )

@@ -64,7 +64,7 @@ const DatePicker: React.FC<Props> = (props: Props) => {
             isVisible={visible}
             onConfirm={d => onConfirm(d)}
             onCancel={() => setVisible(false)}
-            isDarkModeEnabled={theme.kind === "dark"}
+            isDarkModeEnabled={theme.isDarkTheme}
             textColor={theme.value.palette.textColor}
          />
       </>

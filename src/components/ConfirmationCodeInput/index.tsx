@@ -55,7 +55,7 @@ const ConfirmationCodeInput: React.FC<Props> = (props: Props) => {
                 onChangeText={onChange}
                 cellCount={CELL_COUNT}
                 keyboardType="number-pad"
-                keyboardAppearance={theme.kind === "dark" ? "dark" : "light"}
+                keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
                 textContentType="oneTimeCode"
                 renderCell={({index, symbol, isFocused}) => (
                     <View key={index} style={[styles.cell, isFocused && styles.focusCell]} onLayout={getCellOnLayoutHandler(index)}>
