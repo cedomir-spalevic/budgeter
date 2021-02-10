@@ -79,13 +79,13 @@ const Searchbox: React.FC<Props> = (props: Props) => {
    return (
       <View style={styles.container} onLayout={e => containerWidth.current = e.nativeEvent.layout.width}>
          <View style={styles.textContainer} onTouchStart={() => ref.current && ref.current.focus()}>
-            <Icon size={18} color="#9E9FA4" name="search" />
+            <Icon size={18} color={theme.value.palette.systemGray} name="search" />
             <TextInput
                value={value}
                placeholder={props.placeholder}
-               placeholderTextColor="#9E9FA4"
+               placeholderTextColor={theme.value.palette.systemGray}
                onChangeText={onChange}
-               style={{ color: "#9E9FA4ABC" }}
+               style={{ color: theme.value.palette.textColor }}
                onFocus={() => setShowCancel(true)}
                onTouchStart={() => setShowCancel(true)}
                onBlur={() => setShowCancel(false)}
