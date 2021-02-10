@@ -33,7 +33,10 @@ const BudgetList: React.FC<Props> = (props: Props) => {
             <Container title={`${budgets.title}`} allowScroll flex>
                 <Label type="header" text={`${budgets.title}`} />
                 <Spacer />
-                <ActionItem title={<Label type="regular" text="Due Today" />} action={<Link text="View all" onPress={() => navigation.navigate(HomeRoutes.BudgetDueTodayList)} />}>
+                <ActionItem 
+                    title={<Label type="regular" text="Due Today" />} 
+                    action={props.dueTodayItems.length > 0 && <Link text="View all" onPress={() => navigation.navigate(HomeRoutes.BudgetDueTodayList)} />}
+                >
                     {props.dueTodayItems.length === 0 ? (
                         <MessageBox>
                             <Label
@@ -53,7 +56,10 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                     )}
                 </ActionItem>
                 <Spacer />
-                <ActionItem title={<Label type="regular" text="Incomes" />} action={<Link text="View all" onPress={() => navigation.navigate(HomeRoutes.BudgetIncomesList)} />}>
+                <ActionItem 
+                    title={<Label type="regular" text="Incomes" />} 
+                    action={props.incomeItems.length > 0 && <Link text="View all" onPress={() => navigation.navigate(HomeRoutes.BudgetIncomesList)} />}
+                >
                     {props.incomeItems.length === 0 ? (
                         <MessageBox>
                             <Label
@@ -73,7 +79,10 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                     )}
                 </ActionItem>
                 <Spacer />
-                <ActionItem title={<Label type="regular" text="Payments" />} action={<Link text="View all" onPress={() => navigation.navigate(HomeRoutes.BudgetPaymentsList)} />}>
+                <ActionItem 
+                    title={<Label type="regular" text="Payments" />} 
+                    action={props.paymentItems.length > 0 && <Link text="View all" onPress={() => navigation.navigate(HomeRoutes.BudgetPaymentsList)} />}
+                >
                     {props.paymentItems.length === 0 ? (
                         <MessageBox>
                             <Label
