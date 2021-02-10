@@ -48,8 +48,8 @@ class ApiConfig {
    }
 
    public async checkForValidAccessToken(): Promise<void> {
-      const accessTokenExpiration = await getItem(StorageKeys.AccessTokenExpiration);
-      if(Date.now() > accessTokenExpiration) {
+      const accessTokenExpiration = await getItem(StorageKeys.AccessTokenExpiration) as string;
+      if(Date.now()-500 > Number(accessTokenExpiration)) {
          const authenticationService = AuthenticationService.getInstance();
          await authenticationService.refresh();
       }

@@ -88,7 +88,7 @@ class AuthenticationService {
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
          method: "POST",
-         body: JSON.stringify({ refreshToken: "" })
+         body: JSON.stringify({ refreshToken })
       };
       const response = await apiConfig.callApi(`${this.resource}/refresh`, options);
       if(response.status === 400) {

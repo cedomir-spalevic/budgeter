@@ -1,18 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Page, Label, List, ActionItem } from "components";
 import { Switch } from "components";
 import { useUser } from "context/User";
 import { useNotifications } from "context/Notifications";
+import { setIn } from "formik";
 
 const Notifications: React.FC = () => {
+    const [paymentNotifications, setPaymentNotifications] = useState<boolean>(false);
+    const [incomeNotifications, setIncomeNotifications] = useState<boolean>(false);
     const user = useUser();
     const notifications = useNotifications();
 
     const togglePaymentNotificationSetting = async () => {
-        if(!user.value.notificationPreferences.paymentNotifications) {
-            notifications.askForPermissions().then(() => {
-                user.update({ paymentNotifications: true })
-            })
+        let p = !paymentNotifications;
+        setPaymentNotifications(p);
+        if(p) {
+            notifications.askForPermissions()
+                .then(() => {
+                    user.update({ paymentNotifications: true })
+                })
+                .catch(reason => {
+                    setPaymentNotifications(false);
+                })
         }
         else {
             user.update({ paymentNotifications: false })
@@ -20,15 +29,26 @@ const Notifications: React.FC = () => {
     }
 
     const toggleIncomeNotificationSetting = async () => {
-        if(!user.value.notificationPreferences.incomeNotifications) {
-            notifications.askForPermissions().then(() => {
-                user.update({ incomeNotifications: true })
-            })
+        let i = !incomeNotifications;
+        setIncomeNotifications(i);
+        if(i) {
+            notifications.askForPermissions()
+                .then(() => {
+                    user.update({ incomeNotifications: true })
+                })
+                .catch(reason => {
+                    setIncomeNotifications(false);
+                })
         }
         else {
             user.update({ incomeNotifications: false })
         }
     }
+
+    useEffect(() => {
+        setPaymentNotifications(user.value.notificationPreferences.paymentNotifications);
+        setIncomeNotifications(user.value.notificationPreferences.incomeNotifications);
+    }, [])
 
     return (
         <Page>
@@ -39,13 +59,13 @@ const Notifications: React.FC = () => {
                             { 
                                 id: "payment-reminder",
                                 text: "Payment Reminder", 
-                                action: <Switch onChange={() => togglePaymentNotificationSetting()} value={user.value.notificationPreferences.paymentNotifications} />, 
+                                action: <Switch onChange={() => togglePaymentNotificationSetting()} value={paymentNotifications} />, 
                                 onPress: () => {}
                             },
                             { 
                                 id: "income-reminder",
                                 text: "Income Reminder", 
-                                action: <Switch onChange={() => toggleIncomeNotificationSetting()} value={user.value.notificationPreferences.incomeNotifications} />, 
+                                action: <Switch onChange={() => toggleIncomeNotificationSetting()} value={incomeNotifications} />, 
                                 onPress: () => {}
                             }
                         ]} 

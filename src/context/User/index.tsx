@@ -55,11 +55,13 @@ const UserProvider: React.FC<Props & any> = (props: Props) => {
 
     const update = async (user: Partial<User>) => {
         try {
+            console.log(user);
             const userService  = UserService.getInstance();
             let updatedUser = await userService.update(user);
             setValue({...updatedUser});
         }
         catch(error) {
+            console.log(error)
             if(error instanceof UnauthorizedError) {
                 auth.logout();
                 return;
