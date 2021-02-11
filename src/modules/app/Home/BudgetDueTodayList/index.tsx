@@ -53,7 +53,7 @@ const BudgetDueTodayList: React.FC = () => {
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if((x.type === "income" && user.swipeOptions.deleteIncome === "right") ||
                                 (x.type === "payment" && user.swipeOptions.deletePayment === "right")) {
-                                swipeContentKey = "rightSwipeContnet";
+                                swipeContentKey = "rightSwipeContent";
                                 actionReleaseKey = "onRightActionRelease";
                             }
                             return ({
@@ -62,9 +62,9 @@ const BudgetDueTodayList: React.FC = () => {
                                 note: { text: toCurrency(x.item.amount), color: x.type === "income" ? "green" : "red" },
                                 onPress: () => {
                                     if(x.type === "income")
-                                        navigation.navigate(HomeRoutes.Income)
+                                        navigation.navigate(HomeRoutes.Income, { income: x.item })
                                     else
-                                        navigation.navigate(HomeRoutes.Payment)
+                                        navigation.navigate(HomeRoutes.Payment, { payment: x.item })
                                 },
                                 [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
                                 [actionReleaseKey]: () => setItemToDelete(x)

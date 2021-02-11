@@ -50,7 +50,12 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                                 id: x.item.id,
                                 text: x.item.title,
                                 note: { text: toCurrency(x.item.amount), color: x.type === "income" ? "green" : "red" },
-                                onPress: () => {}
+                                onPress: () => {
+                                    if(x.type === "income")
+                                        navigation.navigate(HomeRoutes.Income, { income: x.item })
+                                    else
+                                        navigation.navigate(HomeRoutes.Payment, { payment: x.item })
+                                }
                             }))} 
                         />
                     )}

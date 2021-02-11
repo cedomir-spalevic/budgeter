@@ -44,14 +44,14 @@ const PaymentsList: React.FC = () => {
                         items={payments.values.map(x => {
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if(user.swipeOptions.deleteIncome === "right") {
-                                swipeContentKey = "rightSwipeContnet";
+                                swipeContentKey = "rightSwipeContent";
                                 actionReleaseKey = "onRightActionRelease";
                             }
                             return ({
                                 id: x.id,
                                 text: x.title,
                                 note: { text: toCurrency(x.amount), color: "green" },
-                                onPress: () => navigation.navigate(PaymentsRoutes.Payment, { income: x }),
+                                onPress: () => navigation.navigate(PaymentsRoutes.Payment, { payment: x }),
                                 [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
                                 [actionReleaseKey]: () => setPaymentToDelete(x)
                             })
