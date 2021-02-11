@@ -13,6 +13,8 @@ const useStyles = makeStyles(theme => ({
         paddingHorizontal: theme.size.pagePadding,
         flexDirection: "row",
         alignItems: "center",
+        borderTopColor: theme.palette.systemGray2,
+        borderTopWidth: 1,
         backgroundColor: theme.palette.tabBarBackground
     }
 }))
@@ -30,7 +32,7 @@ const KeyboardAccessory: React.FC<Props> = (props: Props) => {
     if(props.justifyContent)
         style.push({ justifyContent: props.justifyContent });
     return (
-        <KeyboardAccessoryView alwaysVisible androidAdjustResize>
+        <KeyboardAccessoryView hideBorder alwaysVisible androidAdjustResize>
             <View style={style}>
                 {props.children}
             </View>
