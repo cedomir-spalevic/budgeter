@@ -23,12 +23,13 @@ const useStyles = makeStyles(theme => ({
       alignItems: "center",
       flex: 1
    },
+   textInput: {
+      fontSize: theme.font.regularSize,
+      fontFamily: theme.font.fontFamily,
+      color: theme.palette.textColor
+   },
    linkStyles: {
       alignItems: "flex-end"
-   },
-   textInput: {
-      flex: 1,
-      color: theme.palette.searchBoxText
    }
 }))
 
@@ -85,7 +86,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
                placeholder={props.placeholder}
                placeholderTextColor={theme.value.palette.systemGray}
                onChangeText={onChange}
-               style={{ color: theme.value.palette.textColor }}
+               style={styles.textInput}
                onFocus={() => setShowCancel(true)}
                onTouchStart={() => setShowCancel(true)}
                onBlur={() => setShowCancel(false)}
