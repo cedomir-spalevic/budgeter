@@ -87,7 +87,7 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => {
                     preRenderIcon={<Icon name="event" />}
                     placeholder="Initial Occurrence Date"
                     value={props.values.initialOccurrenceDate ? new Date(props.values.initialOccurrenceDate) : undefined}
-                    onChange={props.handleChange("initialOccurrenceDate")}
+                    onChange={date => props.setFieldValue("initialOccurrenceDate", date.toUTCString(), true)}
                     errorMessage={props.touched.initialOccurrenceDate && props.errors.initialOccurrenceDate}
                     datePickerRef={props.initialOccurrenceRef}
                 />
@@ -127,7 +127,7 @@ const PaymentScreen: React.FC = () => {
             const initialOccurenceDate = new Date(values.initialOccurrenceDate);
             const payment: Partial<Payment> = {
                 title: values.title,
-                amount: Number(values.amount)/100,
+                amount: values.amount,
                 recurrence: RecurrenceLabels[values.repeat],
                 initialDay: initialOccurenceDate.getDate(),
                 initialDate: initialOccurenceDate.getDate(),

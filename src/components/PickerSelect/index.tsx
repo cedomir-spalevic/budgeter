@@ -74,7 +74,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
          value={value}
          returnKeyType="done"
          onTouchStart={() => showPicker()}
-         onFocus={() => alert("here")}
+         onBlur={() => Picker.hide()}
          errorMessage={props.errorMessage}
          controlled
       />
