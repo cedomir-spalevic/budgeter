@@ -83,7 +83,7 @@ class AuthenticationService {
       }
    }
 
-   public async refresh(): Promise<AuthResponse> {
+   public async refresh(retries?: number): Promise<AuthResponse> {
       const refreshToken = await getItem(StorageKeys.RefreshToken);
       const apiConfig = ApiConfig.getInstance();
       const options: RequestInit = {
@@ -99,8 +99,9 @@ class AuthenticationService {
          throw new UnauthorizedError();
       }
       if(response.status >= 500) {
+         if(retries !== 3)
+            return await this.refresh(retries ? retries+1 : 1);
          const body = await response.json();
-         console.log(body)
          throw new InternalServerError(body.message);
       }
       const body = await response.json();

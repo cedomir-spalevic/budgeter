@@ -67,7 +67,6 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             return true;
         }
         catch(error) {
-            console.log(error)
             return false;
         }
     }
