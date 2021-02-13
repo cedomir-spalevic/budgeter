@@ -40,6 +40,7 @@ interface Props {
     allowScroll?: boolean;
     title?: string;
     preventTitleAnimation?: boolean;
+    onCloseToBottom?: () => void;
 }
 
 const Container: React.FC<Props> = (props: Props) => {
@@ -63,6 +64,12 @@ const Container: React.FC<Props> = (props: Props) => {
         style.push({ alignItems: props.alignItems });
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        // Check if closae to bottom
+        if((event.nativeEvent.layoutMeasurement.height + event.nativeEvent.contentOffset.y) >= (event.nativeEvent.contentSize.height - 1)
+            && props.onCloseToBottom)
+            props.onCloseToBottom();
+            
+
         scrollY.current.setValue(event.nativeEvent.contentOffset.y);
         if(props.preventTitleAnimation) {
             navigation.setOptions({

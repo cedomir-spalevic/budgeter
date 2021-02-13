@@ -7,7 +7,8 @@ import {
     Searchbox,
     Label,
     SummaryView,
-    ConfirmDialog
+    ConfirmDialog,
+    Progress
 } from "components";
 import { useTheme, useUser } from "context";
 import { useIncomes } from "context/Incomes";
@@ -18,11 +19,26 @@ import { toCurrency } from "services/internal/currency";
 import { Income } from "services/external/api/models/data/income";
 
 const IncomesList: React.FC = () => {
+    const [searchValue, setSearchValue] = useState<string>();
+    const [loading, setLoading] = useState<boolean>(false);
     const [incomeToDelete, setIncomeToDelete] = useState<Income>();
     const incomes = useIncomes();
     const navigation = useNavigation();
     const theme = useTheme();
     const user = useUser();
+    
+    const search = (sv: string) => {
+        setSearchValue(sv);
+        incomes.get(sv);
+    }
+
+    const getNext = async () => {
+        if(loading)
+            return;
+        setLoading(true);
+        await incomes.get(searchValue, true);
+        setLoading(false);
+    }
 
     const deleteIncome = async () => {
         await incomes.delete(incomeToDelete.id);
@@ -31,12 +47,12 @@ const IncomesList: React.FC = () => {
 
     return (
         <Page>
-            <Container title="Incomes" allowScroll fullWith>
+            <Container title="Incomes" allowScroll fullWith onCloseToBottom={getNext}>
                 <Container>
                     <ActionItem title={<Label type="header" text="Incomes" />}>
                         <Searchbox 
                             placeholder="Search Incomes"
-                            onChange={searchValue => incomes.get(searchValue)}
+                            onChange={search}
                         />
                     </ActionItem>
                 </Container>
@@ -60,14 +76,7 @@ const IncomesList: React.FC = () => {
                         })}
                     />
                 </Container>
-            </Container>
-            <Container fullWith>
-                <SummaryView>
-                    <View style={{ flexDirection: "row" }}>
-                        <Label text="Total:" type="regular" color={theme.value.palette.primary} style={{ paddingRight: 5 }} />
-                        <Label text={toCurrency(incomes.values.map(x => x.amount).reduce((p, c) => p + c, 0))} type="regular" />
-                    </View>
-                </SummaryView>
+                {loading && <View style={{ paddingTop: 15 }}><Progress size="small" /></View>}
             </Container>
             {incomeToDelete && (
                 <ConfirmDialog

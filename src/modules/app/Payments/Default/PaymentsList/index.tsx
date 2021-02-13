@@ -6,22 +6,37 @@ import {
     ActionItem,
     Searchbox,
     Label,
-    SummaryView,
-    ConfirmDialog
+    ConfirmDialog,
+    Progress
 } from "components";
 import { usePayments, useTheme, useUser } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { PaymentsRoutes } from "../../routes";
-import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
 import { Payment } from "services/external/api/models/data/payment";
+import { View } from "react-native";
 
 const PaymentsList: React.FC = () => {
+    const [searchValue, setSearchValue] = useState<string>();
+    const [loading, setLoading] = useState<boolean>(false);
     const [paymentToDelete, setPaymentToDelete] = useState<Payment>();
     const payments = usePayments();
     const navigation = useNavigation();
     const theme = useTheme();
     const user = useUser();
+
+    const search = (sv: string) => {
+        setSearchValue(sv);
+        payments.get(sv);
+    }
+
+    const getNext = async () => {
+        if(loading)
+            return;
+        setLoading(true);
+        await payments.get(searchValue, true);
+        setLoading(false);
+    }
 
     const deletePayment = async () => {
         await payments.delete(paymentToDelete.id);
@@ -30,19 +45,18 @@ const PaymentsList: React.FC = () => {
 
     return (
         <Page>
-            <Container allowScroll fullWith title="Payments">
+            <Container allowScroll fullWith title="Payments" onCloseToBottom={getNext}>
                 <Container>
                     <ActionItem title={<Label type="header" text="Payments" />}>
                         <Searchbox 
                             placeholder="Search Payments"
-                            onChange={searchValue => payments.get(searchValue)}
+                            onChange={search}
                         />
                     </ActionItem>
                 </Container>
                 <Container fullWith>
                     <ActionList
                         items={payments.values.map(x => {
-                            console.log(x)
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if(user.swipeOptions.deleteIncome === "right") {
                                 swipeContentKey = "rightSwipeContent";
@@ -59,14 +73,7 @@ const PaymentsList: React.FC = () => {
                     })}
                     />
                 </Container>
-            </Container>
-            <Container fullWith>
-                <SummaryView>
-                    <View style={{ flexDirection: "row" }}>
-                        <Label text="Total:" type="regular" color={theme.value.palette.primary} style={{ paddingRight: 5 }} />
-                        <Label text={toCurrency(payments.values.map(x => x.amount).reduce((p, c) => p + c, 0))} type="regular" />
-                    </View>
-                </SummaryView>
+                {loading && <View style={{ paddingTop: 15 }}><Progress size="small" /></View>}
             </Container>
             {paymentToDelete && (
                 <ConfirmDialog

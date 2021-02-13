@@ -13,7 +13,7 @@ interface Props {
 interface Context {
     empty: boolean;
     values: Payment[];
-    get: (searchValue?: string) => Promise<void>;
+    get: (searchValue?: string, getNext?: boolean) => Promise<void>;
     create: (Payment: Partial<Payment>) => Promise<boolean>;
     update: (id: string, Payment: Partial<Payment>) => Promise<boolean>;
     delete: (id: string) => Promise<boolean>;
@@ -23,15 +23,23 @@ const PaymentsContext = createContext<Context>(undefined!);
 
 const PaymentsProvider: React.FC<Props> = (props: Props) => {
     const [empty, setEmpty] = useState<boolean>(false);
+    const [count, setCount] = useState<number>(0);
     const [values, setValues] = useState<Payment[]>([]);
     const auth = useAuth();
     const budgets = useBudgets();
 
-    const get = async (search?: string) => {
+    const get = async (search?: string, getNext?: boolean) => {
         try {
+            if(getNext && values.length === count)
+                return;
             const paymentsService = PaymentsService.getInstance();
-            const p = await paymentsService.get(10, 0, search);
-            setValues([...p.values])
+            let skip = (getNext ? values.length : 0);
+            const p = await paymentsService.get(10, skip, search);
+            setCount(p.count);
+            if(getNext)
+                setValues([...values,...p.values])
+            else
+                setValues([...p.values])
             setEmpty(!search && p.values.length === 0)
         }
         catch(error) {
@@ -50,6 +58,7 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             const isEmpty = values.length === 0;
             values.push(i)
             setValues([...values]);
+            setCount(count+1);
             if(isEmpty)
                 setEmpty(false);
             // Update budget
@@ -99,6 +108,7 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             const willBeEmpty = values.length === 1;
             values.splice(index, 1);
             setValues([...values]);
+            setCount(count-1);
             if(willBeEmpty)
                 setEmpty(true);
             // Update budget

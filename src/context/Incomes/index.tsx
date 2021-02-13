@@ -13,7 +13,7 @@ interface Props {
 interface Context {
     empty: boolean;
     values: Income[];
-    get: (searchValue?: string) => Promise<void>;
+    get: (searchValue?: string, getNext?: boolean) => Promise<void>;
     create: (income: Partial<Income>) => Promise<boolean>;
     update: (id: string, income: Partial<Income>) => Promise<boolean>;
     delete: (id: string) => Promise<boolean>;
@@ -23,15 +23,23 @@ const IncomesContext = createContext<Context>(undefined!);
 
 const IncomesProvider: React.FC<Props> = (props: Props) => {
     const [empty, setEmpty] = useState<boolean>(false);
+    const [count, setCount] = useState<number>(0);
     const [values, setValues] = useState<Income[]>([]);
     const auth = useAuth();
     const budgets = useBudgets();
 
-    const get = async (search?: string) => {
+    const get = async (search?: string, getNext?: boolean) => {
         try {
+            if(getNext && values.length === count)
+                return;
+            let skip = (getNext ? values.length : 0);
             const incomesService = IncomesService.getInstance();
-            const incomes = await incomesService.get(10, 0, search);
-            setValues([...incomes.values]);
+            const incomes = await incomesService.get(10, skip, search);
+            setCount(incomes.count);
+            if(getNext)
+                setValues([...values,...incomes.values]);
+            else
+                setValues([...incomes.values]);
             setEmpty(!search && incomes.values.length === 0)
         }
         catch(error) {
@@ -49,6 +57,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
             const i = await incomesService.create(income);
             const isEmpty = values.length === 0;
             values.push(i)
+            setCount(count+1);
             setValues([...values]);
             if(isEmpty)
                 setEmpty(false);
@@ -98,6 +107,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
             await incomesService.delete(id);
             const willBeEmpty = values.length === 1;
             values.splice(index, 1);
+            setCount(count-1);
             setValues([...values]);
             if(willBeEmpty)
                 setEmpty(true);
