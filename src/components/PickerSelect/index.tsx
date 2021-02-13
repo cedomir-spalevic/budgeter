@@ -69,7 +69,10 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
    const styles = useStyles();
 
    const onConfirm = () => {
-      setValue(pickerValue);
+      if(!pickerValue)
+         setValue(props.items[0])
+      else
+         setValue(pickerValue);
       setVisible(false);
       if(props.onChange)
          props.onChange(pickerValue);
