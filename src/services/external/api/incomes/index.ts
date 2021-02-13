@@ -40,6 +40,7 @@ class IncomesService {
             title: x.title,
             amount: x.amount,
             initialDay: x.initialDay,
+            initialDate: x.initialDate,
             initialMonth: x.initialMonth,
             initialYear: x.initialYear,
             recurrence: x.recurrence,

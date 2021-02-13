@@ -39,9 +39,10 @@ class PaymentsService {
             id: x.id,
             title: x.title,
             amount: x.amount,
-            initialDay: responseBody.initialDay,
-            initialMonth: responseBody.initialMonth,
-            initialYear: responseBody.initialYear,
+            initialDay: x.initialDay,
+            initialDate: x.initialDate,
+            initialMonth: x.initialMonth,
+            initialYear: x.initialYear,
             recurrence: x.recurrence,
             createdOn: new Date(x.createdOn),
             modifiedOn: new Date(x.modifiedOn)

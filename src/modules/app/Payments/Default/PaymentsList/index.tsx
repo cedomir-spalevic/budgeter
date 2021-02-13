@@ -42,6 +42,7 @@ const PaymentsList: React.FC = () => {
                 <Container fullWith>
                     <ActionList
                         items={payments.values.map(x => {
+                            console.log(x)
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if(user.swipeOptions.deleteIncome === "right") {
                                 swipeContentKey = "rightSwipeContent";
