@@ -133,27 +133,6 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                     )}
                 </ActionItem>
             </Container>
-            {/* <Container fullWith>
-                <SummaryView>
-                    <View>
-                        <View style={{ flexDirection: "row" }}>
-                            <Label text={toCurrency(moneyIn)} type="regular" />
-                        </View>
-                        <View>
-                            <Label type="regular" text="-" />
-                        </View>
-                        <View style={{ flexDirection: "row" }}>
-                            <Label text={toCurrency(moneyOut)} type="regular" />
-                        </View>
-                        <View>
-                            <Label type="regular" text="---------------" />
-                        </View>
-                        <View style={{ flexDirection: "row" }}>
-                            <Label text={toCurrency(leftOver)} type="regular" color={leftOver > 0 ? theme.value.palette.green : theme.value.palette.red} />
-                        </View>
-                    </View>
-                </SummaryView>
-            </Container> */}
         </Page>
     )
 }

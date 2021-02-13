@@ -23,7 +23,6 @@ const useStyles = makeStyles(theme => ({
         alignItems: "center"
     },
     flex: {
-        flex: 1,
         flexGrow: 1,
         paddingBottom: 20
     }
@@ -123,7 +122,7 @@ const Container: React.FC<Props> = (props: Props) => {
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 ref={scrollView} 
-                contentContainerStyle={style} 
+                contentContainerStyle={[...style, { paddingBottom: 100}]} 
                 scrollEnabled={!scroll.isSwiping} 
                 keyboardShouldPersistTaps="handled"
             >
