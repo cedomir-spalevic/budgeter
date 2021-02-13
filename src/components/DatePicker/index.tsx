@@ -133,7 +133,7 @@ const DatePicker: React.FC<Props> = (props: Props) => {
             controlled
          />
          <Modal
-            animationType="none"
+            animationType="fade"
             transparent={true}
             visible={visible}
             onRequestClose={() => setVisible(false)}
