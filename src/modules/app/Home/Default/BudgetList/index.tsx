@@ -7,7 +7,9 @@ import {
     List,
     Link,
     Spacer,
-    MessageBox
+    MessageBox,
+    Box,
+    Icon
 } from "components";
 import { useBudgets } from "context/Budgets";
 import { BudgetIncome } from "services/external/api/models/data/income";
@@ -16,7 +18,8 @@ import { DueTodayItem } from "services/external/api/models/data/budget";
 import { useNavigation } from "@react-navigation/native";
 import { HomeRoutes } from "../../routes";
 import { toCurrency } from "services/internal/currency";
-import { View } from "react-native";
+import { useTheme } from "context";
+import { TouchableOpacityComponent, View } from "react-native";
 
 interface Props {
     dueTodayItems: DueTodayItem[];
@@ -27,11 +30,34 @@ interface Props {
 const BudgetList: React.FC<Props> = (props: Props) => {
     const budgets = useBudgets();
     const navigation = useNavigation();
+    const theme = useTheme();
+    const moneyIn = budgets.value.incomes.map(x => x.amount).reduce((p, c) => p + c, 0);
+    const moneyOut = budgets.value.payments.map(x => x.amount).reduce((i, c) => i + c, 0);
+    const leftOver = (moneyIn - moneyOut);
+    let sub = "+", c = theme.value.palette.green;
+    if(leftOver < 0) {
+        sub = "-";
+        c = theme.value.palette.red;
+    }
 
     return (
         <Page>
             <Container title={`${budgets.title}`} allowScroll flex>
-                <Label type="header" text={`${budgets.title}`} />
+                <Label type="header" text={`${budgets.title}`} style={{ paddingBottom: 5 }} />
+                <Label text={`${sub} ${toCurrency(leftOver)}`} type="regular" color={c} />
+                <Spacer />
+                <ActionItem title={<Label type="regular" text="Summary" />}>
+                    <Box style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                        <View style={{ flexDirection: "row", alignItems: 'center' }}>
+                            <Icon name="arrow-upward" size={32} color={theme.value.palette.green} />
+                            <Label type="regular" text={toCurrency(moneyIn)} color={theme.value.palette.green} />
+                        </View>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Icon name="arrow-downward" size={32} color={theme.value.palette.red} />
+                            <Label type="regular" text={toCurrency(moneyOut)} color={theme.value.palette.red} />
+                        </View>
+                    </Box>
+                </ActionItem>
                 <Spacer />
                 <ActionItem 
                     title={<Label type="regular" text="Due Today" />} 
@@ -107,6 +133,27 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                     )}
                 </ActionItem>
             </Container>
+            {/* <Container fullWith>
+                <SummaryView>
+                    <View>
+                        <View style={{ flexDirection: "row" }}>
+                            <Label text={toCurrency(moneyIn)} type="regular" />
+                        </View>
+                        <View>
+                            <Label type="regular" text="-" />
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                            <Label text={toCurrency(moneyOut)} type="regular" />
+                        </View>
+                        <View>
+                            <Label type="regular" text="---------------" />
+                        </View>
+                        <View style={{ flexDirection: "row" }}>
+                            <Label text={toCurrency(leftOver)} type="regular" color={leftOver > 0 ? theme.value.palette.green : theme.value.palette.red} />
+                        </View>
+                    </View>
+                </SummaryView>
+            </Container> */}
         </Page>
     )
 }

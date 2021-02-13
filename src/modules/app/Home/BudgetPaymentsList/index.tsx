@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Page,
     Container,
     ActionList,
     Label,
     SummaryView,
-    ConfirmDialog
+    ConfirmDialog,
+    Searchbox,
+    ActionItem
 } from "components";
 import { useTheme, useUser } from "context";
 import { usePayments } from "context/Payments";
@@ -17,6 +19,7 @@ import { Payment } from "services/external/api/models/data/payment";
 import { HomeRoutes } from "../routes";
 
 const BudgetPaymentsList: React.FC = () => {
+    const [list, setList] = useState<Payment[]>([]);
     const [paymentToDelete, setPaymentToDelete] = useState<Payment>();
     const budgets = useBudgets();
     const payments = usePayments();
@@ -24,20 +27,34 @@ const BudgetPaymentsList: React.FC = () => {
     const theme = useTheme();
     const user = useUser();
 
+    const onSearch = (searchValue: string) => {
+        const l = budgets.value.payments.filter(x => x.title.trim().toLowerCase().includes(searchValue.trim().toLowerCase()));
+        setList([...l])
+    }
+
     const deletePayment = async () => {
         await payments.delete(paymentToDelete.id);
         setPaymentToDelete(undefined);
     }
 
+    useEffect(() => {
+        setList([...budgets.value.payments])
+    }, [])
+
     return (
         <Page>
             <Container title="Payments" allowScroll fullWith>
                 <Container>
-                    <Label type="header" text="Payments" />
+                    <ActionItem title={<Label type="header" text="Payments" />}>
+                        <Searchbox 
+                            placeholder="Search Payments"
+                            onChange={onSearch}
+                        />
+                    </ActionItem>
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={budgets.value.payments.map(x => {
+                        items={list.map(x => {
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if(user.swipeOptions.deletePayment === "right") {
                                 swipeContentKey = "rightSwipeContent";

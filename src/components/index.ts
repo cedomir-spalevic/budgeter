@@ -1,5 +1,6 @@
 import ActionItem from "./ActionItem";
 import ActionList from "./ActionList";
+import Box from "./Box";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 import ConfirmationCodeInput from "./ConfirmationCodeInput";
@@ -30,6 +31,7 @@ import TextFieldSecret from "./TextFieldSecret";
 export {
     ActionItem,
     ActionList,
+    Box,
     Button,
     Checkbox,
     ConfirmationCodeInput,

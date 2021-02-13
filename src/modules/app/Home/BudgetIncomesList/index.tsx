@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Page,
     Container,
@@ -19,6 +19,7 @@ import { Income } from "services/external/api/models/data/income";
 import { HomeRoutes } from "../routes";
 
 const BudgetIncomesList: React.FC = () => {
+    const [list, setList] = useState<Income[]>([]);
     const [incomeToDelete, setIncomeToDelete] = useState<Income>();
     const budgets = useBudgets();
     const incomes = useIncomes();
@@ -26,20 +27,34 @@ const BudgetIncomesList: React.FC = () => {
     const theme = useTheme();
     const user = useUser();
 
+    const onSearch = (searchValue: string) => {
+        const l = budgets.value.incomes.filter(x => x.title.trim().toLowerCase().includes(searchValue.trim().toLowerCase()));
+        setList([...l])
+    }
+
     const deleteIncome = async () => {
         await incomes.delete(incomeToDelete.id);
         setIncomeToDelete(undefined);
     }
 
+    useEffect(() => {
+        setList([...budgets.value.incomes])
+    }, [])
+
     return (
         <Page>
             <Container title="Incomes" allowScroll fullWith>
                 <Container>
-                    <Label type="header" text="Incomes" />
+                    <ActionItem title={<Label type="header" text="Incomes" />}>
+                        <Searchbox 
+                            placeholder="Search Incomes"
+                            onChange={onSearch}
+                        />
+                    </ActionItem>
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={budgets.value.incomes.map(x => {
+                        items={list.map(x => {
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if(user.swipeOptions.deleteIncome === "right") {
                                 swipeContentKey = "rightSwipeContent";

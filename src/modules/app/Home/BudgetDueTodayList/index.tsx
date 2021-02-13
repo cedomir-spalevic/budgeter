@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Page,
     Container,
     ActionList,
     Label,
     SummaryView,
-    ConfirmDialog
+    ConfirmDialog,
+    Searchbox,
+    ActionItem
 } from "components";
 import { useTheme, useUser } from "context";
 import { useIncomes } from "context/Incomes";
@@ -18,6 +20,7 @@ import { DueTodayItem } from "services/external/api/models/data/budget";
 import { HomeRoutes } from "../routes";
 
 const BudgetDueTodayList: React.FC = () => {
+    const [list, setList] = useState<DueTodayItem[]>([]);
     const [itemToDelete, setItemToDelete] = useState<DueTodayItem>();
     const budgets = useBudgets();
     const incomes = useIncomes();
@@ -25,10 +28,18 @@ const BudgetDueTodayList: React.FC = () => {
     const navigation = useNavigation();
     const theme = useTheme();
     const user = useUser();
-    const dueTodayItems = [
-        ...budgets.value.incomes.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "income", item: x })),
-        ...budgets.value.payments.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "payment", item: x}))
-    ]
+
+    const onSearch = (searchValue: string) => {
+        const l = [
+            ...budgets.value.incomes
+                .filter(x => x.dueToday && x.title.trim().toLowerCase().includes(searchValue.trim().toLowerCase()))
+                .map((x): DueTodayItem => ({ type: "income", item: x })),
+            ...budgets.value.payments
+                .filter(x => x.dueToday && x.title.trim().toLowerCase().includes(searchValue.trim().toLowerCase()))
+                .map((x): DueTodayItem => ({ type: "payment", item: x}))
+        ]
+        setList([...l])
+    }
 
     const deleteItem = async () => {
         if(itemToDelete.type === "payment") {
@@ -41,15 +52,27 @@ const BudgetDueTodayList: React.FC = () => {
         }
     }
 
+    useEffect(() => {
+        setList([
+            ...budgets.value.incomes.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "income", item: x })),
+            ...budgets.value.payments.filter(x => x.dueToday).map((x): DueTodayItem => ({ type: "payment", item: x}))
+        ])
+    }, [])
+
     return (
         <Page>
             <Container title="Due Today" allowScroll fullWith>
                 <Container>
-                    <Label type="header" text="Due Today" />
+                    <ActionItem title={<Label type="header" text="Due Today" />}>
+                        <Searchbox 
+                            placeholder="Search items"
+                            onChange={onSearch}
+                        />
+                    </ActionItem>
                 </Container>
                 <Container fullWith>
                     <ActionList
-                        items={dueTodayItems.map(x => {
+                        items={list.map(x => {
                             let swipeContentKey = "leftSwipeContent", actionReleaseKey = "onLeftActionRelease";
                             if((x.type === "income" && user.swipeOptions.deleteIncome === "right") ||
                                 (x.type === "payment" && user.swipeOptions.deletePayment === "right")) {
