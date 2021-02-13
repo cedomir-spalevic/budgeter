@@ -20,9 +20,9 @@ interface RegisterResponse {
 }
 
 export enum AuthState {
-   SignedOut,
-   Verified,
-   SignedIn
+    Verifying,
+    SignedOut,
+    SignedIn
 }
 
 interface Props {
@@ -44,41 +44,30 @@ interface Context {
 const AuthContext = createContext<Context>(undefined!);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
-    const [attemptedVerification, setAttemptedVerification] = useState<boolean>(false);
-    const [state, setState] = useState<AuthState>(AuthState.SignedOut);
+    const [verified, setVerified] = useState<boolean>(false);
+    const [state, setState] = useState<AuthState>(AuthState.Verifying);
 
     const verify = () => {
         const authenticationService = AuthenticationService.getInstance();
         authenticationService.refresh().then(() => {
-            setState(AuthState.Verified);
-            setAttemptedVerification(true);
-        }).catch(e => {
-            setAttemptedVerification(true);
+            setVerified(true);
+            setState(AuthState.SignedOut);
+        }).finally(() => {
+            setState(AuthState.SignedOut);
         })
     }
 
     const tryLocalAuthentication = async (): Promise<boolean> => {
         try {
-            if(!attemptedVerification) {
-                // If verification is not done, set interval until its done
-                const awaitForAttemptedVerification = new Promise((resolve, reject) => {
-                    const interval = setInterval(() => {
-                        if(attemptedVerification) {
-                            clearInterval(interval);
-                            resolve();
-                        }
-                    }, 300)
-                });
-                await awaitForAttemptedVerification;
+            if(verified) {
+                const response = await LocalAuthentication.authenticateAsync();
+                if(response)
+                    setState(AuthState.SignedIn);
             }
-            if(state !== AuthState.Verified)
-                return;
-            const response = await LocalAuthentication.authenticateAsync();
-            if(response)
-                setState(AuthState.SignedIn);
             return true;
         }
-        catch {
+        catch(error) {
+            console.log(error)
             return false;
         }
     }

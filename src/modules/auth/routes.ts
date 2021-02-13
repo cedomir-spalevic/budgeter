@@ -1,5 +1,6 @@
 export enum AuthRoutes {
     Default = "Default",
     Login = "Log in",
-    Register = "Register"
+    Register = "Register",
+    Splash = "Splash"
 }
