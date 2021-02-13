@@ -29,7 +29,7 @@ const TabNavigator: React.FC = () => {
     const theme = useTheme();
 
     const tabBarOptions: BottomTabBarOptions = {
-        style: { backgroundColor: theme.value.palette.tabBarBackground },
+        style: { backgroundColor: theme.value.palette.tabBarBackground, borderTopColor: theme.value.palette.tabBarBackground },
         inactiveTintColor: theme.value.palette.systemGray,
         activeTintColor: theme.value.palette.primary,
         showLabel: false,

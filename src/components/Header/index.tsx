@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
         position: "absolute", 
         height: "100%", 
         width: "100%", 
-        backgroundColor: theme.palette.secondaryBackground,
+        backgroundColor: theme.palette.appBackground,
         borderBottomWidth: 0.5,
         borderBottomColor: theme.palette.appBackground,
         opacity: 0

@@ -6,13 +6,11 @@ import { makeStyles } from "context";
 
 const useStyles = makeStyles(theme => ({
     container: {
-        backgroundColor: theme.palette.secondaryBackground,
+        backgroundColor: theme.palette.appBackground,
         paddingVertical: 20,
         paddingHorizontal: theme.size.pagePadding,
         justifyContent: "center",
         alignItems: "center",
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
         shadowColor: theme.palette.systemGray6,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.6,
