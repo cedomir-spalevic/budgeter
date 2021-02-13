@@ -37,12 +37,6 @@ const UserProvider: React.FC<Props & any> = (props: Props) => {
             const userService  = UserService.getInstance();
             const user = await userService.get();
             setValue(user);
-            const deleteIncomeSwipeOption = await getItem(StorageKeys.DeleteIncomeSwipeOption);
-            const deletePaymentSwipeOption = await getItem(StorageKeys.DeletePaymentSwipeOption);
-            setSwipeOptions({
-                deleteIncome: !deleteIncomeSwipeOption ? "left" : deleteIncomeSwipeOption,
-                deletePayment: !deletePaymentSwipeOption ? "left" : deletePaymentSwipeOption
-            })
         }
         catch(error) {
             if(error instanceof UnauthorizedError) {
@@ -50,6 +44,14 @@ const UserProvider: React.FC<Props & any> = (props: Props) => {
                 return;
             }
             Alert.alert("Unable to get user", "We're having trouble getting your user at the moment.");
+        }
+        finally {
+            const deleteIncomeSwipeOption = await getItem(StorageKeys.DeleteIncomeSwipeOption);
+            const deletePaymentSwipeOption = await getItem(StorageKeys.DeletePaymentSwipeOption);
+            setSwipeOptions({
+                deleteIncome: !deleteIncomeSwipeOption ? "left" : deleteIncomeSwipeOption,
+                deletePayment: !deletePaymentSwipeOption ? "left" : deletePaymentSwipeOption
+            })
         }
     }
 
