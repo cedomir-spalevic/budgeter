@@ -96,14 +96,6 @@ const BudgetDueTodayList: React.FC = () => {
                     />
                 </Container>
             </Container>
-            <Container fullWith>
-                <SummaryView>
-                    <View style={{ flexDirection: "row" }}>
-                        <Label text="Total:" type="regular" color={theme.value.palette.primary} style={{ paddingRight: 5 }} />
-                        <Label text={toCurrency(incomes.values.map(x => x.amount).reduce((p, c) => p + c, 0))} type="regular" />
-                    </View>
-                </SummaryView>
-            </Container>
             {itemToDelete && (
                 <ConfirmDialog
                     visible={true}
