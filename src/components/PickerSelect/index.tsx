@@ -1,8 +1,46 @@
-import { TextField } from "components";
-import { useTheme } from "context";
+import { Link, TextField } from "components";
+import { makeStyles, useTheme } from "context";
 import React, { useState, useEffect, useRef, forwardRef } from "react";
-import Picker from "react-native-picker";
-import { rgbToRGBA } from "services/internal/colors";
+import { Picker } from "@react-native-picker/picker";
+import { Animated, Modal, View } from "react-native";
+
+const useStyles = makeStyles(theme => ({
+   overlay: {
+      position: "absolute",
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: theme.palette.black
+   },
+   actionSheet: {
+      flex: 1, 
+      justifyContent: "flex-end"
+   },
+   actionSheetHeader: {
+      width: "100%", 
+      justifyContent: "space-between", 
+      flexDirection: "row", 
+      paddingHorizontal: theme.size.pagePadding, 
+      paddingVertical: 15,
+      borderBottomColor: theme.palette.systemGray4,
+      borderBottomWidth: 1
+   },
+   actionSheetBody: {
+      width: "100%",
+      flexDirection: "column",
+      backgroundColor: theme.palette.secondaryBackground,
+      borderRadius: 10
+   },
+   picker: {
+      width: "100%",
+      padding: 0,
+      margin: 0
+   },
+   pickerItem: {
+      color: theme.palette.textColor
+   }
+}))
 
 export interface PickerSelectRef {
    showPicker: () => void;
@@ -22,39 +60,37 @@ interface Props {
 }
 
 const PickerSelect: React.FC<Props> = (props: Props) => {
-   const selected = useRef<string | null>(null);
+   const [visible, setVisible] = useState<boolean>(false);
    const [value, setValue] = useState<string>();
-   const pickerSelectRef = useRef<PickerSelectRef>({ showPicker: () => showPicker() });
+   const [pickerValue, setPickerValue] = useState<string>();
+   const pickerSelectRef = useRef<PickerSelectRef>({ showPicker: () => setVisible(true) });
+   const overlayOpacity = useRef<Animated.Value>(new Animated.Value(0));
    const theme = useTheme();
+   const styles = useStyles();
 
-   const onConfirm = (v: any) => {
-      let newValue = selected.current !== null ? selected.current : !v ? props.items[0] : v;
-      setValue(newValue);
-      selected.current = null;
+   const onConfirm = () => {
+      setValue(pickerValue);
+      setVisible(false);
       if(props.onChange)
-         props.onChange(newValue);
+         props.onChange(pickerValue);
    }
 
-   const showPicker = () => {
-      Picker.init({
-         pickerTitleText: props.placeholder ?? "",
-         pickerTitleColor: rgbToRGBA(theme.value.palette.textColor),
-         pickerData: props.items,
-         selectedValue: value ? [value] : [""],
-         onPickerConfirm: (item: string[]) => onConfirm(item[0]),
-         onPickerCancel: (item: string[]) => selected.current = null,
-         onPickerSelect: (item: string[]) => selected.current = item[0],
-         pickerConfirmBtnText: "Select",
-         pickerConfirmBtnColor: rgbToRGBA(theme.value.palette.primary),
-         pickerCancelBtnText: "Cancel",
-         pickerCancelBtnColor: rgbToRGBA(theme.value.palette.primary),
-         pickerToolBarBg: rgbToRGBA(theme.value.palette.secondaryBackground),
-         pickerFontColor: rgbToRGBA(theme.value.palette.textColor),
-         pickerFontSize: theme.value.font.regularSize,
-         pickerBg: rgbToRGBA(theme.value.palette.appBackground)
-      });
-      Picker.show();
+   const onCancel = () => {
+      setPickerValue(undefined);
+      setVisible(false);
    }
+
+   useEffect(() => {
+      Animated.timing(
+         overlayOpacity.current,
+         {
+            toValue: visible ? 0.4 : 0,
+            duration: 275,
+            useNativeDriver: false
+         }
+      ).start(e => {
+      });
+   }, [visible])
 
    useEffect(() => {
       if(props.value && value === undefined)
@@ -65,19 +101,39 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
    })
 
    return (
-      <TextField
-         preRenderIcon={props.preRenderIcon}
-         postRenderIcon={props.postRenderIcon}
-         placeholder={props.placeholder}
-         contextMenuHidden={true}
-         editable={false}
-         value={value}
-         returnKeyType="done"
-         onTouchStart={() => showPicker()}
-         onBlur={() => Picker.hide()}
-         errorMessage={props.errorMessage}
-         controlled
-      />
+      <>
+         <TextField
+            preRenderIcon={props.preRenderIcon}
+            postRenderIcon={props.postRenderIcon}
+            placeholder={props.placeholder}
+            contextMenuHidden={true}
+            editable={false}
+            value={value}
+            returnKeyType="done"
+            onTouchStart={() => setVisible(true)}
+            errorMessage={props.errorMessage}
+            controlled
+         />
+         <Modal
+            animationType="none"
+            transparent={true}
+            visible={visible}
+            onRequestClose={() => setVisible(false)}
+         >
+            <Animated.View style={[styles.overlay, { opacity: overlayOpacity.current }]}></Animated.View>
+            <View style={styles.actionSheet}>
+               <View style={styles.actionSheetBody}>
+                  <View style={styles.actionSheetHeader}>
+                     <Link text="Cancel" onPress={() => onCancel()} />
+                     <Link text="Confirm" onPress={() => onConfirm()} />
+                  </View>
+                  <Picker style={styles.picker} itemStyle={styles.pickerItem} selectedValue={pickerValue} onValueChange={(v, i) => setPickerValue(v)}>
+                     {props.items.map(x => <Picker.Item label={x} value={x} />)}
+                  </Picker>
+               </View>
+            </View>
+         </Modal>
+      </>
    )
 }
 

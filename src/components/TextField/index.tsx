@@ -74,6 +74,7 @@ interface Props {
    preventOnChange?: boolean;
    controlled?: boolean;
    renderInput?: () => React.ReactNode;
+   blurOnSubmit?: boolean;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -156,7 +157,7 @@ const TextField: React.FC<Props> = (props: Props) => {
                   onSubmitEditing={onSubmitEditing}
                   ref={mergedRefs}
                   style={!props.renderInput ? styles.textInput : { display: "none" }}
-                  blurOnSubmit={false}
+                  blurOnSubmit={props.blurOnSubmit}
                   keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
                   autoCapitalize={props.autoCapitalize}
                   textContentType={props.textContentType}

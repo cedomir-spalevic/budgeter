@@ -55,9 +55,9 @@ const useStyles = makeStyles(theme => ({
         position: "absolute", 
         height: "100%", 
         width: "100%", 
-        backgroundColor: theme.palette.appBackground,
+        backgroundColor: theme.palette.tabBarBackground,
         borderBottomWidth: 0.5,
-        borderBottomColor: theme.palette.appBackground,
+        borderBottomColor: theme.palette.tabBarBackground,
         opacity: 0
     },
     header: {

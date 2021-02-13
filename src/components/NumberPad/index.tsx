@@ -114,6 +114,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
          returnKeyType="done"
          controlled
          renderInput={() => <Label type="regular" text={num} />}
+         blurOnSubmit={true}
       />
    )
 }
