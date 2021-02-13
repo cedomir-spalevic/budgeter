@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles, useScroll, useTheme } from "context";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableHighlight, TouchableOpacity, View } from "react-native";
 import { Label, Icon, SwipeContainer } from "components";
 import Swipeable from "react-native-swipeable";
 
@@ -123,21 +123,23 @@ const ActionList: React.FC<Props> = (props: Props) => {
                         onSwipeRelease={() => scroll.setIsSwiping(false)}
                         useNativeDriver={false}
                     >
-                        <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
-                            <View style={styles.listItemText}>
-                                {item.preIcon}
-                                <Label type="regular" text={item.text} color={item.textColor} />
-                                {item.note &&
-                                    <Label 
-                                        style={{ paddingLeft: 8 }} 
-                                        type="subText" 
-                                        text={item.note.text} 
-                                        color={item.note.color === "red" ? theme.value.palette.red : theme.value.palette.green} 
-                                    />
-                                }
+                        <TouchableHighlight key={item.id} onPress={item.onPress} activeOpacity={0.6} underlayColor={theme.value.palette.systemGray4}>
+                            <View style={listItemStyle}>
+                                <View style={styles.listItemText}>
+                                    {item.preIcon}
+                                    <Label type="regular" text={item.text} color={item.textColor} />
+                                    {item.note &&
+                                        <Label 
+                                            style={{ paddingLeft: 8 }} 
+                                            type="subText" 
+                                            text={item.note.text} 
+                                            color={item.note.color === "red" ? theme.value.palette.red : theme.value.palette.green} 
+                                        />
+                                    }
+                                </View>
+                                {item.action ? item.action : <Icon name={item.postIconName ?? "chevron-right"} size={24} color={item.postIconColor} />}
                             </View>
-                            {item.action ? item.action : <Icon name={item.postIconName ?? "chevron-right"} size={24} color={item.postIconColor} />}
-                        </TouchableOpacity>
+                        </TouchableHighlight>
                     </Swipeable>
                 )
             })}

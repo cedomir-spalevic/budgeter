@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles, useTheme } from "context";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableHighlight, View } from "react-native";
 import { Label, Icon } from "components";
 
 const useStyles = makeStyles(theme => ({
@@ -9,6 +9,9 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.secondaryBackground,
         borderRadius: 10,
         marginTop: 5
+    },
+    touchableHighlight: {
+        borderRadius: 10
     },
     listItem: {
         paddingHorizontal: 20,
@@ -53,8 +56,9 @@ const List: React.FC<Props> = (props: Props) => {
                 if(index !== props.items.length-1)
                     listItemStyle.push(styles.listItemBorder)
                 return (
-                    <TouchableOpacity key={item.id} onPress={item.onPress} style={listItemStyle}>
-                        <View style={styles.listItemText}>
+                    <TouchableHighlight key={item.id} onPress={item.onPress} style={styles.touchableHighlight} activeOpacity={0.6} underlayColor={theme.value.palette.systemGray4}>
+                        <View style={listItemStyle}>
+                            <View style={styles.listItemText}>
                                 <Label type="regular" text={item.text} color={item.textColor} />
                                 {item.note &&
                                     <Label 
@@ -64,9 +68,10 @@ const List: React.FC<Props> = (props: Props) => {
                                         color={item.note.color === "red" ? theme.value.palette.red : theme.value.palette.green} 
                                     />
                                 }
+                            </View>
+                            {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
                         </View>
-                        {item.action ? item.action : <Icon name={item.iconName ?? "chevron-right"} size={24} color={item.iconColor} />}
-                    </TouchableOpacity>
+                    </TouchableHighlight>
                 )
             })}
         </View>
