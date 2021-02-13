@@ -3,7 +3,8 @@ import React from "react";
 import {
     Text,
     StyleProp,
-    TextStyle
+    TextStyle,
+    LayoutChangeEvent
 } from "react-native";
 
 const useStyles = makeStyles(theme => ({
@@ -44,6 +45,10 @@ interface Props {
     text: string | React.ReactNode;
     color?: string;
     style?: TextStyle;
+    ellipsizeMode?: "head" | "middle" | "tail" | "clip";
+    onLayout?: (event: LayoutChangeEvent) => void;
+    adjustsFontSizeToFit?: boolean;
+    numberOfLines?: number;
 }
 
 const Label: React.FC<Props> = (props: Props) => {
@@ -70,7 +75,16 @@ const Label: React.FC<Props> = (props: Props) => {
         style.push({ color: props.color });
     if(props.style)
         style.push(props.style);
-    return <Text adjustsFontSizeToFit style={style}>{props.text}</Text>
+    return (
+        <Text 
+            adjustsFontSizeToFit={props.adjustsFontSizeToFit}
+            ellipsizeMode={props.ellipsizeMode} 
+            numberOfLines={props.numberOfLines} 
+            onLayout={props.onLayout}
+            style={style}>
+                {props.text}
+        </Text>
+    )
 }
 
 export default Label;

@@ -65,7 +65,7 @@ const PaymentsList: React.FC = () => {
                             return ({
                                 id: x.id,
                                 text: x.title,
-                                note: { text: toCurrency(x.amount), color: "green" },
+                                note: { text: toCurrency(x.amount), color: "red" },
                                 onPress: () => navigation.navigate(PaymentsRoutes.Payment, { payment: x }),
                                 [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
                                 [actionReleaseKey]: () => setPaymentToDelete(x)
