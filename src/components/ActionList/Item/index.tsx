@@ -1,7 +1,7 @@
 import { Icon, Label, SwipeContainer } from "components";
 import { makeStyles, useScroll, useTheme } from "context";
-import React, { useState } from "react";
-import { TextStyle, TouchableHighlight, View } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { Animated, TextStyle, TouchableHighlight, View } from "react-native";
 import Swipeable from "react-native-swipeable";
 import { ListItem } from "..";
 
@@ -38,6 +38,7 @@ const Item: React.FC<Props> = (props: Props) => {
     const [listItemTextWidth, setListItemTextWidth] = useState<number>();
     const [noteWidth, setNoteWidth] = useState<number>();
     const [titleWidth, setTitleWidth] = useState<number>();
+    const listItemHeightValue = useRef<Animated.Value>(new Animated.Value(0));
     const theme = useTheme();
     const styles = useStyles();
     const scroll = useScroll();
@@ -71,6 +72,20 @@ const Item: React.FC<Props> = (props: Props) => {
         )
     }
 
+    useEffect(() => {
+        if(listItemTextWidth && noteWidth && titleWidth) {
+            Animated.timing(
+               listItemHeightValue.current,
+               {
+                  toValue: 25,
+                  duration: 275,
+                  useNativeDriver: false
+               }
+            ).start(e => {
+            });
+        }
+    }, [listItemTextWidth, noteWidth, titleWidth])
+
     return (
         <Swipeable
             leftContent={leftSwipeContent}
@@ -100,7 +115,7 @@ const Item: React.FC<Props> = (props: Props) => {
         >
             <TouchableHighlight key={props.item.id} onPress={props.item.onPress} activeOpacity={0.6} underlayColor={theme.value.palette.systemGray4}>
                 <View style={listItemStyle}>
-                    <View style={styles.listItemText} onLayout={e => !listItemTextWidth && setListItemTextWidth(e.nativeEvent.layout.width)}>
+                    <Animated.View style={{...styles.listItemText, height: listItemHeightValue.current}} onLayout={e => !listItemTextWidth && setListItemTextWidth(e.nativeEvent.layout.width)}>
                         {/* {props.item.preIcon} */}
                         <Label 
                             onLayout={e => !titleWidth && setTitleWidth(e.nativeEvent.layout.width)}
@@ -120,7 +135,7 @@ const Item: React.FC<Props> = (props: Props) => {
                                 color={props.item.note.color === "red" ? theme.value.palette.red : theme.value.palette.green} 
                             />
                         }
-                    </View>
+                    </Animated.View>
                     {props.item.action ? props.item.action : <Icon name={props.item.postIconName ?? "chevron-right"} size={24} color={props.item.postIconColor} />}
                 </View>
             </TouchableHighlight>
