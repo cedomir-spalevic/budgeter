@@ -71,7 +71,7 @@
 		<string>Zocial.ttf</string>
 	</array>
 	<key>UIUserInterfaceStyle</key>
-	<string>automatic</string>
+	<string>Automatic</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>$(PRODUCT_NAME) Authentication with TouchId or FaceID</string>
 </dict>
