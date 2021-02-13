@@ -3,7 +3,7 @@ import RNDatePicker from "react-native-date-picker";
 import moment from "moment";
 import { Link, TextField, Label } from "components";
 import { makeStyles, useTheme } from "context";
-import { Animated, View, Modal } from "react-native";
+import { Animated, View, Modal, Dimensions } from "react-native";
 
 const useStyles = makeStyles(theme => ({
    overlay: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
       justifyContent: "flex-end", 
       alignItems: "center", 
       marginBottom: 30,
-      marginHorizontal: theme.size.pagePadding
+      marginHorizontal: Dimensions.get("screen").width * .03
    },
    actionSheetBodyContainer: {
       width: "100%",
@@ -154,13 +154,9 @@ const DatePicker: React.FC<Props> = (props: Props) => {
                         textColor={theme.value.palette.textColor}
                      />
                   </View>
-                  <View style={styles.datePickerConfirmContainer}>
-                     <Link text="Confirm" onPress={() => onConfirm()} />
-                  </View>
+                  <Link text="Confirm" onPress={() => onConfirm()} style={styles.datePickerConfirmContainer} />
                </View>
-               <View style={styles.cancelContainer}>
-                  <Link text="Cancel" onPress={() => setVisible(false)} />
-               </View>
+               <Link text="Cancel" onPress={() => setVisible(false)} style={styles.cancelContainer} />
             </View>
          </Modal>
       </>
