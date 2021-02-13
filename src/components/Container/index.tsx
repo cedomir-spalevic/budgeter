@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     },
     flex: {
         flexGrow: 1,
-        paddingBottom: 20
+        marginBottom: 20
     }
 }))
 
@@ -39,6 +39,7 @@ interface Props {
     allowScroll?: boolean;
     title?: string;
     preventTitleAnimation?: boolean;
+    preventBottomMargin?: boolean;
     onCloseToBottom?: () => void;
 }
 
@@ -122,7 +123,7 @@ const Container: React.FC<Props> = (props: Props) => {
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 ref={scrollView} 
-                contentContainerStyle={[...style, { paddingBottom: 100}]} 
+                contentContainerStyle={[...style, { paddingBottom: props.preventBottomMargin ? 0 : 100 }]} 
                 scrollEnabled={!scroll.isSwiping} 
                 keyboardShouldPersistTaps="handled"
             >

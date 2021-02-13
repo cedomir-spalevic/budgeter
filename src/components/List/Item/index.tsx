@@ -47,7 +47,7 @@ const Item: React.FC<Props> = (props: Props) => {
         listItemStyle.push(styles.listItemBorder)
 
     useEffect(() => {
-        if(listItemTextWidth && noteWidth && titleWidth) {
+        if((listItemTextWidth && noteWidth && titleWidth) || !props.item.note) {
             Animated.timing(
                 listItemHeightValue.current,
                 {
