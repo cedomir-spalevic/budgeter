@@ -41,7 +41,7 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                         <MessageBox>
                             <Label
                                 type="regular"
-                                text="You have nothing due today!"
+                                text="You have nothing due today"
                             />
                         </MessageBox>
                     ) : (
@@ -69,7 +69,7 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                         <MessageBox>
                             <Label
                                 type="regular"
-                                text="No incomes are expected today"
+                                text="No incomes detected for this month"
                             />
                         </MessageBox>
                     ) : (
@@ -92,7 +92,7 @@ const BudgetList: React.FC<Props> = (props: Props) => {
                         <MessageBox>
                             <Label
                                 type="regular"
-                                text="You have nothing due today!"
+                                text="No payments detected for this month"
                             />
                         </MessageBox>
                     ) : (
