@@ -61,14 +61,14 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
         try {
             if(verified) {
                 const response = await LocalAuthentication.authenticateAsync();
-                if(response)
+                if(response) {
                     setState(AuthState.SignedIn);
+                    return true;
+                }
             }
-            return true;
         }
-        catch(error) {
-            return false;
-        }
+        catch(error) {}
+        return false;
     }
 
     const login = async (email: string, password: string): Promise<LoginResponse> => {
