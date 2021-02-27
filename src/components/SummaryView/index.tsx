@@ -6,7 +6,7 @@ import { makeStyles } from "context";
 
 const useStyles = makeStyles(theme => ({
     container: {
-        backgroundColor: theme.palette.appBackground,
+        backgroundColor: theme.palette.tabBarBackground,
         paddingVertical: 20,
         paddingHorizontal: theme.size.pagePadding,
         justifyContent: "center",
