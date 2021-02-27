@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import Welcome from "assets/svg/Welcome";
 import { Button, Container, Label, Link, Page, Spacer } from "components";
 import { useNavigation } from "@react-navigation/native";
 import { AuthRoutes } from "modules/auth/routes";
 import { makeStyles, useAuth } from "context";
+import RNBootSplash from "react-native-bootsplash";
 
 const useStyles = makeStyles(palette => ({
     welcomeText: {
@@ -32,6 +33,12 @@ const DefaultScreen: React.FC = () => {
         if(!localLAuthenticationResult)
             navigation.navigate(AuthRoutes.Login);
     }
+
+    useEffect(() => {
+        (async () => {
+            await RNBootSplash.hide({ fade: true });
+        })();
+    }, [auth.state])
 
     return (
         <Page>

@@ -12,6 +12,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17663BEDB10C66D483F9D276 /* libPods-budgeter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8035FE806F74C3F3404E221B /* libPods-budgeter.a */; };
 		1D615F9525490ED10088E4C4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1DB6D2D625EA1827007AD660 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DB6D2D525EA1827007AD660 /* BootSplash.storyboard */; };
+		1DB6D2D725EA1827007AD660 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1DB6D2D525EA1827007AD660 /* BootSplash.storyboard */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* budgeterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* budgeterTests.m */; };
@@ -49,6 +51,7 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = budgeter/Images.xcassets; sourceTree = SOURCE_ROOT; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = budgeter/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = budgeter/main.m; sourceTree = "<group>"; };
+		1DB6D2D525EA1827007AD660 /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = budgeter/BootSplash.storyboard; sourceTree = "<group>"; };
 		1DD9D6A025732FE6000C5B6D /* Budgeter.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Budgeter.entitlements; path = budgeter/Budgeter.entitlements; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* budgeter-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "budgeter-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* budgeter-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "budgeter-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,6 +143,7 @@
 		13B07FAE1A68108700A75B9A /* budgeter */ = {
 			isa = PBXGroup;
 			children = (
+				1DB6D2D525EA1827007AD660 /* BootSplash.storyboard */,
 				1DD9D6A025732FE6000C5B6D /* Budgeter.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -383,6 +387,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1D615F9525490ED10088E4C4 /* Images.xcassets in Resources */,
+				1DB6D2D625EA1827007AD660 /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +395,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1DB6D2D725EA1827007AD660 /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
