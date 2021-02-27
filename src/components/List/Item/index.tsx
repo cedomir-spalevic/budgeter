@@ -52,7 +52,7 @@ const Item: React.FC<Props> = (props: Props) => {
                 listItemHeightValue.current,
                 {
                     toValue: 20,
-                    duration: 275,
+                    duration: 100,
                     useNativeDriver: false
                 }
             ).start(e => {
