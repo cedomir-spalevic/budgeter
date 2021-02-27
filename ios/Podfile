@@ -8,6 +8,8 @@ target 'budgeter' do
   use_unimodules!
   config = use_native_modules!
   use_react_native!(:path => config["reactNativePath"])
+  
+  pod 'RNBootSplash', :path => '../node_modules/react-native-bootsplash'
 
   target 'budgeterTests' do
     inherit! :complete
