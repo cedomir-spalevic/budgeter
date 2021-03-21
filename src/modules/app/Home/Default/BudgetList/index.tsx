@@ -31,8 +31,8 @@ const BudgetList: React.FC<Props> = (props: Props) => {
     const budgets = useBudgets();
     const navigation = useNavigation();
     const theme = useTheme();
-    const moneyIn = budgets.value.incomes.map(x => x.amount).reduce((p, c) => p + c, 0);
-    const moneyOut = budgets.value.payments.map(x => x.amount).reduce((i, c) => i + c, 0);
+    const moneyIn = budgets.value.incomes.map(x => x.totalAmount).reduce((p, c) => p + c, 0);
+    const moneyOut = budgets.value.payments.map(x => x.totalAmount).reduce((i, c) => i + c, 0);
     const leftOver = (moneyIn - moneyOut);
     let sub = "+", c = theme.value.palette.green;
     if(leftOver < 0) {
