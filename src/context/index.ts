@@ -8,22 +8,22 @@ import ThemeProvider, { useTheme, makeStyles } from "./Theme";
 import UserProvider, { useUser } from "./User";
 
 export {
-    AuthProvider,
-    useAuth,
-    BudgetsProvider,
-    useBudgets,
-    IncomesProvider,
-    useIncomes,
-    NotificationsProvider, 
-    useNotifications,
-    AuthState,
-    PaymentsProvider,
-    usePayments,
-    ScrollProvider,
-    useScroll,
-    ThemeProvider,
-    useTheme,
-    makeStyles,
-    UserProvider,
-    useUser
-}
+   AuthProvider,
+   useAuth,
+   BudgetsProvider,
+   useBudgets,
+   IncomesProvider,
+   useIncomes,
+   NotificationsProvider,
+   useNotifications,
+   AuthState,
+   PaymentsProvider,
+   usePayments,
+   ScrollProvider,
+   useScroll,
+   ThemeProvider,
+   useTheme,
+   makeStyles,
+   UserProvider,
+   useUser
+};

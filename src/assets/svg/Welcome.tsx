@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import Svg, {
    Defs,
    LinearGradient,
@@ -7,8 +7,8 @@ import Svg, {
    Circle,
    Ellipse,
    G,
-   Rect,
-} from "react-native-svg"
+   Rect
+} from "react-native-svg";
 
 interface Props {
    width?: number;
@@ -16,8 +16,8 @@ interface Props {
 }
 
 const Welcome: React.FC<Props> = (props: Props) => {
-   const width = (props.width ?? 250);
-   const height = (props.height ?? 225);
+   const width = props.width ?? 250;
+   const height = props.height ?? 225;
    return (
       <Svg
          data-name="Layer 1"
@@ -114,11 +114,7 @@ const Welcome: React.FC<Props> = (props: Props) => {
                x2={731.5}
                y2={542}
             />
-            <LinearGradient
-               id="prefix__l"
-               x1={731.5}
-               x2={731.5}
-            />
+            <LinearGradient id="prefix__l" x1={731.5} x2={731.5} />
             <LinearGradient
                id="prefix__m"
                x1={51}
@@ -168,13 +164,7 @@ const Welcome: React.FC<Props> = (props: Props) => {
                x2={735}
                y2={664}
             />
-            <LinearGradient
-               id="prefix__t"
-               x1={435}
-               y1={89}
-               x2={435}
-               y2={50}
-            />
+            <LinearGradient id="prefix__t" x1={435} y1={89} x2={435} y2={50} />
             <LinearGradient
                id="prefix__u"
                x1={601}
@@ -301,7 +291,7 @@ const Welcome: React.FC<Props> = (props: Props) => {
             fill="#f8c198"
          />
       </Svg>
-   )
-}
+   );
+};
 
 export default Welcome;

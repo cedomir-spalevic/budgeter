@@ -1,11 +1,11 @@
-import * as React from "react"
+import * as React from "react";
 import Svg, {
    Defs,
    LinearGradient,
    Stop,
    Path,
    Rect,
-   Circle,
+   Circle
 } from "react-native-svg";
 
 interface Props {
@@ -14,8 +14,8 @@ interface Props {
 }
 
 const Finance: React.FC<Props> = (props: Props) => {
-   const width = (props.width ?? 250);
-   const height = (props.height ?? 225);
+   const width = props.width ?? 250;
+   const height = props.height ?? 225;
    return (
       <Svg
          data-name="Layer 1"
@@ -273,7 +273,7 @@ const Finance: React.FC<Props> = (props: Props) => {
          <Circle cx={60.09} cy={311.65} r={7.23} fill="#1883c4" />
          <Circle cx={101.68} cy={231.19} r={7.23} fill="#1883c4" />
       </Svg>
-   )
-}
+   );
+};
 
 export default Finance;

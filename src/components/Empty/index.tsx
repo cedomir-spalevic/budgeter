@@ -1,14 +1,10 @@
 import React from "react";
-import {
-   View,
-   Text,
-   TouchableOpacity
-} from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { NoData } from "assets/svg";
 import { Icon, Label, Container } from "components";
 import { makeStyles } from "context";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
    textView: {
       paddingBottom: 20
    },
@@ -32,7 +28,7 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.primary,
       marginLeft: 5
    }
-}))
+}));
 
 interface Props {
    message: string;
@@ -46,17 +42,21 @@ const Empty: React.FC<Props> = (props: Props) => {
       <Container flex verticallyCenter>
          <View style={styles.textView}>
             <Label text={props.message} type="regular" />
-            {props.addCreateNew &&
-               <TouchableOpacity style={styles.linkView} onPress={() => props.onCreateNewClick && props.onCreateNewClick()}>
-                  <Text style={styles.link}>
-                     Let's create one
-                  </Text>
+            {props.addCreateNew && (
+               <TouchableOpacity
+                  style={styles.linkView}
+                  onPress={() =>
+                     props.onCreateNewClick && props.onCreateNewClick()
+                  }
+               >
+                  <Text style={styles.link}>Let's create one</Text>
                   <Icon name="arrow-forward" style={styles.linkIcon} />
-               </TouchableOpacity>}
+               </TouchableOpacity>
+            )}
          </View>
          <NoData />
       </Container>
-   )
-}
+   );
+};
 
 export default Empty;

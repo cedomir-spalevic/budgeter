@@ -14,4 +14,4 @@ export {
    PiggyBank,
    PressPlay,
    Welcome
-}
+};

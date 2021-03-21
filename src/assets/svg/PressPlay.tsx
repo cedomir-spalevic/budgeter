@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import Svg, {
    Defs,
    LinearGradient,
@@ -7,7 +7,7 @@ import Svg, {
    Circle,
    Ellipse,
    Rect,
-   G,
+   G
 } from "react-native-svg";
 
 interface Props {
@@ -16,8 +16,8 @@ interface Props {
 }
 
 const PressPlay: React.FC<Props> = (props: Props) => {
-   const width = (props.width ?? 250);
-   const height = (props.height ?? 225);
+   const width = props.width ?? 250;
+   const height = props.height ?? 225;
    return (
       <Svg
          data-name="Layer 1"
@@ -115,7 +115,13 @@ const PressPlay: React.FC<Props> = (props: Props) => {
             d="M711.93 718.63l-4 13-17 14.75-25 7.18s-11.75-6.43-7.75-7.68c1.11-.35 2.43-1.62 3.77-3.28a50 50 0 003.34-4.82c2.14-3.44 4.46-6.76 6.83-10a36 36 0 006.31-16.61c1.75-13.75-16-41.5-16-41.5l-32.25-66.25 45 5.5s24.25 83.25 24.25 87.25c0 3 6.84 13.85 10.4 19.32 1.25 1.91 2.1 3.14 2.1 3.14z"
             fill="#fdc2cc"
          />
-         <Ellipse cx={686.97} cy={771.05} rx={85.12} ry={24.55} fill="#5f5d7e" />
+         <Ellipse
+            cx={686.97}
+            cy={771.05}
+            rx={85.12}
+            ry={24.55}
+            fill="#5f5d7e"
+         />
          <Path
             d="M719.93 734.63a4.8 4.8 0 01-1.5 2.07c-6.18 5.67-29.29 14.1-43.57 18.68a101.11 101.11 0 01-11.43 3.25c-3.5.25-10.75-2-15.75-5.07s-.5-7.43 1.52-9.68 14-2.92 14-2.92c-5.75 9.57 8.49 1.17 8.49 1.17s28.75-20.5 31.75-22.75 8.5-3.5 8.5-3.5z"
             fill="#1883c4"
@@ -325,7 +331,7 @@ const PressPlay: React.FC<Props> = (props: Props) => {
             d="M331.08 623.15l-.5 4.11h-75.07l-.5-4.11h76.07zM330.38 628.98l-.5 4.12h-73.66l-.51-4.12h74.67zM329.66 634.81l-.5 4.12h-72.23l-.5-4.12h73.23z"
          />
       </Svg>
-   )
-}
+   );
+};
 
 export default PressPlay;

@@ -1,12 +1,12 @@
-import * as React from "react"
+import * as React from "react";
 import Svg, {
    Defs,
    LinearGradient,
    Stop,
    Path,
    G,
-   Ellipse,
-} from "react-native-svg"
+   Ellipse
+} from "react-native-svg";
 
 interface Props {
    width?: number;
@@ -14,8 +14,8 @@ interface Props {
 }
 
 const NoData: React.FC<Props> = (props: Props) => {
-   const width = (props.width ?? 250);
-   const height = (props.height ?? 225);
+   const width = props.width ?? 250;
+   const height = props.height ?? 225;
    return (
       <Svg
          data-name="Layer 1"
@@ -303,7 +303,7 @@ const NoData: React.FC<Props> = (props: Props) => {
             opacity={0.2}
          />
       </Svg>
-   )
-}
+   );
+};
 
 export default NoData;

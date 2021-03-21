@@ -1,9 +1,5 @@
 import React from "react";
-import {
-   View,
-   TextStyle,
-   ActivityIndicator
-} from "react-native";
+import { View, TextStyle, ActivityIndicator } from "react-native";
 import { useTheme } from "context";
 
 interface Props {
@@ -20,22 +16,23 @@ const SwipeContainer: React.FC<Props> = (props: Props) => {
       backgroundColor: props.color,
       flexDirection: "row",
       alignItems: "center"
-   }
+   };
    if (props.side === "left") {
       styles.justifyContent = "flex-end";
       styles.paddingRight = 20;
-   }
-   else {
+   } else {
       styles.justifyContent = "flex-start";
       styles.paddingLeft = 20;
    }
    return (
       <View style={styles}>
-         {props.activated ?
-            <ActivityIndicator color={theme.value.palette.white} /> :
-            props.icon}
+         {props.activated ? (
+            <ActivityIndicator color={theme.value.palette.white} />
+         ) : (
+            props.icon
+         )}
       </View>
-   )
-}
+   );
+};
 
 export default SwipeContainer;

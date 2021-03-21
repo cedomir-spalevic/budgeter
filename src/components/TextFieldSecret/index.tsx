@@ -14,9 +14,11 @@ interface Props {
 const TextFieldSecret: React.FC<Props> = (props: Props) => {
    const [hidden, setHidden] = useState<boolean>(true);
 
-   const visible = <Icon onPress={() => setHidden(false)} name="visibility" />
-   const visibleOff = <Icon onPress={() => setHidden(true)} name="visibility-off" />
-    
+   const visible = <Icon onPress={() => setHidden(false)} name="visibility" />;
+   const visibleOff = (
+      <Icon onPress={() => setHidden(true)} name="visibility-off" />
+   );
+
    return (
       <TextField
          preRenderIcon={<Icon name="lock" />}
@@ -25,13 +27,15 @@ const TextFieldSecret: React.FC<Props> = (props: Props) => {
          hidden={hidden}
          postRenderIcon={hidden ? visible : visibleOff}
          onPostRenderIconClick={() => setHidden(!hidden)}
-         onChange={nt => props.onChange && props.onChange(nt)}
+         onChange={(nt) => props.onChange && props.onChange(nt)}
          onSubmit={props.onSubmit}
          ref={props.textInputRef}
          textContentType={props.newPassword ? "newPassword" : "password"}
          autoCapitalize="none"
       />
-   )
-}
+   );
+};
 
-export default forwardRef((props: Props, ref: React.Ref<TextInput>) => <TextFieldSecret textInputRef={ref} {...props} />);
+export default forwardRef((props: Props, ref: React.Ref<TextInput>) => (
+   <TextFieldSecret textInputRef={ref} {...props} />
+));

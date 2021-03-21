@@ -11,44 +11,45 @@ interface Props {
 }
 
 interface Context {
-    title: string;
-    value: Budget;
-    get: () => Promise<void>;
+   title: string;
+   value: Budget;
+   get: () => Promise<void>;
 }
 
 const BudgetContext = createContext<Context>(undefined!);
 
 const BudgetsProvider: React.FC<Props> = (props: Props) => {
-    const [title, setTitle] = useState<string>();
-    const [value, setValue] = useState<Budget>({ incomes: [], payments: [] });
-    const auth = useAuth();
+   const [title, setTitle] = useState<string>();
+   const [value, setValue] = useState<Budget>({ incomes: [], payments: [] });
+   const auth = useAuth();
 
-    const get = async () => {
-        try {
-            const today = moment();
-            const day = today.get("date");
-            const month = today.get("month");
-            const year = today.get("year")
-            const budgetsService = BudgetsService.getInstance();
-            const budget = await budgetsService.getBudget(day, month, year);
-            console.log(budget)
-            setTitle(`${today.format("MMMM")} ${year}`)
-            setValue({...budget});
-        }
-        catch(error) {
-            if(error instanceof UnauthorizedError) {
-                auth.logout();
-                return;
-            }
-            Alert.alert("Unable to get budget", "We're having trouble getting your budget at the moment.");
-        }
-    }
+   const get = async () => {
+      try {
+         const today = moment();
+         const day = today.get("date");
+         const month = today.get("month");
+         const year = today.get("year");
+         const budgetsService = BudgetsService.getInstance();
+         const budget = await budgetsService.getBudget(day, month, year);
+         setTitle(`${today.format("MMMM")} ${year}`);
+         setValue({ ...budget });
+      } catch (error) {
+         if (error instanceof UnauthorizedError) {
+            auth.logout();
+            return;
+         }
+         Alert.alert(
+            "Unable to get budget",
+            "We're having trouble getting your budget at the moment."
+         );
+      }
+   };
 
-    return (
-        <BudgetContext.Provider value={{ title, value, get }}>
-            {props.children}
-        </BudgetContext.Provider>
-    )
+   return (
+      <BudgetContext.Provider value={{ title, value, get }}>
+         {props.children}
+      </BudgetContext.Provider>
+   );
 };
 
 export const useBudgets = (): Context => useContext<Context>(BudgetContext);

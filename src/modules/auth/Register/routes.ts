@@ -1,4 +1,6 @@
-export enum RegisterRoutes {
-    Default = "Default",
-    ConfirmationCode = "Confirmation Code"
+enum RegisterRoutes {
+   Default = "Default",
+   ConfirmationCode = "Confirmation Code"
 }
+
+export default RegisterRoutes;

@@ -1,8 +1,10 @@
-export enum HomeRoutes {
-    Default = "Default",
-    BudgetPaymentsList = "BudgetPaymentsList",
-    BudgetIncomesList = "BudgetIncomesList",
-    BudgetDueTodayList = "BudgetDueTodayList",
-    Income = "Income",
-    Payment = "Payment"
+enum HomeRoutes {
+   Default = "Default",
+   BudgetPaymentsList = "BudgetPaymentsList",
+   BudgetIncomesList = "BudgetIncomesList",
+   BudgetDueTodayList = "BudgetDueTodayList",
+   Income = "Income",
+   Payment = "Payment"
 }
+
+export default HomeRoutes;

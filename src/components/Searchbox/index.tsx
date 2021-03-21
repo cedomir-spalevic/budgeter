@@ -1,14 +1,9 @@
 import { Icon, Link } from "components";
 import { makeStyles, useTheme } from "context";
 import React, { useEffect, useRef, useState } from "react";
-import {
-   View,
-   TextInput,
-   Animated,
-   Keyboard
-} from "react-native";
+import { View, TextInput, Animated, Keyboard } from "react-native";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
    container: {
       flexDirection: "row",
       alignItems: "center",
@@ -31,7 +26,7 @@ const useStyles = makeStyles(theme => ({
    linkStyles: {
       alignItems: "flex-end"
    }
-}))
+}));
 
 interface Props {
    onChange?: (newText?: string) => void;
@@ -47,40 +42,46 @@ const Searchbox: React.FC<Props> = (props: Props) => {
    const cancelWidthAnimation = useRef<Animated.Value>(new Animated.Value(0));
    const styles = useStyles();
    const linkStyles = [styles.linkStyles];
-   linkStyles.push({ display: showCancel && showCancelText ? "flex" : "none" })
+   linkStyles.push({ display: showCancel && showCancelText ? "flex" : "none" });
    const theme = useTheme();
 
    const onChange = (input?: string) => {
-      let newValue = (input === undefined ? "" : input);
+      let newValue = input === undefined ? "" : input;
       setValue(newValue);
-      if(props.onChange)
-         props.onChange(newValue);
-   }
+      if (props.onChange) props.onChange(newValue);
+   };
 
    const cancel = () => {
       onChange(undefined);
       setShowCancel(false);
       Keyboard.dismiss();
-   }
+   };
 
    useEffect(() => {
-      Animated.timing(
-         cancelWidthAnimation.current,
-         {
-            toValue: showCancel ? (containerWidth.current / 5) : 0,
-            duration: 275,
-            useNativeDriver: false
-         }
-      ).start(e => {
-         if(e.finished)
-            setShowCancelText(showCancel);
+      Animated.timing(cancelWidthAnimation.current, {
+         toValue: showCancel ? containerWidth.current / 5 : 0,
+         duration: 275,
+         useNativeDriver: false
+      }).start((e) => {
+         if (e.finished) setShowCancelText(showCancel);
       });
    }, [showCancel]);
 
    return (
-      <View style={styles.container} onLayout={e => containerWidth.current = e.nativeEvent.layout.width}>
-         <View style={styles.textContainer} onTouchStart={() => ref.current && ref.current.focus()}>
-            <Icon size={22} color={theme.value.palette.systemGray} name="search" style={{ paddingRight: 5 }} />
+      <View
+         style={styles.container}
+         onLayout={(e) => (containerWidth.current = e.nativeEvent.layout.width)}
+      >
+         <View
+            style={styles.textContainer}
+            onTouchStart={() => ref.current && ref.current.focus()}
+         >
+            <Icon
+               size={22}
+               color={theme.value.palette.systemGray}
+               name="search"
+               style={{ paddingRight: 5 }}
+            />
             <TextInput
                value={value}
                placeholder={props.placeholder}
@@ -95,14 +96,10 @@ const Searchbox: React.FC<Props> = (props: Props) => {
             />
          </View>
          <Animated.View style={{ width: cancelWidthAnimation.current }}>
-            <Link
-               style={linkStyles}
-               text="Cancel"
-               onPress={() => cancel()}
-            />
+            <Link style={linkStyles} text="Cancel" onPress={() => cancel()} />
          </Animated.View>
       </View>
-   )
-}
+   );
+};
 
 export default Searchbox;

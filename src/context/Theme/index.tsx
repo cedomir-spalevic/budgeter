@@ -10,49 +10,54 @@ interface Props {
 }
 
 interface Context {
-    value: Theme;
-    isDarkTheme:  boolean;
-    kind: Kind;
-    setKind: (kind: Kind) => void;
+   value: Theme;
+   isDarkTheme: boolean;
+   kind: Kind;
+   setKind: (kind: Kind) => void;
 }
 
 const ThemeContext = createContext<Context>(undefined!);
 
 const ThemeProvider: React.FC<Props & any> = (props: Props) => {
-    const [kind, setKind] = useState<Kind>("auto");
-    const deviceColorScheme = useColorScheme();
+   const [kind, setKind] = useState<Kind>("auto");
+   const deviceColorScheme = useColorScheme();
 
-    let theme = lightTheme, isDarkTheme = false;
-    if(kind === "dark" || (kind === "auto" && deviceColorScheme === "dark")) {
-        theme = darkTheme;
-        isDarkTheme = true;
-    }
+   let theme = lightTheme;
+   let isDarkTheme = false;
+   if (kind === "dark" || (kind === "auto" && deviceColorScheme === "dark")) {
+      theme = darkTheme;
+      isDarkTheme = true;
+   }
 
-    const updateKind = async (k: Kind) => {
-        await setItem(StorageKeys.Theme, k);
-        setKind(k);
-    }
+   const updateKind = async (k: Kind) => {
+      await setItem(StorageKeys.Theme, k);
+      setKind(k);
+   };
 
-    useEffect(() => {
-        getItem(StorageKeys.Theme).then(x => x && setKind(x))
-    }, [])
+   useEffect(() => {
+      getItem(StorageKeys.Theme).then((x) => x && setKind(x as Kind));
+   }, []);
 
-    return (
-        <ThemeContext.Provider value={{ value: theme, kind, isDarkTheme, setKind: updateKind }}>
-            {props.children}
-        </ThemeContext.Provider>
-    )
+   return (
+      <ThemeContext.Provider
+         value={{ value: theme, kind, isDarkTheme, setKind: updateKind }}
+      >
+         {props.children}
+      </ThemeContext.Provider>
+   );
 };
 
 export const useTheme = (): Context => useContext<Context>(ThemeContext);
 
 type MakeStylesHook<T> = () => StyleSheet.NamedStyles<T>;
 type MakeStylesFuncParam<T> = (theme: Theme) => T | StyleSheet.NamedStyles<T>;
-export function makeStyles<T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>>(makeStylesFunc: MakeStylesFuncParam<T>): MakeStylesHook<T> {
-    return () => {
-        const theme = useTheme();
-        return makeStylesFunc(theme.value);
-    }
+export function makeStyles<
+   T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>
+>(makeStylesFunc: MakeStylesFuncParam<T>): MakeStylesHook<T> {
+   return () => {
+      const theme = useTheme();
+      return makeStylesFunc(theme.value);
+   };
 }
 
 export default ThemeProvider;

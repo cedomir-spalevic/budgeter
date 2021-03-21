@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { toCurrency } from "services/internal/currency";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
    container: {
       flexDirection: "column",
       width: "100%"
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
       paddingVertical: 10,
       borderBottomWidth: 2,
       borderBottomColor: "#e0e0e0",
-      marginBottom: 5,
+      marginBottom: 5
    },
    inputWithError: {
       borderBottomColor: theme.palette.red
@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
    errorText: {
       color: theme.palette.red
    }
-}))
+}));
 
 interface Props {
    value?: number;
@@ -56,7 +56,9 @@ interface Props {
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
-   textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void);
+   textInputRef?:
+      | React.MutableRefObject<TextInput>
+      | ((instance: TextInput) => void);
    onSubmit?: () => void;
 }
 
@@ -65,35 +67,33 @@ const NumberPad: React.FC<Props> = (props: Props) => {
    const styles = useStyles();
    const theme = useTheme();
    const textInput = useRef<TextInput>();
-   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
+   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef);
    const inputStyles = [styles.input];
-   if(props.errorMessage) {
+   if (props.errorMessage) {
       inputStyles.push(styles.inputWithError);
    }
 
-    const onKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-       if(e.cancelable) {
+   const onKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+      if (e.cancelable) {
          let numStr = num.substr(1).replaceAll(".", "").replaceAll(",", "");
-         if(numStr === "000" && e.nativeEvent.key === "Backspace") {
+         if (numStr === "000" && e.nativeEvent.key === "Backspace") {
             e.preventDefault();
             e.stopPropagation();
          }
       }
-    }
+   };
 
-    const onChange = (newValue: string) => {
+   const onChange = (newValue: string) => {
       let numStr = newValue.substr(1).replaceAll(".", "").replaceAll(",", "");
-      const amount = Number(numStr ?? "")/100;
-      setNum(toCurrency(amount))
+      const amount = Number(numStr ?? "") / 100;
+      setNum(toCurrency(amount));
       props.onChange(amount);
-    }
+   };
 
    useEffect(() => {
-      if(props.value)
-         setNum(toCurrency(props.value))
-      else
-         setNum(toCurrency(0))
-   }, [])
+      if (props.value) setNum(toCurrency(props.value));
+      else setNum(toCurrency(0));
+   }, []);
 
    return (
       <TextField
@@ -116,7 +116,9 @@ const NumberPad: React.FC<Props> = (props: Props) => {
          renderInput={() => <Label type="regular" text={num} />}
          blurOnSubmit={true}
       />
-   )
-}
+   );
+};
 
-export default forwardRef<TextInput, Props>((props, ref) => <NumberPad textInputRef={ref} {...props} />);
+export default forwardRef<TextInput, Props>((props, ref) => (
+   <NumberPad textInputRef={ref} {...props} />
+));

@@ -11,13 +11,16 @@ const monthList = [
    "October",
    "November",
    "December"
-]
+];
 
-export const getCurrentMonthSpan = () => {
-   let date = new Date();
-   let next = new Date();
+export const getCurrentMonthSpan = (): string => {
+   const date = new Date();
+   const next = new Date();
    next.setMonth(next.getMonth() + 1);
-   return `${monthList[date.getMonth()]}, ${date.getFullYear()} - ${monthList[date.getMonth()]}, ${date.getFullYear()}`;
-}
+   return `${monthList[date.getMonth()]}, ${date.getFullYear()} - ${
+      monthList[date.getMonth()]
+   }, ${date.getFullYear()}`;
+};
 
-export const formatDate = (date: Date) => `${monthList[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+export const formatDate = (date: Date): string =>
+   `${monthList[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;

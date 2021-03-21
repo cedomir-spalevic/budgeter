@@ -5,7 +5,7 @@ import { Link, TextField, Label } from "components";
 import { makeStyles, useTheme } from "context";
 import { Animated, View, Modal, Dimensions } from "react-native";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
    overlay: {
       position: "absolute",
       top: 0,
@@ -15,11 +15,11 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.black
    },
    actionSheet: {
-      flex: 1, 
-      justifyContent: "flex-end", 
-      alignItems: "center", 
+      flex: 1,
+      justifyContent: "flex-end",
+      alignItems: "center",
       marginBottom: 30,
-      marginHorizontal: Dimensions.get("screen").width * .03
+      marginHorizontal: Dimensions.get("screen").width * 0.03
    },
    actionSheetBodyContainer: {
       width: "100%",
@@ -46,14 +46,14 @@ const useStyles = makeStyles(theme => ({
       borderTopWidth: 1
    },
    cancelContainer: {
-      width: "100%", 
-      backgroundColor: theme.palette.secondaryBackground, 
-      paddingVertical: 15, 
-      borderRadius: 10, 
-      justifyContent: "center", 
+      width: "100%",
+      backgroundColor: theme.palette.secondaryBackground,
+      paddingVertical: 15,
+      borderRadius: 10,
+      justifyContent: "center",
       alignItems: "center"
    }
-}))
+}));
 
 export interface DatePickerRef {
    showPicker: () => void;
@@ -78,7 +78,9 @@ const DatePicker: React.FC<Props> = (props: Props) => {
    const [visible, setVisible] = useState<boolean>(false);
    const datePickerValue = useRef<Date>();
    const overlayOpacity = useRef<Animated.Value>(new Animated.Value(0));
-   const datePickerRef = useRef<DatePickerRef>({ showPicker: () => setVisible(true) });
+   const datePickerRef = useRef<DatePickerRef>({
+      showPicker: () => setVisible(true)
+   });
    const theme = useTheme();
    const styles = useStyles();
 
@@ -88,31 +90,27 @@ const DatePicker: React.FC<Props> = (props: Props) => {
       datePickerValue.current = date;
       setValue(date);
       setVisible(false);
-      if(props.onChange)
-         props.onChange(date);
-   }
+      if (props.onChange) props.onChange(date);
+   };
 
    useEffect(() => {
-      Animated.timing(
-         overlayOpacity.current,
-         {
-            toValue: visible ? 0.4 : 0,
-            duration: 275,
-            useNativeDriver: false
-         }
-      ).start(e => {
-      });
-   }, [visible])
+      Animated.timing(overlayOpacity.current, {
+         toValue: visible ? 0.4 : 0,
+         duration: 275,
+         useNativeDriver: false
+      }).start((e) => {});
+   }, [visible]);
 
    useEffect(() => {
       if (props.value && value === undefined) {
          setValue(props.value);
          datePickerValue.current = props.value;
       }
-      if(props.datePickerRef) {
-         (props.datePickerRef as React.MutableRefObject<DatePickerRef>).current = datePickerRef.current;
+      if (props.datePickerRef) {
+         (props.datePickerRef as React.MutableRefObject<DatePickerRef>).current =
+            datePickerRef.current;
       }
-   })
+   });
 
    return (
       <>
@@ -138,29 +136,41 @@ const DatePicker: React.FC<Props> = (props: Props) => {
             visible={visible}
             onRequestClose={() => setVisible(false)}
          >
-            <Animated.View style={[styles.overlay, { opacity: overlayOpacity.current }]}></Animated.View>
+            <Animated.View
+               style={[styles.overlay, { opacity: overlayOpacity.current }]}
+            ></Animated.View>
             <View style={styles.actionSheet}>
                <View style={styles.actionSheetBodyContainer}>
                   <View style={styles.datePickerHeaderContainer}>
-                     <Label type="regular" text="Pick a date"  />
+                     <Label type="regular" text="Pick a date" />
                   </View>
                   <View style={styles.datePickerContainer}>
                      <RNDatePicker
                         date={value}
                         mode="date"
-                        onDateChange={d => {
+                        onDateChange={(d) => {
                            datePickerValue.current = d;
                         }}
                         textColor={theme.value.palette.textColor}
                      />
                   </View>
-                  <Link text="Confirm" onPress={() => onConfirm()} style={styles.datePickerConfirmContainer} />
+                  <Link
+                     text="Confirm"
+                     onPress={() => onConfirm()}
+                     style={styles.datePickerConfirmContainer}
+                  />
                </View>
-               <Link text="Cancel" onPress={() => setVisible(false)} style={styles.cancelContainer} />
+               <Link
+                  text="Cancel"
+                  onPress={() => setVisible(false)}
+                  style={styles.cancelContainer}
+               />
             </View>
          </Modal>
       </>
-   )
-}
+   );
+};
 
-export default forwardRef<DatePickerRef, Props>((props, ref) => <DatePicker datePickerRef={ref} {...props} />);
+export default forwardRef<DatePickerRef, Props>((props, ref) => (
+   <DatePicker datePickerRef={ref} {...props} />
+));

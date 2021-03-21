@@ -1,40 +1,45 @@
 import { useTheme } from "context";
 import React from "react";
-import { ConfirmDialog as RNConfirmDialog, ConfirmDialogProps } from "react-native-simple-dialogs";
+import {
+   ConfirmDialog as RNConfirmDialog,
+   ConfirmDialogProps
+} from "react-native-simple-dialogs";
 
-const ConfirmDialog: React.FC<ConfirmDialogProps> = (props: ConfirmDialogProps) => {
-    const theme = useTheme();
+const ConfirmDialog: React.FC<ConfirmDialogProps> = (
+   props: ConfirmDialogProps
+) => {
+   const theme = useTheme();
 
-    return (
-        <RNConfirmDialog
-            {...props}
-            dialogStyle={{
-                backgroundColor: theme.value.palette.secondaryBackground
-            }}
-            titleStyle={{
-                fontFamily: theme.value.font.fontFamily,
-                color: theme.value.palette.textColor
-            }}
-            messageStyle={{
-                fontFamily: theme.value.font.fontFamily,
-                color: theme.value.palette.systemGray
-            }}
-            positiveButton={{
-                ...props.positiveButton,
-                titleStyle: {
-                    color: theme.value.palette.primary,
-                    fontFamily: theme.value.font.fontFamily
-                }
-            }}
-            negativeButton={{
-                ...props.negativeButton,
-                titleStyle: {
-                    color: theme.value.palette.red,
-                    fontFamily: theme.value.font.fontFamily
-                }
-            }}
-        />
-    )
-}
+   return (
+      <RNConfirmDialog
+         {...props}
+         dialogStyle={{
+            backgroundColor: theme.value.palette.secondaryBackground
+         }}
+         titleStyle={{
+            fontFamily: theme.value.font.fontFamily,
+            color: theme.value.palette.textColor
+         }}
+         messageStyle={{
+            fontFamily: theme.value.font.fontFamily,
+            color: theme.value.palette.systemGray
+         }}
+         positiveButton={{
+            ...props.positiveButton,
+            titleStyle: {
+               color: theme.value.palette.primary,
+               fontFamily: theme.value.font.fontFamily
+            }
+         }}
+         negativeButton={{
+            ...props.negativeButton,
+            titleStyle: {
+               color: theme.value.palette.red,
+               fontFamily: theme.value.font.fontFamily
+            }
+         }}
+      />
+   );
+};
 
-export default ConfirmDialog
+export default ConfirmDialog;

@@ -7,19 +7,19 @@ import { RootSiblingParent } from "react-native-root-siblings";
 import { MenuProvider } from "react-native-popup-menu";
 
 const Root: React.FC = () => (
-  <NavigationContainer>
-    <AuthProvider>
-      <ThemeProvider>
-        <RootSiblingParent>
-          <ScrollProvider>
-            <MenuProvider>
-              <Entry />
-            </MenuProvider>
-          </ScrollProvider>
-        </RootSiblingParent>
-      </ThemeProvider>
-    </AuthProvider>
-  </NavigationContainer>
-)
+   <NavigationContainer>
+      <AuthProvider>
+         <ThemeProvider>
+            <RootSiblingParent>
+               <ScrollProvider>
+                  <MenuProvider>
+                     <Entry />
+                  </MenuProvider>
+               </ScrollProvider>
+            </RootSiblingParent>
+         </ThemeProvider>
+      </AuthProvider>
+   </NavigationContainer>
+);
 
 export default Root;

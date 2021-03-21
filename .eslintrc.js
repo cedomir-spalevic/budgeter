@@ -1,22 +1,11 @@
 module.exports = {
-  root: true,
-  extends: [
-    "eslint:recommended", 
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react-native/all"
-  ],
-  parser: "@typescript-eslint/parser",
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true
-    }
-  },
-  env: {
-    "react-native/react-native": true
-  },
-  plugins: [
-    "@typescript-eslint",
-    "react",
-    "react-native"
-  ],
+   root: true,
+   extends: ["@react-native-community", "airbnb-typescript", "prettier"],
+   parserOptions: {
+      project: "./tsconfig.json"
+   },
+   rules: {
+      "react/destructuring-assignment": "off",
+      "jsx-a11y/anchor-is-valid": "off"
+   }
 };

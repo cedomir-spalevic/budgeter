@@ -1,4 +1,6 @@
-export enum PaymentsRoutes {
-    Default = "Default",
-    Payment = "Payment"
+enum PaymentsRoutes {
+   Default = "Default",
+   Payment = "Payment"
 }
+
+export default PaymentsRoutes;

@@ -11,7 +11,7 @@ import {
    TextInputKeyPressEventData
 } from "react-native";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
    container: {
       flexDirection: "column",
       width: "100%"
@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
       paddingVertical: 10,
       borderBottomWidth: 2,
       borderBottomColor: theme.palette.systemGray4,
-      marginBottom: 5,
+      marginBottom: 5
    },
    inputWithError: {
       borderBottomColor: theme.palette.red
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
    errorText: {
       color: theme.palette.red
    }
-}))
+}));
 
 interface Props {
    value?: string;
@@ -60,7 +60,9 @@ interface Props {
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
    onSubmit?: () => void;
-   textInputRef?: React.MutableRefObject<TextInput> | ((instance: TextInput) => void);
+   textInputRef?:
+      | React.MutableRefObject<TextInput>
+      | ((instance: TextInput) => void);
    autoCapitalize?: "none" | "sentences" | "words" | "characters";
    textContentType?: "password" | "newPassword" | "name" | "emailAddress";
    keyboardType?: "email-address" | "number-pad";
@@ -81,70 +83,72 @@ const TextField: React.FC<Props> = (props: Props) => {
    const scroll = useScroll();
    const y = useRef<number>();
    const textInput = useRef<TextInput>();
-   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef)
+   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef);
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
    const inputStyles = [styles.input];
-   if(props.errorMessage) {
+   if (props.errorMessage) {
       inputStyles.push(styles.inputWithError);
    }
 
    const onChange = (input?: string) => {
-      let newValue = (input === undefined ? "" : input);
+      let newValue = input === undefined ? "" : input;
       setValue(newValue);
-      if(props.onChange)
-         props.onChange(newValue);
-   }
+      if (props.onChange) props.onChange(newValue);
+   };
 
-   const onSubmitEditing = (event: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => {
+   const onSubmitEditing = (
+      event: NativeSyntheticEvent<TextInputSubmitEditingEventData>
+   ) => {
       event.preventDefault();
-      if(props.onSubmit)
-         props.onSubmit();
-   }
+      if (props.onSubmit) props.onSubmit();
+   };
 
    const onContainerPress = () => {
-      if(textInput.current)
-         textInput.current.focus();
-   }
+      if (textInput.current) textInput.current.focus();
+   };
 
    const onPreRenderIconClick = () => {
-      if(props.onPreRenderIconClick)
-         props.onPreRenderIconClick();
+      if (props.onPreRenderIconClick) props.onPreRenderIconClick();
       textInput.current.focus();
-   }
+   };
 
    const onPostRenderIconClick = () => {
-      if(props.onPostRenderIconClick)
-         props.onPostRenderIconClick();
+      if (props.onPostRenderIconClick) props.onPostRenderIconClick();
       textInput.current.focus();
-   }
+   };
 
    const onFocus = () => {
       //scroll.to(y.current);
-      if(props.onFocus)
-         props.onFocus();
-   }
+      if (props.onFocus) props.onFocus();
+   };
 
    const onBlur = () => {
-      if(props.onBlur)
-         props.onBlur();
-   }
+      if (props.onBlur) props.onBlur();
+   };
 
    useEffect(() => {
       if (props.controlled || (props.value && value === undefined)) {
          setValue(props.value);
       }
-   })
+   });
 
    return (
-      <View style={styles.container} onTouchStart={() => onContainerPress()} onLayout={e => (y.current = e.nativeEvent.layout.y)}>
+      <View
+         style={styles.container}
+         onTouchStart={() => onContainerPress()}
+         onLayout={(e) => (y.current = e.nativeEvent.layout.y)}
+      >
          <View style={inputStyles}>
             <View style={styles.inputContainer}>
                {props.preRenderIcon && (
                   <TouchableOpacity onPress={onPreRenderIconClick}>
-                     {React.cloneElement(props.preRenderIcon, { style: styles.icon })}
-                  </TouchableOpacity> )}
+                     {React.cloneElement(props.preRenderIcon, {
+                        style: styles.icon
+                     })}
+                  </TouchableOpacity>
+               )}
                <TextInput
                   editable={props.editable}
                   contextMenuHidden={props.contextMenuHidden}
@@ -156,14 +160,16 @@ const TextField: React.FC<Props> = (props: Props) => {
                   secureTextEntry={props.hidden}
                   onSubmitEditing={onSubmitEditing}
                   ref={mergedRefs}
-                  style={!props.renderInput ? styles.textInput : { display: "none" }}
+                  style={
+                     !props.renderInput ? styles.textInput : { display: "none" }
+                  }
                   blurOnSubmit={props.blurOnSubmit}
                   keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
                   autoCapitalize={props.autoCapitalize}
                   textContentType={props.textContentType}
                   keyboardType={props.keyboardType}
-                  onFocus={e => onFocus()}
-                  onBlur={e => onBlur()}
+                  onFocus={(e) => onFocus()}
+                  onBlur={(e) => onBlur()}
                   onKeyPress={props.onKeyPress}
                   returnKeyType={props.returnKeyType}
                   onTouchStart={props.onTouchStart}
@@ -172,13 +178,19 @@ const TextField: React.FC<Props> = (props: Props) => {
             </View>
             {props.postRenderIcon && (
                <TouchableOpacity onPress={onPostRenderIconClick}>
-                  {React.cloneElement(props.postRenderIcon, { style: styles.icon })}
-               </TouchableOpacity> )}
+                  {React.cloneElement(props.postRenderIcon, {
+                     style: styles.icon
+                  })}
+               </TouchableOpacity>
+            )}
          </View>
-         {props.errorMessage &&
-            <Text style={styles.errorText}>{props.errorMessage}</Text> }
+         {props.errorMessage && (
+            <Text style={styles.errorText}>{props.errorMessage}</Text>
+         )}
       </View>
-   )
-}
+   );
+};
 
-export default forwardRef<TextInput, Props>((props, ref) => <TextField textInputRef={ref} {...props} />);
+export default forwardRef<TextInput, Props>((props, ref) => (
+   <TextField textInputRef={ref} {...props} />
+));

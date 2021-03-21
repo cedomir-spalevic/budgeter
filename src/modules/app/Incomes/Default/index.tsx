@@ -8,19 +8,25 @@ import NoIncomes from "./NoIncomes";
 import IncomesList from "./IncomesList";
 
 const Incomes: React.FC = () => {
-    const theme = useTheme();
-    const incomes = useIncomes();
-    const navigation = useNavigation();
+   const theme = useTheme();
+   const incomes = useIncomes();
+   const navigation = useNavigation();
 
-    useEffect(() => {
-        navigation.setOptions({
-            headerRight: () => <Icon onPress={() => navigation.navigate(IncomesRoutes.Income)} name="add-circle" color={theme.value.palette.primary} size={32} />
-        })
-    })
+   useEffect(() => {
+      navigation.setOptions({
+         headerRight: () => (
+            <Icon
+               onPress={() => navigation.navigate(IncomesRoutes.Income)}
+               name="add-circle"
+               color={theme.value.palette.primary}
+               size={32}
+            />
+         )
+      });
+   });
 
-    if(incomes.empty)
-        return <NoIncomes />
-    return <IncomesList />
-}
+   if (incomes.empty) return <NoIncomes />;
+   return <IncomesList />;
+};
 
 export default Incomes;

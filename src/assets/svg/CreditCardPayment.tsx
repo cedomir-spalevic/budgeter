@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import Svg, {
    Defs,
    LinearGradient,
@@ -6,7 +6,7 @@ import Svg, {
    Path,
    Circle,
    Rect,
-   Ellipse,
+   Ellipse
 } from "react-native-svg";
 
 interface Props {
@@ -15,8 +15,8 @@ interface Props {
 }
 
 const CreditCardPayment: React.FC<Props> = (props: Props) => {
-   const width = (props.width ?? 250);
-   const height = (props.height ?? 225);
+   const width = props.width ?? 250;
+   const height = props.height ?? 225;
    return (
       <Svg
          data-name="Layer 1"
@@ -230,7 +230,7 @@ const CreditCardPayment: React.FC<Props> = (props: Props) => {
             opacity={0.1}
          />
       </Svg>
-   )
-}
+   );
+};
 
 export default CreditCardPayment;
