@@ -15,12 +15,12 @@ import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { Payment } from "services/external/api/models/data/payment";
+import { BudgetPayment, Payment } from "services/external/api/models/data/payment";
 import { HomeRoutes } from "../routes";
 
 const BudgetPaymentsList: React.FC = () => {
-    const [list, setList] = useState<Payment[]>([]);
-    const [paymentToDelete, setPaymentToDelete] = useState<Payment>();
+    const [list, setList] = useState<BudgetPayment[]>([]);
+    const [paymentToDelete, setPaymentToDelete] = useState<BudgetPayment>();
     const budgets = useBudgets();
     const payments = usePayments();
     const navigation = useNavigation();
@@ -63,7 +63,7 @@ const BudgetPaymentsList: React.FC = () => {
                             return ({
                                 id: x.id,
                                 text: x.title,
-                                note: { text: toCurrency(x.amount), color: "red" },
+                                note: { text: `${toCurrency(x.amount)} (x${x.numberOfOccurrences})`, color: "red" },
                                 onPress: () => navigation.navigate(HomeRoutes.Payment, { payment: x }),
                                 [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
                                 [actionReleaseKey]: () => setPaymentToDelete(x)
@@ -76,7 +76,7 @@ const BudgetPaymentsList: React.FC = () => {
                 <SummaryView>
                     <View style={{ flexDirection: "row" }}>
                         <Label text="Total:" type="regular" color={theme.value.palette.primary} style={{ paddingRight: 5 }} />
-                        <Label text={toCurrency(budgets.value.payments.map(x => x.amount).reduce((p, c) => p + c, 0))} type="regular" />
+                        <Label text={toCurrency(list.map(x => x.totalAmount).reduce((p, c) => p + c, 0))} type="regular" />
                     </View>
                 </SummaryView>
             </Container>

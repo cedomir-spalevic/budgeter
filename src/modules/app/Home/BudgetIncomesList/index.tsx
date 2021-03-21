@@ -15,12 +15,12 @@ import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { Income } from "services/external/api/models/data/income";
+import { BudgetIncome, Income } from "services/external/api/models/data/income";
 import { HomeRoutes } from "../routes";
 
 const BudgetIncomesList: React.FC = () => {
-    const [list, setList] = useState<Income[]>([]);
-    const [incomeToDelete, setIncomeToDelete] = useState<Income>();
+    const [list, setList] = useState<BudgetIncome[]>([]);
+    const [incomeToDelete, setIncomeToDelete] = useState<BudgetIncome>();
     const budgets = useBudgets();
     const incomes = useIncomes();
     const navigation = useNavigation();
@@ -63,7 +63,7 @@ const BudgetIncomesList: React.FC = () => {
                             return ({
                                 id: x.id,
                                 text: x.title,
-                                note: { text: toCurrency(x.amount), color: "green" },
+                                note: { text: `${toCurrency(x.amount)} (x${x.numberOfOccurrences})`, color: "green" },
                                 onPress: () => navigation.navigate(HomeRoutes.Income, { income: x }),
                                 [swipeContentKey]: { color: theme.value.palette.red, iconName: "delete" },
                                 [actionReleaseKey]: () => setIncomeToDelete(x)
@@ -76,7 +76,7 @@ const BudgetIncomesList: React.FC = () => {
                 <SummaryView>
                     <View style={{ flexDirection: "row" }}>
                         <Label text="Total:" type="regular" color={theme.value.palette.primary} style={{ paddingRight: 5 }} />
-                        <Label text={toCurrency(incomes.values.map(x => x.amount).reduce((p, c) => p + c, 0))} type="regular" />
+                        <Label text={toCurrency(list.map(x => x.totalAmount).reduce((p, c) => p + c, 0))} type="regular" />
                     </View>
                 </SummaryView>
             </Container>

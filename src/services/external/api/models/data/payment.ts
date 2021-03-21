@@ -16,4 +16,5 @@ export interface Payment {
 export interface BudgetPayment extends Payment {
     dueToday: boolean;
     totalAmount: number;
+    numberOfOccurrences: number;
 }

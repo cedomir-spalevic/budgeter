@@ -41,7 +41,8 @@ class BudgetsService {
             createdOn: new Date(x.createdOn),
             modifiedOn: new Date(x.modifiedOn),
             dueToday: x.dueToday,
-            totalAmount: x.totalAmount
+            totalAmount: x.totalAmount,
+            numberOfOccurrences: x.numberOfOccurrences
          })),
          payments: responseBody.payments.map(x => ({
             id: x.id,
@@ -55,7 +56,8 @@ class BudgetsService {
             createdOn: new Date(x.createdOn),
             modifiedOn: new Date(x.modifiedOn),
             dueToday: x.dueToday,
-            totalAmount: x.totalAmount
+            totalAmount: x.totalAmount,
+            numberOfOccurrences: x.numberOfOccurrences
          }))
       }
    }

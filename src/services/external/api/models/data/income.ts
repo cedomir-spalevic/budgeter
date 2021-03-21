@@ -16,4 +16,5 @@ export interface Income {
 export interface BudgetIncome extends Income {
     dueToday: boolean;
     totalAmount: number;
+    numberOfOccurrences: number;
 }
