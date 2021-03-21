@@ -3,12 +3,13 @@
   "version": "1.2.0",
   "private": true,
   "scripts": {
+    "clean:babel-cache": "sudo rm -rf node_modules/.cache/babel-loader/*",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "clean": "watchman watch-del-all && rm -rf node_modules && npm install --ignore-engines && npm start --reset-cache",
+    "clean": "watchman watch-del-all && rm -rf node_modules && npm install --ignore-engines && npm run ios --reset-cache",
     "postversion": "react-native-version",
     "push-release": "git push --follow-tags",
     "generate-splash": "react-native generate-bootsplash app-icon.png --background-color=1882c4"
@@ -31,6 +32,8 @@
     "react-native-bootsplash": "^3.1.5",
     "react-native-confirmation-code-field": "^6.5.1",
     "react-native-date-picker": "^3.2.9",
+    "react-native-dotenv": "^2.5.3",
+    "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.7.0",
     "react-native-keyboard-accessory": "^0.1.14",
     "react-native-linear-gradient": "^2.5.6",

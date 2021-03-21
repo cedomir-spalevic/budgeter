@@ -1,32 +1,20 @@
-import EnvironmentService, { Environment } from "services/internal/environment";
 import { getItem, setItem, StorageKeys } from "services/internal/storage";
 import { AuthResponse, ConfirmationCodeResponse } from "./models/responses";
 import AuthenticationService from "./auth";
+import { API_URL } from "react-native-dotenv";
 
 class ApiConfig {
    static instance: ApiConfig;
    private baseUrl: string;
 
    constructor() {
-      this.baseUrl = this.getBaseUrl();
+      this.baseUrl = API_URL;
    }
 
    static getInstance(): ApiConfig {
       if(!ApiConfig.instance)
          ApiConfig.instance = new ApiConfig();
       return ApiConfig.instance;
-   }
-
-   public getBaseUrl(): string {
-      const environmentService = EnvironmentService.getInstance();
-      switch(environmentService.environment) {
-         case Environment.Local:
-            return "http://localhost:4000/dev/";
-         case Environment.Dev:
-            return "https://g5quz7hgte.execute-api.us-east-1.amazonaws.com/dev/";
-         case Environment.Prod:
-            return "";
-      }
    }
 
    public async handleAuthResponse(authResponse: AuthResponse): Promise<void> {
