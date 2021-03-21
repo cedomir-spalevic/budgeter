@@ -6,6 +6,9 @@ module.exports = {
    },
    rules: {
       "react/destructuring-assignment": "off",
-      "jsx-a11y/anchor-is-valid": "off"
+      "jsx-a11y/anchor-is-valid": "off",
+      "react/require-default-props": "off",
+      "react/jsx-props-no-spreading": "off",
+      "no-empty": ["error", { allowEmptyCatch: true }]
    }
 };

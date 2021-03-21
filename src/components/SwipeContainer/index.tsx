@@ -11,7 +11,7 @@ interface Props {
 
 const SwipeContainer: React.FC<Props> = (props: Props) => {
    const theme = useTheme();
-   let styles: TextStyle = {
+   const styles: TextStyle = {
       height: 65,
       backgroundColor: props.color,
       flexDirection: "row",

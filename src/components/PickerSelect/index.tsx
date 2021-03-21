@@ -1,5 +1,5 @@
 import { Link, TextField } from "components";
-import { makeStyles, useTheme } from "context";
+import { makeStyles } from "context";
 import React, { useState, useEffect, useRef, forwardRef } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { Animated, Modal, View } from "react-native";
@@ -67,7 +67,6 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
       showPicker: () => setVisible(true)
    });
    const overlayOpacity = useRef<Animated.Value>(new Animated.Value(0));
-   const theme = useTheme();
    const styles = useStyles();
 
    const onConfirm = () => {
@@ -87,7 +86,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
          toValue: visible ? 0.4 : 0,
          duration: 275,
          useNativeDriver: false
-      }).start((e) => {});
+      }).start(() => {});
    }, [visible]);
 
    useEffect(() => {
@@ -96,7 +95,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
          (props.pickerSelectRef as React.MutableRefObject<PickerSelectRef>).current =
             pickerSelectRef.current;
       }
-   });
+   }, [setValue, props.value, props.pickerSelectRef]);
 
    return (
       <>
@@ -104,7 +103,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
             preRenderIcon={props.preRenderIcon}
             postRenderIcon={props.postRenderIcon}
             placeholder={props.placeholder}
-            contextMenuHidden={true}
+            contextMenuHidden
             editable={false}
             value={value}
             returnKeyType="done"
@@ -114,7 +113,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
          />
          <Modal
             animationType="fade"
-            transparent={true}
+            transparent
             visible={visible}
             onRequestClose={() => setVisible(false)}
          >

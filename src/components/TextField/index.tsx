@@ -1,5 +1,5 @@
 import useMergedRef from "@react-hook/merged-ref";
-import { makeStyles, useScroll, useTheme } from "context";
+import { makeStyles, useTheme } from "context";
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import {
    View,
@@ -80,7 +80,6 @@ interface Props {
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
-   const scroll = useScroll();
    const y = useRef<number>();
    const textInput = useRef<TextInput>();
    const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef);
@@ -93,7 +92,7 @@ const TextField: React.FC<Props> = (props: Props) => {
    }
 
    const onChange = (input?: string) => {
-      let newValue = input === undefined ? "" : input;
+      const newValue = input === undefined ? "" : input;
       setValue(newValue);
       if (props.onChange) props.onChange(newValue);
    };
@@ -120,7 +119,6 @@ const TextField: React.FC<Props> = (props: Props) => {
    };
 
    const onFocus = () => {
-      //scroll.to(y.current);
       if (props.onFocus) props.onFocus();
    };
 
@@ -132,7 +130,7 @@ const TextField: React.FC<Props> = (props: Props) => {
       if (props.controlled || (props.value && value === undefined)) {
          setValue(props.value);
       }
-   });
+   }, [setValue, props.controlled, props.value]);
 
    return (
       <View
@@ -168,8 +166,8 @@ const TextField: React.FC<Props> = (props: Props) => {
                   autoCapitalize={props.autoCapitalize}
                   textContentType={props.textContentType}
                   keyboardType={props.keyboardType}
-                  onFocus={(e) => onFocus()}
-                  onBlur={(e) => onBlur()}
+                  onFocus={() => onFocus()}
+                  onBlur={() => onBlur()}
                   onKeyPress={props.onKeyPress}
                   returnKeyType={props.returnKeyType}
                   onTouchStart={props.onTouchStart}

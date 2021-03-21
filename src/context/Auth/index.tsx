@@ -89,29 +89,28 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
          const authenticationService = AuthenticationService.getInstance();
          const response = await authenticationService.login(
             email,
-            btoa(password)
+            internalSecurity.btoa(password)
          );
+         let verificationEmailSent = false;
          if (response.isEmailVerified) {
             setState(AuthState.SignedIn);
-            return { valid: true, verificationEmailSent: true };
-         } else {
-            return { valid: true };
+            verificationEmailSent = true;
          }
+         return { valid: true, verificationEmailSent };
       } catch (error) {
          if (error instanceof UnauthorizedError)
             return { valid: false, passwordError: "Incorrect password" };
-         else if (error instanceof NotFoundError)
+         if (error instanceof NotFoundError)
             return {
                valid: false,
                emailError: "No user found with this email"
             };
-         else {
-            Alert.alert(
-               "Unable to log in",
-               "We're having trouble logging you in. Please try again later."
-            );
-            return { valid: false };
-         }
+
+         Alert.alert(
+            "Unable to log in",
+            "We're having trouble logging you in. Please try again later."
+         );
+         return { valid: false };
       }
    };
 
@@ -123,11 +122,11 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    ): Promise<RegisterResponse> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         const response = await authenticationService.register(
+         await authenticationService.register(
             firstName,
             lastName,
             email,
-            btoa(password)
+            internalSecurity.btoa(password)
          );
          return { valid: true };
       } catch (error) {
@@ -136,13 +135,11 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
                valid: false,
                emailError: "A user already exists with this email address"
             };
-         else {
-            Alert.alert(
-               "Unable to create account",
-               "We're having trouble creating your account. Please try again later."
-            );
-            return { valid: false };
-         }
+         Alert.alert(
+            "Unable to create account",
+            "We're having trouble creating your account. Please try again later."
+         );
+         return { valid: false };
       }
    };
 
@@ -163,52 +160,47 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    const confirmEmailVerification = async (code: number): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         const response = await authenticationService.confirmChallenge(code);
+         await authenticationService.confirmChallenge(code);
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) return false;
-         else {
-            Alert.alert(
-               "Unable to confirm your email",
-               "We're having trouble confirming your email. Please try again later."
-            );
-            return false;
-         }
+
+         Alert.alert(
+            "Unable to confirm your email",
+            "We're having trouble confirming your email. Please try again later."
+         );
+         return false;
       }
    };
    const confirmPasswordReset = async (code: number): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         const response = await authenticationService.confirmChallenge(code);
+         await authenticationService.confirmChallenge(code);
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) return false;
-         else {
-            Alert.alert(
-               "Unable to confirm your email",
-               "We're having trouble confirming your email. Please try again later."
-            );
-            return false;
-         }
+         Alert.alert(
+            "Unable to confirm your email",
+            "We're having trouble confirming your email. Please try again later."
+         );
+         return false;
       }
    };
 
    const updatePassword = async (password: string): Promise<boolean> => {
       try {
          const userService = UserService.getInstance();
-         const response = await userService.updatePassword(btoa(password));
+         await userService.updatePassword(btoa(password));
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) return false;
-         else {
-            Alert.alert(
-               "Unable to update password",
-               "We're having trouble updating your password. Please try again later."
-            );
-            return false;
-         }
+         Alert.alert(
+            "Unable to update password",
+            "We're having trouble updating your password. Please try again later."
+         );
+         return false;
       }
    };
 

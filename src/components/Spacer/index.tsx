@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Spacer: React.FC = () => {
    const styles = useStyles();
-   return <View style={styles.spacer}></View>;
+   return <View style={styles.spacer} />;
 };
 
 export default Spacer;

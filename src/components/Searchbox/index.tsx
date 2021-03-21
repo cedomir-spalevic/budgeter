@@ -46,7 +46,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
    const theme = useTheme();
 
    const onChange = (input?: string) => {
-      let newValue = input === undefined ? "" : input;
+      const newValue = input === undefined ? "" : input;
       setValue(newValue);
       if (props.onChange) props.onChange(newValue);
    };
@@ -70,7 +70,9 @@ const Searchbox: React.FC<Props> = (props: Props) => {
    return (
       <View
          style={styles.container}
-         onLayout={(e) => (containerWidth.current = e.nativeEvent.layout.width)}
+         onLayout={(e) => {
+            containerWidth.current = e.nativeEvent.layout.width
+         }}
       >
          <View
             style={styles.textContainer}

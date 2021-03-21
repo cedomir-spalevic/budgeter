@@ -59,7 +59,6 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
          setValues([...values]);
          setCount(count + 1);
          if (isEmpty) setEmpty(false);
-         // Update budget
          budgets.get();
          return true;
       } catch (error) {
@@ -78,12 +77,11 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
    const update = async (id: string, payment: Partial<Payment>) => {
       try {
          const index = values.findIndex((x) => x.id === id);
-         if (index === -1) return;
+         if (index === -1) return false;
          const paymentsService = PaymentsService.getInstance();
          const i = await paymentsService.update(id, payment);
          values[index] = i;
          setValues([...values]);
-         // Update budget
          budgets.get();
          return true;
       } catch (error) {
@@ -102,7 +100,7 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
    const deletePayment = async (id: string) => {
       try {
          const index = values.findIndex((x) => x.id === id);
-         if (index === -1) return;
+         if (index === -1) return false;
          const paymentsService = PaymentsService.getInstance();
          await paymentsService.delete(id);
          const willBeEmpty = values.length === 1;

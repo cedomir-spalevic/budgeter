@@ -31,7 +31,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
    const get = async (search?: string, getNext?: boolean) => {
       try {
          if (getNext && values.length === count) return;
-         let skip = getNext ? values.length : 0;
+         const skip = getNext ? values.length : 0;
          const incomesService = IncomesService.getInstance();
          const incomes = await incomesService.get(10, skip, search);
          setCount(incomes.count);
@@ -78,12 +78,11 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
    const update = async (id: string, income: Partial<Income>) => {
       try {
          const index = values.findIndex((x) => x.id === id);
-         if (index === -1) return;
+         if (index === -1) return false;
          const incomesService = IncomesService.getInstance();
          const i = await incomesService.update(id, income);
          values[index] = i;
          setValues([...values]);
-         // Update budget
          budgets.get();
          return true;
       } catch (error) {
@@ -102,7 +101,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
    const deleteIncome = async (id: string) => {
       try {
          const index = values.findIndex((x) => x.id === id);
-         if (index === -1) return;
+         if (index === -1) return false;
          const incomesService = IncomesService.getInstance();
          await incomesService.delete(id);
          const willBeEmpty = values.length === 1;
