@@ -78,8 +78,7 @@ const Notifications: React.FC = () => {
                               }
                               value={paymentNotifications}
                            />
-                        ),
-                        onPress: () => {}
+                        )
                      },
                      {
                         id: "income-reminder",
@@ -89,8 +88,7 @@ const Notifications: React.FC = () => {
                               onChange={() => toggleIncomeNotificationSetting()}
                               value={incomeNotifications}
                            />
-                        ),
-                        onPress: () => {}
+                        )
                      }
                   ]}
                />

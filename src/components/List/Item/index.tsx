@@ -1,7 +1,14 @@
 import { Icon, Label } from "components";
 import { makeStyles, useTheme } from "context";
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, TextStyle, TouchableHighlight, View } from "react-native";
+import {
+   Animated,
+   StyleProp,
+   TextStyle,
+   TouchableHighlight,
+   View,
+   ViewStyle
+} from "react-native";
 import { ListItem } from "..";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,7 +53,7 @@ const Item: React.FC<Props> = (props: Props) => {
    }
    const theme = useTheme();
    const styles = useStyles();
-   const listItemStyle = [];
+   const listItemStyle: StyleProp<ViewStyle> = [];
    listItemStyle.push(styles.listItem);
    if (!props.isLast) listItemStyle.push(styles.listItemBorder);
 
@@ -56,7 +63,7 @@ const Item: React.FC<Props> = (props: Props) => {
             toValue: 20,
             duration: 100,
             useNativeDriver: false
-         }).start((e) => {});
+         }).start();
       }
    }, [listItemTextWidth, noteWidth, titleWidth]);
 

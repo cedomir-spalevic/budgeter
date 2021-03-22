@@ -31,7 +31,7 @@ const CELL_COUNT = 6;
 const ConfirmationCodeInput: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<string>("");
    const theme = useTheme();
-   const [p, getCellOnLayoutHandler] = useClearByFocusCell({
+   const [, getCellOnLayoutHandler] = useClearByFocusCell({
       value,
       setValue
    });

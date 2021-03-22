@@ -33,7 +33,7 @@ const IncomesList: React.FC = () => {
    const user = useUser();
    const styles = useStyles();
 
-   const search = (sv: string) => {
+   const search = (sv?: string) => {
       setSearchValue(sv);
       incomes.get(sv);
    };
@@ -46,6 +46,7 @@ const IncomesList: React.FC = () => {
    };
 
    const deleteIncome = async () => {
+      if (!incomeToDelete) return;
       await incomes.delete(incomeToDelete.id);
       setIncomeToDelete(undefined);
    };
@@ -98,7 +99,7 @@ const IncomesList: React.FC = () => {
          </Container>
          <ConfirmDialog
             visible={incomeToDelete !== undefined}
-            title={`Delete ${incomeToDelete.title}?`}
+            title={`Delete ${incomeToDelete!.title}?`}
             onTouchOutside={() => setIncomeToDelete(undefined)}
             message="Are you sure want to delete this income? This will be removed from all of your budgets."
             positiveButton={{

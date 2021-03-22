@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, useTheme } from "context";
+import { makeStyles } from "context";
 import {
    Menu as RNMenu,
    MenuOptions,
@@ -39,7 +39,6 @@ interface Props {
 
 const Menu: React.FC<Props> = (props: Props) => {
    const styles = useStyles();
-   const theme = useTheme();
 
    return (
       <RNMenu
@@ -55,6 +54,7 @@ const Menu: React.FC<Props> = (props: Props) => {
                }
                return (
                   <MenuOption
+                     key={x.text}
                      onSelect={x.onSelect}
                      text={x.text}
                      customStyles={{

@@ -23,7 +23,11 @@ const List: React.FC<Props> = (props: Props) => {
    return (
       <View style={styles.container}>
          {props.items.map((item, index) => (
-            <Item item={item} isLast={index === props.items.length - 1} />
+            <Item
+               key={item.id}
+               item={item}
+               isLast={index === props.items.length - 1}
+            />
          ))}
       </View>
    );

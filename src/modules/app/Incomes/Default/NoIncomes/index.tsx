@@ -6,11 +6,7 @@ const NoIncomes: React.FC = () => (
       <Container flex>
          <Label type="header" text="Incomes" />
          <Container flex verticallyCenter>
-            <Empty
-               message="You have no incomes, yet"
-               addCreateNew={false}
-               onCreateNewClick={() => {}}
-            />
+            <Empty message="You have no incomes, yet" addCreateNew={false} />
          </Container>
       </Container>
    </Page>

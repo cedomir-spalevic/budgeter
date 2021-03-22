@@ -1,14 +1,22 @@
 module.exports = {
    root: true,
-   extends: ["@react-native-community", "airbnb-typescript", "prettier"],
+   parser: "@typescript-eslint/parser",
+   plugins: ["@typescript-eslint", "react"],
+   extends: [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:react/recommended"
+   ],
    parserOptions: {
-      project: "./tsconfig.json"
+      ecmaFeatures: {
+         jsx: true
+      }
    },
    rules: {
-      "react/destructuring-assignment": "off",
-      "jsx-a11y/anchor-is-valid": "off",
-      "react/require-default-props": "off",
-      "react/jsx-props-no-spreading": "off",
-      "no-empty": ["error", { allowEmptyCatch: true }]
+      "react/prop-types": "off",
+      "react/display-name": "off",
+      "no-empty": ["error", { allowEmptyCatch: true }],
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-non-null-assertion": "off" // This is until I can figure out a better way to set default context values
    }
 };

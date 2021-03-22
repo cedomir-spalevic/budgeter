@@ -71,7 +71,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
       <View
          style={styles.container}
          onLayout={(e) => {
-            containerWidth.current = e.nativeEvent.layout.width
+            containerWidth.current = e.nativeEvent.layout.width;
          }}
       >
          <View

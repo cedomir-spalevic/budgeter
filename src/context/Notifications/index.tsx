@@ -12,9 +12,9 @@ interface Context {
 
 const NotificationsContext = createContext<Context>(undefined!);
 
-const NotificationsProvider: React.FC<Props & any> = (props: Props) => {
+const NotificationsProvider: React.FC<Props> = (props: Props) => {
    const askForPermissions = () =>
-      new Promise((resolve, reject) => {
+      new Promise<void>((resolve, reject) => {
          Notifications.events().registerRemoteNotificationsRegistered(
             async (event: Registered) => {
                try {

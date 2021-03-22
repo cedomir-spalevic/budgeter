@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, useTheme } from "context";
+import { makeStyles } from "context";
 import { View } from "react-native";
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +22,6 @@ interface Props {
 
 const MessageBox: React.FC<Props> = (props: Props) => {
    const styles = useStyles();
-   const theme = useTheme();
 
    return <View style={styles.container}>{props.children}</View>;
 };

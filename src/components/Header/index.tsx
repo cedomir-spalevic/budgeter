@@ -26,11 +26,12 @@ type StackDescriptor = {
    render(): JSX.Element;
    options: ExtraNavigationProps & StackNavigationOptions;
    navigation: NavigationProp<
-      Record<string, object>,
+      Record<string, Record<string, unknown> | undefined>,
       string,
       StackNavigationState,
       StackNavigationOptions,
-      {}
+      // eslint-disable-next-line @typescript/no-explicit-any
+      Record<string, { data?: any; canPreventDefault?: boolean | undefined }>
    >;
 };
 
@@ -111,6 +112,7 @@ const Header: React.FC<Props & StackHeaderProps> = (
    const headerTitleNode =
       headerTitle &&
       typeof headerTitle === "function" &&
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       headerTitle({ onLayout: () => {} });
    const headerLeft = props.scene.descriptor.options.headerLeft;
    const leftActions =

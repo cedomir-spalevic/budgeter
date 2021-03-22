@@ -4,7 +4,7 @@ export interface ListItem {
    id: string;
    text: string;
    note?: { text: string; color: "red" | "green" };
-   onPress: () => void;
+   onPress?: () => void;
    iconName?: string;
    textColor?: string;
    iconColor?: string;

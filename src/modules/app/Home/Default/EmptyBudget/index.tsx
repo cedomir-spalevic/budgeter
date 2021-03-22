@@ -13,7 +13,6 @@ const EmptyBudget: React.FC = () => {
                <Empty
                   message="You have nothing in this budget, yet"
                   addCreateNew={false}
-                  onCreateNewClick={() => {}}
                />
             </Container>
          </Container>

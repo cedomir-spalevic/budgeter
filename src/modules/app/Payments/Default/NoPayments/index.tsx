@@ -6,11 +6,7 @@ const NoPayments: React.FC = () => (
       <Container flex>
          <Label type="header" text="Payments" />
          <Container flex verticallyCenter>
-            <Empty
-               message="You have no payments, yet"
-               addCreateNew={false}
-               onCreateNewClick={() => {}}
-            />
+            <Empty message="You have no payments, yet" addCreateNew={false} />
          </Container>
       </Container>
    </Page>

@@ -27,7 +27,7 @@ interface Context {
 
 const UserContext = createContext<Context>(undefined!);
 
-const UserProvider: React.FC<Props & any> = (props: Props) => {
+const UserProvider: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<User>(undefined!);
    const [swipeOptions, setSwipeOptions] = useState<UserSwipeOptions>(
       undefined!

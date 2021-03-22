@@ -1,7 +1,14 @@
 import { Icon, Label, SwipeContainer } from "components";
 import { makeStyles, useScroll, useTheme } from "context";
 import React, { useState, useRef, useEffect } from "react";
-import { Animated, TextStyle, TouchableHighlight, View } from "react-native";
+import {
+   Animated,
+   StyleProp,
+   TextStyle,
+   TouchableHighlight,
+   View,
+   ViewStyle
+} from "react-native";
 import Swipeable from "react-native-swipeable";
 import { ListItem } from "..";
 
@@ -51,11 +58,11 @@ const Item: React.FC<Props> = (props: Props) => {
    ) {
       titleStyle = { width: listItemTextWidth - noteWidth - 25 };
    }
-   const listItemStyle = [];
+   const listItemStyle: StyleProp<ViewStyle> = [];
    listItemStyle.push(styles.listItem);
    if (!props.isLast) listItemStyle.push(styles.listItemBorder);
-   let leftSwipeContent = undefined,
-      rightSwipeContent = undefined;
+   let leftSwipeContent: JSX.Element | undefined = undefined;
+   let rightSwipeContent: JSX.Element | undefined = undefined;
    if (props.item.leftSwipeContent) {
       leftSwipeContent = (
          <SwipeContainer
@@ -95,7 +102,7 @@ const Item: React.FC<Props> = (props: Props) => {
             toValue: 25,
             duration: 100,
             useNativeDriver: false
-         }).start((e) => {});
+         }).start();
       }
    }, [listItemTextWidth, noteWidth, titleWidth]);
 

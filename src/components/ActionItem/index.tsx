@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "context";
 import { View } from "react-native";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
    header: {
       justifyContent: "space-between",
       flexDirection: "row",

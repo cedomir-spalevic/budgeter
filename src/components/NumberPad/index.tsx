@@ -1,6 +1,6 @@
 import useMergedRef from "@react-hook/merged-ref";
 import { Label, TextField } from "components";
-import { makeStyles, useTheme } from "context";
+import { makeStyles } from "context";
 import React, { useState, useEffect, forwardRef, useRef } from "react";
 import {
    TextInput,
@@ -65,7 +65,6 @@ interface Props {
 const NumberPad: React.FC<Props> = (props: Props) => {
    const [num, setNum] = useState<string>(toCurrency(0));
    const styles = useStyles();
-   const theme = useTheme();
    const textInput = useRef<TextInput>();
    const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef);
    const inputStyles = [styles.input];
@@ -75,7 +74,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
 
    const onKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
       if (e.cancelable) {
-         let numStr = num.substr(1).replaceAll(".", "").replaceAll(",", "");
+         const numStr = num.substr(1).replaceAll(".", "").replaceAll(",", "");
          if (numStr === "000" && e.nativeEvent.key === "Backspace") {
             e.preventDefault();
             e.stopPropagation();
@@ -84,7 +83,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
    };
 
    const onChange = (newValue: string) => {
-      let numStr = newValue.substr(1).replaceAll(".", "").replaceAll(",", "");
+      const numStr = newValue.substr(1).replaceAll(".", "").replaceAll(",", "");
       const amount = Number(numStr ?? "") / 100;
       setNum(toCurrency(amount));
       props.onChange(amount);

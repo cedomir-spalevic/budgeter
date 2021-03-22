@@ -86,7 +86,7 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
          toValue: visible ? 0.4 : 0,
          duration: 275,
          useNativeDriver: false
-      }).start(() => {});
+      }).start();
    }, [visible]);
 
    useEffect(() => {
@@ -130,10 +130,10 @@ const PickerSelect: React.FC<Props> = (props: Props) => {
                      style={styles.picker}
                      itemStyle={styles.pickerItem}
                      selectedValue={pickerValue}
-                     onValueChange={(v, i) => setPickerValue(v)}
+                     onValueChange={(v) => setPickerValue(v)}
                   >
                      {props.items.map((x) => (
-                        <Picker.Item label={x} value={x} />
+                        <Picker.Item key={x} label={x} value={x} />
                      ))}
                   </Picker>
                </View>
