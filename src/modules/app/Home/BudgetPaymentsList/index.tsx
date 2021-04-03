@@ -40,15 +40,18 @@ const BudgetPaymentsList: React.FC = () => {
       setList([...budgets.value.payments]);
    }, [budgets.value.payments]);
 
-   const onSearch = (searchValue: string) => {
+   const onSearch = (searchValue: string | undefined) => {
+      const normalizedValue = searchValue
+         ? searchValue.trim().toLowerCase()
+         : "";
       const filteredList = budgets.value.payments.filter((x) =>
-         x.title.trim().toLowerCase().includes(searchValue.trim().toLowerCase())
+         x.title.trim().toLowerCase().includes(normalizedValue)
       );
       setList([...filteredList]);
    };
 
    const deletePayment = async () => {
-      await payments.delete(paymentToDelete.id);
+      await payments.delete(paymentToDelete!.id);
       setPaymentToDelete(undefined);
    };
 
@@ -121,7 +124,7 @@ const BudgetPaymentsList: React.FC = () => {
          </Container>
          <ConfirmDialog
             visible={paymentToDelete !== undefined}
-            title={`Delete ${paymentToDelete.title}?`}
+            title={`Delete ${paymentToDelete?.title}?`}
             onTouchOutside={() => setPaymentToDelete(undefined)}
             message="Are you sure want to delete this payment? This will be removed from all of your budgets."
             positiveButton={{

@@ -3,7 +3,7 @@
    "version": "1.2.0",
    "private": true,
    "scripts": {
-      "clean": "npm-run-all clean",
+      "clean": "npm-run-all clean:*",
       "clean:watchman": "watchman watch-del-all",
       "clean:dependencies": "rm -rf node_modules",
       "clean:reinstall": "npm install --ignore-engines",

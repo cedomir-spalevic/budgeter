@@ -40,15 +40,18 @@ const BudgetIncomesList: React.FC = () => {
       setList([...budgets.value.incomes]);
    }, [budgets.value.incomes]);
 
-   const onSearch = (searchValue: string) => {
+   const onSearch = (searchValue: string | undefined) => {
+      const normalizedValue = searchValue
+         ? searchValue.trim().toLowerCase()
+         : "";
       const filteredList = budgets.value.incomes.filter((x) =>
-         x.title.trim().toLowerCase().includes(searchValue.trim().toLowerCase())
+         x.title.trim().toLowerCase().includes(normalizedValue)
       );
       setList([...filteredList]);
    };
 
    const deleteIncome = async () => {
-      await incomes.delete(incomeToDelete.id);
+      await incomes.delete(incomeToDelete!.id);
       setIncomeToDelete(undefined);
    };
 
@@ -118,7 +121,7 @@ const BudgetIncomesList: React.FC = () => {
          </Container>
          <ConfirmDialog
             visible={incomeToDelete !== undefined}
-            title={`Delete ${incomeToDelete.title}?`}
+            title={`Delete ${incomeToDelete?.title}?`}
             onTouchOutside={() => setIncomeToDelete(undefined)}
             message="Are you sure want to delete this income? This will be removed from all of your budgets."
             positiveButton={{

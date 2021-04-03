@@ -25,6 +25,7 @@ class BudgetsService {
       const url = `${this.resource}?day=${day}&month=${month}&year=${year}`;
       const response = await callApiProtected(url);
       const responseBody = await response.json();
+      console.log(responseBody);
       if (response.status === 400) {
          throw new GeneralError(responseBody.message);
       }

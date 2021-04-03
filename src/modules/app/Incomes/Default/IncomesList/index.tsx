@@ -99,7 +99,7 @@ const IncomesList: React.FC = () => {
          </Container>
          <ConfirmDialog
             visible={incomeToDelete !== undefined}
-            title={`Delete ${incomeToDelete!.title}?`}
+            title={`Delete ${incomeToDelete?.title}?`}
             onTouchOutside={() => setIncomeToDelete(undefined)}
             message="Are you sure want to delete this income? This will be removed from all of your budgets."
             positiveButton={{

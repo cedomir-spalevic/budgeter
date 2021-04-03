@@ -32,7 +32,7 @@ const PaymentsList: React.FC = () => {
    const user = useUser();
    const styles = useStyles();
 
-   const search = (sv: string) => {
+   const search = (sv: string | undefined) => {
       setSearchValue(sv);
       payments.get(sv);
    };
@@ -45,7 +45,7 @@ const PaymentsList: React.FC = () => {
    };
 
    const deletePayment = async () => {
-      await payments.delete(paymentToDelete.id);
+      await payments.delete(paymentToDelete!.id);
       setPaymentToDelete(undefined);
    };
 
@@ -96,7 +96,7 @@ const PaymentsList: React.FC = () => {
          </Container>
          <ConfirmDialog
             visible={paymentToDelete !== undefined}
-            title={`Delete ${paymentToDelete.title}?`}
+            title={`Delete ${paymentToDelete?.title}?`}
             onTouchOutside={() => setPaymentToDelete(undefined)}
             message="Are you sure want to delete this payment? This will be removed from all of your budgets."
             positiveButton={{

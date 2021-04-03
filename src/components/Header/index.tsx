@@ -30,8 +30,13 @@ type StackDescriptor = {
       string,
       StackNavigationState,
       StackNavigationOptions,
-      // eslint-disable-next-line @typescript/no-explicit-any
-      Record<string, { data?: any; canPreventDefault?: boolean | undefined }>
+      Record<
+         string,
+         {
+            data?: string | number | boolean;
+            canPreventDefault?: boolean | undefined;
+         }
+      >
    >;
 };
 

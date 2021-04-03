@@ -37,26 +37,23 @@ const BudgetDueTodayList: React.FC = () => {
       ]);
    }, [budgets.value.incomes, budgets.value.payments]);
 
-   const onSearch = (searchValue: string) => {
+   const onSearch = (searchValue: string | undefined) => {
+      const normalizedValue = searchValue
+         ? searchValue.trim().toLowerCase()
+         : "";
       const filteredList = [
          ...budgets.value.incomes
             .filter(
                (x) =>
                   x.dueToday &&
-                  x.title
-                     .trim()
-                     .toLowerCase()
-                     .includes(searchValue.trim().toLowerCase())
+                  x.title.trim().toLowerCase().includes(normalizedValue)
             )
             .map((x): DueTodayItem => ({ type: "income", item: x })),
          ...budgets.value.payments
             .filter(
                (x) =>
                   x.dueToday &&
-                  x.title
-                     .trim()
-                     .toLowerCase()
-                     .includes(searchValue.trim().toLowerCase())
+                  x.title.trim().toLowerCase().includes(normalizedValue)
             )
             .map((x): DueTodayItem => ({ type: "payment", item: x }))
       ];
@@ -64,11 +61,11 @@ const BudgetDueTodayList: React.FC = () => {
    };
 
    const deleteItem = async () => {
-      if (itemToDelete.type === "payment") {
-         await payments.delete(itemToDelete.item.id);
+      if (itemToDelete!.type === "payment") {
+         await payments.delete(itemToDelete!.item.id);
          setItemToDelete(undefined);
       } else {
-         await incomes.delete(itemToDelete.item.id);
+         await incomes.delete(itemToDelete!.item.id);
          setItemToDelete(undefined);
       }
    };
@@ -129,10 +126,10 @@ const BudgetDueTodayList: React.FC = () => {
 
          <ConfirmDialog
             visible={itemToDelete !== undefined}
-            title={`Delete ${itemToDelete.item.title}?`}
+            title={`Delete ${itemToDelete?.item.title}?`}
             onTouchOutside={() => setItemToDelete(undefined)}
             message={`Are you sure want to delete this ${
-               itemToDelete.type === "payment" ? "Payment" : "Income"
+               itemToDelete?.type === "payment" ? "Payment" : "Income"
             }? This will be removed from all of your budgets.`}
             positiveButton={{
                title: "Yes",
