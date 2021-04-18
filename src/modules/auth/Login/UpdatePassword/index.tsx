@@ -40,8 +40,8 @@ interface PasswordRequirements {
 }
 
 interface FormProps {
-   passwordRef: React.MutableRefObject<TextInput>;
-   confirmPasswordRef: React.MutableRefObject<TextInput>;
+   passwordRef: React.MutableRefObject<TextInput | null>;
+   confirmPasswordRef: React.MutableRefObject<TextInput | null>;
    checkForPasswordRequirements: () => PasswordRequirements;
 }
 
@@ -60,16 +60,23 @@ const UpdatePasswordForm = (props: FormProps & FormikProps<FormValues>) => {
             <Spacer />
             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={props.touched.password && props.errors.password}
+               errorMessage={
+                  props.touched.password ? props.errors.password : undefined
+               }
                onChange={props.handleChange("password")}
-               onSubmit={() => props.confirmPasswordRef.current.focus()}
+               onSubmit={() =>
+                  props.confirmPasswordRef.current &&
+                  props.confirmPasswordRef.current.focus()
+               }
                ref={props.passwordRef}
                newPassword
             />
             <TextFieldSecret
                placeholder="Confirm your password"
                errorMessage={
-                  props.touched.confirmPassword && props.errors.confirmPassword
+                  props.touched.confirmPassword
+                     ? props.errors.confirmPassword
+                     : undefined
                }
                onChange={props.handleChange("confirmPassword")}
                onSubmit={() => props.handleSubmit()}
@@ -157,8 +164,8 @@ const UpdatePasswordForm = (props: FormProps & FormikProps<FormValues>) => {
 
 const UpdatePasswordScreen: React.FC = () => {
    const auth = useAuth();
-   const passwordRef = useRef<TextInput>();
-   const confirmPasswordRef = useRef<TextInput>();
+   const passwordRef = useRef<TextInput>(null);
+   const confirmPasswordRef = useRef<TextInput>(null);
    const passwordRequirements = useRef<PasswordRequirements>({
       containsUpperCase: false,
       containsMinimumLength: false,
@@ -195,7 +202,11 @@ const UpdatePasswordScreen: React.FC = () => {
             .test(
                "minimumRequirements",
                "Password must meet minimum requirements",
-               testForMinimumRequirements
+               testForMinimumRequirements as Yup.TestFunction<
+                  string | undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  Record<string, any>
+               >
             ),
          confirmPassword: Yup.string()
             .required("Confirm your password")

@@ -60,7 +60,7 @@ const Item: React.FC<Props> = (props: Props) => {
    useEffect(() => {
       if ((listItemTextWidth && noteWidth && titleWidth) || !props.item.note) {
          Animated.timing(listItemHeightValue.current, {
-            toValue: 20,
+            toValue: 30,
             duration: 100,
             useNativeDriver: false
          }).start();

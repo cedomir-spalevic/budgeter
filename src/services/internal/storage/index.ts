@@ -24,10 +24,10 @@ export const deleteItem = async (key: string): Promise<void> =>
 
 export const deleteAllStorageItems = async (): Promise<void> => {
    await Promise.all([
-      await SecureStorage.setItem(StorageKeys.AccessToken, ""),
-      await SecureStorage.setItem(StorageKeys.RefreshToken, ""),
-      await SecureStorage.setItem(StorageKeys.AccessTokenExpiration, ""),
-      await SecureStorage.setItem(StorageKeys.ConfirmationKey, ""),
-      await SecureStorage.setItem(StorageKeys.ConfirmationKeyExpiration, "")
+      await deleteItem(StorageKeys.AccessToken),
+      await deleteItem(StorageKeys.RefreshToken),
+      await deleteItem(StorageKeys.AccessTokenExpiration),
+      await deleteItem(StorageKeys.ConfirmationKey),
+      await deleteItem(StorageKeys.ConfirmationKeyExpiration)
    ]);
 };

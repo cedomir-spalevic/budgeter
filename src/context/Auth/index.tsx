@@ -11,7 +11,14 @@ import internalSecurity from "services/internal/security";
 import * as LocalAuthentication from "expo-local-authentication";
 import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
+import { ChallengeRequest } from "services/external/api/models/requests/challengeRequest";
+import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
+import { LoginRequest } from "services/external/api/models/requests/loginRequest";
 
+interface ForgotPasswordRequest {
+   email?: string;
+   phoneNumber?: string;
+}
 interface LoginResponse {
    valid: boolean;
    verificationEmailSent?: boolean;
@@ -37,14 +44,11 @@ interface Props {
 interface Context {
    state: AuthState;
    tryLocalAuthentication: () => Promise<boolean>;
-   login: (email: string, password: string) => Promise<LoginResponse>;
-   register: (
-      firstName: string,
-      lastName: string,
-      email: string,
-      password: string
-   ) => Promise<RegisterResponse>;
-   forgotPassword: (email: string) => Promise<boolean>;
+   login: (loginRequest: LoginRequest) => Promise<LoginResponse>;
+   register: (registerRequest: RegisterRequest) => Promise<RegisterResponse>;
+   forgotPassword: (
+      forgotPasswordRequest: ForgotPasswordRequest
+   ) => Promise<boolean>;
    confirmEmailVerification: (code: number) => Promise<boolean>;
    confirmPasswordReset: (code: number) => Promise<boolean>;
    updatePassword: (password: string) => Promise<boolean>;
@@ -81,16 +85,14 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       return false;
    };
 
-   const login = async (
-      email: string,
-      password: string
-   ): Promise<LoginResponse> => {
+   const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         const response = await authenticationService.login(
-            email,
-            internalSecurity.btoa(password)
-         );
+         const response = await authenticationService.login({
+            email: loginRequest.email,
+            phoneNumber: loginRequest.phoneNumber,
+            password: internalSecurity.btoa(loginRequest.password)
+         });
          let verificationEmailSent = false;
          if (response.isEmailVerified) {
             setState(AuthState.SignedIn);
@@ -115,19 +117,17 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    };
 
    const register = async (
-      firstName: string,
-      lastName: string,
-      email: string,
-      password: string
+      registerRequest: RegisterRequest
    ): Promise<RegisterResponse> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         await authenticationService.register(
-            firstName,
-            lastName,
-            email,
-            internalSecurity.btoa(password)
-         );
+         await authenticationService.register({
+            firstName: registerRequest.firstName,
+            lastName: registerRequest.lastName,
+            email: registerRequest.email,
+            phoneNumber: registerRequest.phoneNumber,
+            password: internalSecurity.btoa(registerRequest.password)
+         });
          return { valid: true };
       } catch (error) {
          if (error instanceof AlreadyExistsError)
@@ -143,10 +143,17 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const forgotPassword = async (email: string): Promise<boolean> => {
+   const forgotPassword = async (
+      forgotPasswordRequest: ForgotPasswordRequest
+   ): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         await authenticationService.challenge(email, "passwordReset");
+         const challengeRequest: ChallengeRequest = {
+            email: forgotPasswordRequest.email,
+            phoneNumber: forgotPasswordRequest.phoneNumber,
+            type: "passwordReset"
+         };
+         await authenticationService.challenge(challengeRequest);
          return true;
       } catch (error) {
          Alert.alert(
@@ -191,7 +198,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    const updatePassword = async (password: string): Promise<boolean> => {
       try {
          const userService = UserService.getInstance();
-         await userService.updatePassword(btoa(password));
+         await userService.updatePassword(internalSecurity.btoa(password));
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {
@@ -206,6 +213,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
 
    const logout = () => {
       deleteAllStorageItems();
+      setVerified(false);
       setState(AuthState.SignedOut);
    };
 

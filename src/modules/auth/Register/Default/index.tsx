@@ -16,6 +16,9 @@ import * as Yup from "yup";
 import { makeStyles, useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import RegisterRoutes from "../routes";
+import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
+import { parsePhoneNumber } from "services/external/phoneNumbers";
+import { isValidEmail } from "services/internal/emails";
 
 const useStyles = makeStyles((theme) => ({
    passwordRequirement: {
@@ -43,17 +46,17 @@ interface PasswordRequirements {
 }
 
 interface FormProps {
-   lastNameRef: React.MutableRefObject<TextInput>;
-   emailRef: React.MutableRefObject<TextInput>;
-   passwordRef: React.MutableRefObject<TextInput>;
-   confirmPasswordRef: React.MutableRefObject<TextInput>;
+   lastNameRef: React.MutableRefObject<TextInput | null>;
+   emailOrPhoneNumberRef: React.MutableRefObject<TextInput | null>;
+   passwordRef: React.MutableRefObject<TextInput | null>;
+   confirmPasswordRef: React.MutableRefObject<TextInput | null>;
    checkForPasswordRequirements: () => PasswordRequirements;
 }
 
 interface FormValues {
    firstName: string;
    lastName: string;
-   email: string;
+   emailOrPhoneNumber: string;
    password: string;
    confirmPassword: string;
 }
@@ -68,48 +71,68 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             <Spacer />
             <TextField
                preRenderIcon={<Icon name="subject" />}
-               errorMessage={props.touched.firstName && props.errors.firstName}
+               errorMessage={
+                  props.touched.firstName ? props.errors.firstName : undefined
+               }
                onChange={props.handleChange("firstName")}
                value={props.values.firstName}
                placeholder="First Name"
-               onSubmit={() => props.lastNameRef.current.focus()}
+               onSubmit={() =>
+                  props.lastNameRef.current && props.lastNameRef.current.focus()
+               }
                textContentType="name"
                autoFocus
             />
             <TextField
                preRenderIcon={<Icon name="subject" />}
-               errorMessage={props.touched.lastName && props.errors.lastName}
+               errorMessage={
+                  props.touched.lastName ? props.errors.lastName : undefined
+               }
                onChange={props.handleChange("lastName")}
                value={props.values.lastName}
                placeholder="Last Name"
-               onSubmit={() => props.emailRef.current.focus()}
+               onSubmit={() =>
+                  props.emailOrPhoneNumberRef.current &&
+                  props.emailOrPhoneNumberRef.current.focus()
+               }
                textContentType="name"
                ref={props.lastNameRef}
             />
             <TextField
                preRenderIcon={<Icon name="email" />}
-               errorMessage={props.touched.email && props.errors.email}
-               onChange={props.handleChange("email")}
-               value={props.values.email}
-               placeholder="Email"
-               onSubmit={() => props.passwordRef.current.focus()}
-               textContentType="emailAddress"
-               keyboardType="email-address"
+               errorMessage={
+                  props.touched.emailOrPhoneNumber
+                     ? props.errors.emailOrPhoneNumber
+                     : undefined
+               }
+               onChange={props.handleChange("emailOrPhoneNumber")}
+               value={props.values.emailOrPhoneNumber}
+               placeholder="Email or Phone Number"
+               onSubmit={() =>
+                  props.passwordRef.current && props.passwordRef.current.focus()
+               }
                autoCapitalize="none"
-               ref={props.emailRef}
+               ref={props.emailOrPhoneNumberRef}
             />
             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={props.touched.password && props.errors.password}
+               errorMessage={
+                  props.touched.password ? props.errors.password : undefined
+               }
                onChange={props.handleChange("password")}
-               onSubmit={() => props.confirmPasswordRef.current.focus()}
+               onSubmit={() =>
+                  props.confirmPasswordRef.current &&
+                  props.confirmPasswordRef.current.focus()
+               }
                ref={props.passwordRef}
                newPassword
             />
             <TextFieldSecret
                placeholder="Confirm your password"
                errorMessage={
-                  props.touched.confirmPassword && props.errors.confirmPassword
+                  props.touched.confirmPassword
+                     ? props.errors.confirmPassword
+                     : undefined
                }
                onChange={props.handleChange("confirmPassword")}
                onSubmit={() => props.handleSubmit()}
@@ -198,10 +221,10 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
 const RegisterScreen: React.FC = () => {
    const navigation = useNavigation();
    const auth = useAuth();
-   const lastNameRef = useRef<TextInput>();
-   const emailRef = useRef<TextInput>();
-   const passwordRef = useRef<TextInput>();
-   const confirmPasswordRef = useRef<TextInput>();
+   const lastNameRef = useRef<TextInput>(null);
+   const emailOrPhoneNumberRef = useRef<TextInput>(null);
+   const passwordRef = useRef<TextInput>(null);
+   const confirmPasswordRef = useRef<TextInput>(null);
    const passwordRequirements = useRef<PasswordRequirements>({
       containsUpperCase: false,
       containsMinimumLength: false,
@@ -231,22 +254,26 @@ const RegisterScreen: React.FC = () => {
       mapPropsToValues: () => ({
          firstName: "",
          lastName: "",
-         email: "",
+         emailOrPhoneNumber: "",
          password: "",
          confirmPassword: ""
       }),
       validationSchema: Yup.object().shape({
          firstName: Yup.string().required("First name cannot be blank"),
          lastName: Yup.string().required("Last name cannot be blank"),
-         email: Yup.string()
-            .email("Not a valid email")
-            .required("Email cannot be blank"),
+         emailOrPhoneNumber: Yup.string().required(
+            "Email or phone number cannot be blank"
+         ),
          password: Yup.string()
             .required("Password cannot be blank")
             .test(
                "minimumRequirements",
                "Password must meet minimum requirements",
-               testForMinimumRequirements
+               testForMinimumRequirements as Yup.TestFunction<
+                  string | undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  Record<string, any>
+               >
             ),
          confirmPassword: Yup.string()
             .required("Confirm your password")
@@ -256,15 +283,37 @@ const RegisterScreen: React.FC = () => {
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
-         const response = await auth.register(
-            values.firstName,
-            values.lastName,
-            values.email,
-            values.password
-         );
+         let email: string | undefined = undefined;
+         let phoneNumber: string | undefined = undefined;
+
+         if (isValidEmail(values.emailOrPhoneNumber)) {
+            email = values.emailOrPhoneNumber;
+         }
+         if (!email) {
+            const parsedPhoneNumber = parsePhoneNumber(
+               values.emailOrPhoneNumber
+            );
+            if (parsedPhoneNumber && parsedPhoneNumber.isValid)
+               phoneNumber = parsedPhoneNumber.internationalFormat;
+         }
+         if (!email && !phoneNumber) {
+            formikBag.setErrors({
+               emailOrPhoneNumber: "Email or phone number is not valid"
+            });
+            return;
+         }
+
+         const registerRequest: RegisterRequest = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: email,
+            phoneNumber: phoneNumber,
+            password: values.password
+         };
+         const response = await auth.register(registerRequest);
          if (!response.valid) {
             formikBag.setErrors({
-               email: response.emailError,
+               emailOrPhoneNumber: response.emailError,
                password: response.passwordError
             });
             return;
@@ -278,7 +327,7 @@ const RegisterScreen: React.FC = () => {
          <Form
             checkForPasswordRequirements={() => passwordRequirements.current}
             lastNameRef={lastNameRef}
-            emailRef={emailRef}
+            emailOrPhoneNumberRef={emailOrPhoneNumberRef}
             passwordRef={passwordRef}
             confirmPasswordRef={confirmPasswordRef}
          />

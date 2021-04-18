@@ -4,7 +4,7 @@ import {
    handleAuthResponse,
    handleConfirmationCodeResponse
 } from "../apiFetch";
-import { ChallengeType } from "../models/data/challenge";
+import { ChallengeRequest } from "../models/requests/challengeRequest";
 import {
    AlreadyExistsError,
    GeneralError,
@@ -13,6 +13,8 @@ import {
    UnauthorizedError
 } from "../models/errors";
 import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
+import { RegisterRequest } from "../models/requests/registerRequest";
+import { LoginRequest } from "../models/requests/loginRequest";
 
 interface LoginResponse {
    isEmailVerified: boolean;
@@ -35,13 +37,13 @@ class AuthenticationService {
       return AuthenticationService.instance;
    }
 
-   public async login(email: string, password: string): Promise<LoginResponse> {
+   public async login(loginRequest: LoginRequest): Promise<LoginResponse> {
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ email, password })
+         body: JSON.stringify(loginRequest)
       };
       const response = await callApi(`${this.resource}/login`, options);
       if (response.status === 400) {
@@ -85,17 +87,14 @@ class AuthenticationService {
    }
 
    public async register(
-      firstName: string,
-      lastName: string,
-      email: string,
-      password: string
+      registerRequest: RegisterRequest
    ): Promise<ConfirmationCodeResponse> {
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ firstName, lastName, email, password })
+         body: JSON.stringify(registerRequest)
       };
       const response = await callApi(`${this.resource}/register`, options);
       if (response.status === 400) {
@@ -119,15 +118,14 @@ class AuthenticationService {
    }
 
    public async challenge(
-      email: string,
-      type: ChallengeType
+      challengeRequest: ChallengeRequest
    ): Promise<ConfirmationCodeResponse> {
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ email, type })
+         body: JSON.stringify(challengeRequest)
       };
       const response = await callApi(`${this.resource}/challenge`, options);
       if (response.status === 400) {

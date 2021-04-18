@@ -32,7 +32,7 @@ interface FormProps {
 }
 
 interface FormValues {
-   code: number;
+   code?: number;
 }
 
 const ConfirmationCodeForm = (props: FormProps & FormikProps<FormValues>) => {
@@ -94,7 +94,7 @@ const ConfirmationCodeScreen: React.FC = () => {
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
-         const confirmed = await auth.confirmEmailVerification(values.code);
+         const confirmed = await auth.confirmEmailVerification(values.code!);
          if (!confirmed) {
             formikBag.setErrors({
                code: "Incorrect confirmation code"

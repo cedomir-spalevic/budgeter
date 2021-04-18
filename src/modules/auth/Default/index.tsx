@@ -4,7 +4,7 @@ import Welcome from "assets/svg/Welcome";
 import { Button, Container, Label, Link, Page, Spacer } from "components";
 import { useNavigation } from "@react-navigation/native";
 import AuthRoutes from "modules/auth/routes";
-import { makeStyles, useAuth } from "context";
+import { AuthState, makeStyles, useAuth } from "context";
 import RNBootSplash from "react-native-bootsplash";
 
 const useStyles = makeStyles(() => ({
@@ -34,6 +34,7 @@ const DefaultScreen: React.FC = () => {
    };
 
    useEffect(() => {
+      if (auth.state == AuthState.Verifying) return;
       (async () => {
          await RNBootSplash.hide({ fade: true });
       })();

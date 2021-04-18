@@ -17,14 +17,17 @@ import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { TextInput } from "react-native";
 import LoginRoutes from "../routes";
+import { LoginRequest } from "services/external/api/models/requests/loginRequest";
+import { isValidEmail } from "services/internal/emails";
+import { parsePhoneNumber } from "services/external/phoneNumbers";
 
 interface FormProps {
    onForgotPasswordClick: () => void;
-   passwordRef: React.MutableRefObject<TextInput>;
+   passwordRef: React.MutableRefObject<TextInput | null>;
 }
 
 interface FormValues {
-   email: string;
+   emailOrPhoneNumber: string;
    password: string;
 }
 
@@ -35,23 +38,28 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
          <Spacer />
          <TextField
             preRenderIcon={<Icon name="email" />}
-            errorMessage={props.touched.email && props.errors.email}
-            onChange={props.handleChange("email")}
-            value={props.values.email}
-            placeholder="Email"
+            errorMessage={
+               props.touched.emailOrPhoneNumber
+                  ? props.errors.emailOrPhoneNumber
+                  : undefined
+            }
+            onChange={props.handleChange("emailOrPhoneNumber")}
+            value={props.values.emailOrPhoneNumber}
+            placeholder="Email or Phone Number"
             autoFocus
             onSubmit={() =>
-               !props.values.email
-                  ? props.handleChange("email")
-                  : props.passwordRef.current.focus()
+               !props.values.emailOrPhoneNumber
+                  ? props.handleChange("emailOrPhoneNumber")
+                  : props.passwordRef.current &&
+                    props.passwordRef.current.focus()
             }
-            textContentType="emailAddress"
-            keyboardType="email-address"
             autoCapitalize="none"
          />
          <TextFieldSecret
             placeholder="Enter your password"
-            errorMessage={props.touched.password && props.errors.password}
+            errorMessage={
+               props.touched.password ? props.errors.password : undefined
+            }
             onChange={props.handleChange("password")}
             ref={props.passwordRef}
             onSubmit={() => props.submitForm()}
@@ -74,29 +82,56 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
 const LoginScreen: React.FC = () => {
    const auth = useAuth();
    const navigation = useNavigation();
-   const passwordRef = useRef<TextInput>();
+   const passwordRef = useRef<TextInput>(null);
 
    const Form = withFormik<FormProps, FormValues>({
       mapPropsToValues: () => ({
-         email: "",
+         emailOrPhoneNumber: "",
          password: ""
       }),
       validationSchema: Yup.object().shape({
-         email: Yup.string().required("Email cannot be blank"),
+         emailOrPhoneNumber: Yup.string().required(
+            "Email or phone number cannot be blank"
+         ),
          password: Yup.string().required("Password cannot be blank")
       }),
       handleSubmit: async (
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
-         const response = await auth.login(values.email, values.password);
+         let email: string | undefined = undefined;
+         let phoneNumber: string | undefined = undefined;
+
+         if (isValidEmail(values.emailOrPhoneNumber)) {
+            email = values.emailOrPhoneNumber;
+         }
+         if (!email) {
+            const parsedPhoneNumber = parsePhoneNumber(
+               values.emailOrPhoneNumber
+            );
+            if (parsedPhoneNumber && parsedPhoneNumber.isValid)
+               phoneNumber = parsedPhoneNumber.internationalFormat;
+         }
+         if (!email && !phoneNumber) {
+            formikBag.setErrors({
+               emailOrPhoneNumber: "Email or phone number is not valid"
+            });
+            return;
+         }
+
+         const loginRequest: LoginRequest = {
+            email,
+            phoneNumber,
+            password: values.password
+         };
+         const response = await auth.login(loginRequest);
          if (!response.valid) {
             if (response.verificationEmailSent === true) {
                navigation.navigate(LoginRoutes.ConfirmationCode);
                return;
             }
             formikBag.setErrors({
-               email: response.emailError,
+               emailOrPhoneNumber: response.emailError,
                password: response.passwordError
             });
          }

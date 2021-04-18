@@ -52,6 +52,7 @@ export const useTheme = (): Context => useContext<Context>(ThemeContext);
 type MakeStylesHook<T> = () => StyleSheet.NamedStyles<T>;
 type MakeStylesFuncParam<T> = (theme: Theme) => T | StyleSheet.NamedStyles<T>;
 export function makeStyles<
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
    T extends StyleSheet.NamedStyles<T> | StyleSheet.NamedStyles<any>
 >(makeStylesFunc: MakeStylesFuncParam<T>): MakeStylesHook<T> {
    return () => {
