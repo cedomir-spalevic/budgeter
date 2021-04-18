@@ -41,7 +41,7 @@ class UserService {
          firstName: body.firstName,
          lastName: body.lastName,
          email: body.email,
-         emailVerified: body.emailVerified,
+         isMfaVerified: body.isMfaVerified,
          createdOn: new Date(body.createdOn),
          modifiedOn: new Date(body.modified),
          device: {
@@ -144,7 +144,7 @@ class UserService {
          firstName: responseBody.firstName,
          lastName: responseBody.lastName,
          email: responseBody.email,
-         emailVerified: responseBody.emailVerified,
+         isMfaVerified: responseBody.isMfaVerified,
          createdOn: new Date(responseBody.createdOn),
          modifiedOn: new Date(responseBody.modified),
          device: {

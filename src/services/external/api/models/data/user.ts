@@ -2,7 +2,7 @@ export interface User {
    firstName: string;
    lastName: string;
    email: string;
-   emailVerified: boolean;
+   isMfaVerified: boolean;
    createdOn: Date;
    modifiedOn: Date;
    device: {
