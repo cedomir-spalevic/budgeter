@@ -17,6 +17,8 @@ import { makeStyles, useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import RegisterRoutes from "../routes";
 import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
+import { parsePhoneNumber } from "services/external/phoneNumbers";
+import { isValidEmail } from "services/internal/emails";
 
 const useStyles = makeStyles((theme) => ({
    passwordRequirement: {
@@ -45,7 +47,7 @@ interface PasswordRequirements {
 
 interface FormProps {
    lastNameRef: React.MutableRefObject<TextInput | null>;
-   emailRef: React.MutableRefObject<TextInput | null>;
+   emailOrPhoneNumberRef: React.MutableRefObject<TextInput | null>;
    passwordRef: React.MutableRefObject<TextInput | null>;
    confirmPasswordRef: React.MutableRefObject<TextInput | null>;
    checkForPasswordRequirements: () => PasswordRequirements;
@@ -54,7 +56,7 @@ interface FormProps {
 interface FormValues {
    firstName: string;
    lastName: string;
-   email: string;
+   emailOrPhoneNumber: string;
    password: string;
    confirmPassword: string;
 }
@@ -90,7 +92,7 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                value={props.values.lastName}
                placeholder="Last Name"
                onSubmit={() =>
-                  props.emailRef.current && props.emailRef.current.focus()
+                  props.emailOrPhoneNumberRef.current && props.emailOrPhoneNumberRef.current.focus()
                }
                textContentType="name"
                ref={props.lastNameRef}
@@ -98,18 +100,16 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             <TextField
                preRenderIcon={<Icon name="email" />}
                errorMessage={
-                  props.touched.email ? props.errors.email : undefined
+                  props.touched.emailOrPhoneNumber ? props.errors.emailOrPhoneNumber : undefined
                }
-               onChange={props.handleChange("email")}
-               value={props.values.email}
-               placeholder="Email"
+               onChange={props.handleChange("emailOrPhoneNumber")}
+               value={props.values.emailOrPhoneNumber}
+               placeholder="Email or Phone Number"
                onSubmit={() =>
                   props.passwordRef.current && props.passwordRef.current.focus()
                }
-               textContentType="emailAddress"
-               keyboardType="email-address"
                autoCapitalize="none"
-               ref={props.emailRef}
+               ref={props.emailOrPhoneNumberRef}
             />
             <TextFieldSecret
                placeholder="Enter your password"
@@ -219,7 +219,7 @@ const RegisterScreen: React.FC = () => {
    const navigation = useNavigation();
    const auth = useAuth();
    const lastNameRef = useRef<TextInput>(null);
-   const emailRef = useRef<TextInput>(null);
+   const emailOrPhoneNumberRef = useRef<TextInput>(null);
    const passwordRef = useRef<TextInput>(null);
    const confirmPasswordRef = useRef<TextInput>(null);
    const passwordRequirements = useRef<PasswordRequirements>({
@@ -251,16 +251,14 @@ const RegisterScreen: React.FC = () => {
       mapPropsToValues: () => ({
          firstName: "",
          lastName: "",
-         email: "",
+         emailOrPhoneNumber: "",
          password: "",
          confirmPassword: ""
       }),
       validationSchema: Yup.object().shape({
          firstName: Yup.string().required("First name cannot be blank"),
          lastName: Yup.string().required("Last name cannot be blank"),
-         email: Yup.string()
-            .email("Not a valid email")
-            .required("Email cannot be blank"),
+         emailOrPhoneNumber: Yup.string().required("Email or phone number cannot be blank"),
          password: Yup.string()
             .required("Password cannot be blank")
             .test(
@@ -279,16 +277,30 @@ const RegisterScreen: React.FC = () => {
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
+         let email: string | undefined = undefined;
+         let phoneNumber: string | undefined = undefined;
+         const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
+         if(parsedPhoneNumber.isValid)
+            phoneNumber = parsedPhoneNumber.internationalFormat
+         else if(isValidEmail(values.emailOrPhoneNumber)) 
+            email = values.emailOrPhoneNumber;
+         else {
+            formikBag.setErrors({
+               emailOrPhoneNumber: "Email or phone number is not valid"
+            });
+            return;
+         }
          const registerRequest: RegisterRequest = {
             firstName: values.firstName,
             lastName: values.lastName,
-            email: values.email,
+            email: email,
+            phoneNumber: phoneNumber,
             password: values.password
          };
          const response = await auth.register(registerRequest);
          if (!response.valid) {
             formikBag.setErrors({
-               email: response.emailError,
+               emailOrPhoneNumber: response.emailError,
                password: response.passwordError
             });
             return;
@@ -302,7 +314,7 @@ const RegisterScreen: React.FC = () => {
          <Form
             checkForPasswordRequirements={() => passwordRequirements.current}
             lastNameRef={lastNameRef}
-            emailRef={emailRef}
+            emailOrPhoneNumberRef={emailOrPhoneNumberRef}
             passwordRef={passwordRef}
             confirmPasswordRef={confirmPasswordRef}
          />
