@@ -37,7 +37,7 @@ const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
             <Spacer />
             <TextField
                preRenderIcon={<Icon name="email" />}
-               errorMessage={props.touched.email && props.errors.email}
+               errorMessage={props.touched.email ? props.errors.email : undefined}
                onChange={props.handleChange("email")}
                value={props.values.email}
                placeholder="Email"

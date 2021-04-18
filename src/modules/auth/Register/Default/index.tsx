@@ -43,10 +43,10 @@ interface PasswordRequirements {
 }
 
 interface FormProps {
-   lastNameRef: React.MutableRefObject<TextInput>;
-   emailRef: React.MutableRefObject<TextInput>;
-   passwordRef: React.MutableRefObject<TextInput>;
-   confirmPasswordRef: React.MutableRefObject<TextInput>;
+   lastNameRef: React.MutableRefObject<TextInput | null>;
+   emailRef: React.MutableRefObject<TextInput | null>;
+   passwordRef: React.MutableRefObject<TextInput | null>;
+   confirmPasswordRef: React.MutableRefObject<TextInput | null>;
    checkForPasswordRequirements: () => PasswordRequirements;
 }
 
@@ -68,31 +68,31 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             <Spacer />
             <TextField
                preRenderIcon={<Icon name="subject" />}
-               errorMessage={props.touched.firstName && props.errors.firstName}
+               errorMessage={props.touched.firstName ? props.errors.firstName : undefined}
                onChange={props.handleChange("firstName")}
                value={props.values.firstName}
                placeholder="First Name"
-               onSubmit={() => props.lastNameRef.current.focus()}
+               onSubmit={() => props.lastNameRef.current && props.lastNameRef.current.focus()}
                textContentType="name"
                autoFocus
             />
             <TextField
                preRenderIcon={<Icon name="subject" />}
-               errorMessage={props.touched.lastName && props.errors.lastName}
+               errorMessage={props.touched.lastName ? props.errors.lastName : undefined}
                onChange={props.handleChange("lastName")}
                value={props.values.lastName}
                placeholder="Last Name"
-               onSubmit={() => props.emailRef.current.focus()}
+               onSubmit={() => props.emailRef.current && props.emailRef.current.focus()}
                textContentType="name"
                ref={props.lastNameRef}
             />
             <TextField
                preRenderIcon={<Icon name="email" />}
-               errorMessage={props.touched.email && props.errors.email}
+               errorMessage={props.touched.email ? props.errors.email : undefined}
                onChange={props.handleChange("email")}
                value={props.values.email}
                placeholder="Email"
-               onSubmit={() => props.passwordRef.current.focus()}
+               onSubmit={() => props.passwordRef.current && props.passwordRef.current.focus()}
                textContentType="emailAddress"
                keyboardType="email-address"
                autoCapitalize="none"
@@ -100,16 +100,16 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             />
             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={props.touched.password && props.errors.password}
+               errorMessage={props.touched.password ? props.errors.password : undefined}
                onChange={props.handleChange("password")}
-               onSubmit={() => props.confirmPasswordRef.current.focus()}
+               onSubmit={() => props.confirmPasswordRef.current && props.confirmPasswordRef.current.focus()}
                ref={props.passwordRef}
                newPassword
             />
             <TextFieldSecret
                placeholder="Confirm your password"
                errorMessage={
-                  props.touched.confirmPassword && props.errors.confirmPassword
+                  props.touched.confirmPassword ? props.errors.confirmPassword : undefined
                }
                onChange={props.handleChange("confirmPassword")}
                onSubmit={() => props.handleSubmit()}
@@ -198,10 +198,10 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
 const RegisterScreen: React.FC = () => {
    const navigation = useNavigation();
    const auth = useAuth();
-   const lastNameRef = useRef<TextInput>();
-   const emailRef = useRef<TextInput>();
-   const passwordRef = useRef<TextInput>();
-   const confirmPasswordRef = useRef<TextInput>();
+   const lastNameRef = useRef<TextInput>(null);
+   const emailRef = useRef<TextInput>(null);
+   const passwordRef = useRef<TextInput>(null);
+   const confirmPasswordRef = useRef<TextInput>(null);
    const passwordRequirements = useRef<PasswordRequirements>({
       containsUpperCase: false,
       containsMinimumLength: false,
@@ -246,7 +246,7 @@ const RegisterScreen: React.FC = () => {
             .test(
                "minimumRequirements",
                "Password must meet minimum requirements",
-               testForMinimumRequirements
+               testForMinimumRequirements as Yup.TestFunction<string | undefined, Record<string, any>>
             ),
          confirmPassword: Yup.string()
             .required("Confirm your password")

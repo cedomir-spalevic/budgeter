@@ -20,7 +20,7 @@ import LoginRoutes from "../routes";
 
 interface FormProps {
    onForgotPasswordClick: () => void;
-   passwordRef: React.MutableRefObject<TextInput>;
+   passwordRef: React.MutableRefObject<TextInput | null>;
 }
 
 interface FormValues {
@@ -35,7 +35,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
          <Spacer />
          <TextField
             preRenderIcon={<Icon name="email" />}
-            errorMessage={props.touched.email && props.errors.email}
+            errorMessage={props.touched.email ? props.errors.email : undefined}
             onChange={props.handleChange("email")}
             value={props.values.email}
             placeholder="Email"
@@ -43,7 +43,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
             onSubmit={() =>
                !props.values.email
                   ? props.handleChange("email")
-                  : props.passwordRef.current.focus()
+                  : props.passwordRef.current && props.passwordRef.current.focus()
             }
             textContentType="emailAddress"
             keyboardType="email-address"
@@ -51,7 +51,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
          />
          <TextFieldSecret
             placeholder="Enter your password"
-            errorMessage={props.touched.password && props.errors.password}
+            errorMessage={props.touched.password ? props.errors.password : undefined}
             onChange={props.handleChange("password")}
             ref={props.passwordRef}
             onSubmit={() => props.submitForm()}
@@ -74,7 +74,7 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
 const LoginScreen: React.FC = () => {
    const auth = useAuth();
    const navigation = useNavigation();
-   const passwordRef = useRef<TextInput>();
+   const passwordRef = useRef<TextInput>(null);
 
    const Form = withFormik<FormProps, FormValues>({
       mapPropsToValues: () => ({
