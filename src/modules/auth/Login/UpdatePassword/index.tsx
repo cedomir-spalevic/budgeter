@@ -60,16 +60,23 @@ const UpdatePasswordForm = (props: FormProps & FormikProps<FormValues>) => {
             <Spacer />
             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={props.touched.password ? props.errors.password : undefined}
+               errorMessage={
+                  props.touched.password ? props.errors.password : undefined
+               }
                onChange={props.handleChange("password")}
-               onSubmit={() => props.confirmPasswordRef.current && props.confirmPasswordRef.current.focus()}
+               onSubmit={() =>
+                  props.confirmPasswordRef.current &&
+                  props.confirmPasswordRef.current.focus()
+               }
                ref={props.passwordRef}
                newPassword
             />
             <TextFieldSecret
                placeholder="Confirm your password"
                errorMessage={
-                  props.touched.confirmPassword ? props.errors.confirmPassword : undefined
+                  props.touched.confirmPassword
+                     ? props.errors.confirmPassword
+                     : undefined
                }
                onChange={props.handleChange("confirmPassword")}
                onSubmit={() => props.handleSubmit()}
@@ -195,7 +202,10 @@ const UpdatePasswordScreen: React.FC = () => {
             .test(
                "minimumRequirements",
                "Password must meet minimum requirements",
-               testForMinimumRequirements as Yup.TestFunction<string | undefined, Record<string, any>>
+               testForMinimumRequirements as Yup.TestFunction<
+                  string | undefined,
+                  Record<string, any>
+               >
             ),
          confirmPassword: Yup.string()
             .required("Confirm your password")

@@ -4,7 +4,7 @@ import {
    handleAuthResponse,
    handleConfirmationCodeResponse
 } from "../apiFetch";
-import { ChallengeRequest } from "../models/requests/challengeRequest"
+import { ChallengeRequest } from "../models/requests/challengeRequest";
 import {
    AlreadyExistsError,
    GeneralError,

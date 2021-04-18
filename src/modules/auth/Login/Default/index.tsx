@@ -44,7 +44,8 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
             onSubmit={() =>
                !props.values.email
                   ? props.handleChange("email")
-                  : props.passwordRef.current && props.passwordRef.current.focus()
+                  : props.passwordRef.current &&
+                    props.passwordRef.current.focus()
             }
             textContentType="emailAddress"
             keyboardType="email-address"
@@ -52,7 +53,9 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
          />
          <TextFieldSecret
             placeholder="Enter your password"
-            errorMessage={props.touched.password ? props.errors.password : undefined}
+            errorMessage={
+               props.touched.password ? props.errors.password : undefined
+            }
             onChange={props.handleChange("password")}
             ref={props.passwordRef}
             onSubmit={() => props.submitForm()}
@@ -93,7 +96,7 @@ const LoginScreen: React.FC = () => {
          const loginRequest: LoginRequest = {
             email: values.email,
             password: values.password
-         }
+         };
          const response = await auth.login(loginRequest);
          if (!response.valid) {
             if (response.verificationEmailSent === true) {

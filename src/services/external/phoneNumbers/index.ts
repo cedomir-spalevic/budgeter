@@ -6,7 +6,9 @@ export const parsePhoneNumber = (phoneNumber: string): ParsedPhoneNumber => {
    const isValid = !parsedNumber || parsedNumber.isValid();
    let internationalFormat = phoneNumber;
    if (isValid)
-      internationalFormat = parsedNumber!.formatInternational().replace(" ", "");
+      internationalFormat = parsedNumber!
+         .formatInternational()
+         .replace(" ", "");
    return {
       internationalFormat,
       isValid

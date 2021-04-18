@@ -69,31 +69,43 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             <Spacer />
             <TextField
                preRenderIcon={<Icon name="subject" />}
-               errorMessage={props.touched.firstName ? props.errors.firstName : undefined}
+               errorMessage={
+                  props.touched.firstName ? props.errors.firstName : undefined
+               }
                onChange={props.handleChange("firstName")}
                value={props.values.firstName}
                placeholder="First Name"
-               onSubmit={() => props.lastNameRef.current && props.lastNameRef.current.focus()}
+               onSubmit={() =>
+                  props.lastNameRef.current && props.lastNameRef.current.focus()
+               }
                textContentType="name"
                autoFocus
             />
             <TextField
                preRenderIcon={<Icon name="subject" />}
-               errorMessage={props.touched.lastName ? props.errors.lastName : undefined}
+               errorMessage={
+                  props.touched.lastName ? props.errors.lastName : undefined
+               }
                onChange={props.handleChange("lastName")}
                value={props.values.lastName}
                placeholder="Last Name"
-               onSubmit={() => props.emailRef.current && props.emailRef.current.focus()}
+               onSubmit={() =>
+                  props.emailRef.current && props.emailRef.current.focus()
+               }
                textContentType="name"
                ref={props.lastNameRef}
             />
             <TextField
                preRenderIcon={<Icon name="email" />}
-               errorMessage={props.touched.email ? props.errors.email : undefined}
+               errorMessage={
+                  props.touched.email ? props.errors.email : undefined
+               }
                onChange={props.handleChange("email")}
                value={props.values.email}
                placeholder="Email"
-               onSubmit={() => props.passwordRef.current && props.passwordRef.current.focus()}
+               onSubmit={() =>
+                  props.passwordRef.current && props.passwordRef.current.focus()
+               }
                textContentType="emailAddress"
                keyboardType="email-address"
                autoCapitalize="none"
@@ -101,16 +113,23 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             />
             <TextFieldSecret
                placeholder="Enter your password"
-               errorMessage={props.touched.password ? props.errors.password : undefined}
+               errorMessage={
+                  props.touched.password ? props.errors.password : undefined
+               }
                onChange={props.handleChange("password")}
-               onSubmit={() => props.confirmPasswordRef.current && props.confirmPasswordRef.current.focus()}
+               onSubmit={() =>
+                  props.confirmPasswordRef.current &&
+                  props.confirmPasswordRef.current.focus()
+               }
                ref={props.passwordRef}
                newPassword
             />
             <TextFieldSecret
                placeholder="Confirm your password"
                errorMessage={
-                  props.touched.confirmPassword ? props.errors.confirmPassword : undefined
+                  props.touched.confirmPassword
+                     ? props.errors.confirmPassword
+                     : undefined
                }
                onChange={props.handleChange("confirmPassword")}
                onSubmit={() => props.handleSubmit()}
@@ -247,7 +266,10 @@ const RegisterScreen: React.FC = () => {
             .test(
                "minimumRequirements",
                "Password must meet minimum requirements",
-               testForMinimumRequirements as Yup.TestFunction<string | undefined, Record<string, any>>
+               testForMinimumRequirements as Yup.TestFunction<
+                  string | undefined,
+                  Record<string, any>
+               >
             ),
          confirmPassword: Yup.string()
             .required("Confirm your password")

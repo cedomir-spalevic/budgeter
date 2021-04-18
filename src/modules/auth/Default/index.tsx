@@ -34,8 +34,7 @@ const DefaultScreen: React.FC = () => {
    };
 
    useEffect(() => {
-      if(auth.state == AuthState.Verifying)
-         return;
+      if (auth.state == AuthState.Verifying) return;
       (async () => {
          await RNBootSplash.hide({ fade: true });
       })();

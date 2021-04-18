@@ -143,7 +143,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
          const challengeRequest: ChallengeRequest = {
             email,
             type: "passwordReset"
-         }
+         };
          await authenticationService.challenge(challengeRequest);
          return true;
       } catch (error) {

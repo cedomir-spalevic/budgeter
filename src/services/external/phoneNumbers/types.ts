@@ -1,4 +1,4 @@
 export interface ParsedPhoneNumber {
-    isValid: boolean;
-    internationalFormat: string;
- }
+   isValid: boolean;
+   internationalFormat: string;
+}
