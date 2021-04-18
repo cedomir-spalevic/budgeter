@@ -194,7 +194,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    const updatePassword = async (password: string): Promise<boolean> => {
       try {
          const userService = UserService.getInstance();
-         await userService.updatePassword(btoa(password));
+         await userService.updatePassword(internalSecurity.btoa(password));
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {
