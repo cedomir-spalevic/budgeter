@@ -18,6 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 import { TextInput } from "react-native";
 import LoginRoutes from "../routes";
 import { LoginRequest } from "services/external/api/models/requests/loginRequest";
+import { isValidEmail } from "services/internal/emails";
+import { parsePhoneNumber } from "services/external/phoneNumbers";
 
 interface FormProps {
    onForgotPasswordClick: () => void;
@@ -25,7 +27,7 @@ interface FormProps {
 }
 
 interface FormValues {
-   email: string;
+   emailOrPhoneNumber: string;
    password: string;
 }
 
@@ -36,19 +38,17 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
          <Spacer />
          <TextField
             preRenderIcon={<Icon name="email" />}
-            errorMessage={props.touched.email ? props.errors.email : undefined}
-            onChange={props.handleChange("email")}
-            value={props.values.email}
-            placeholder="Email"
+            errorMessage={props.touched.emailOrPhoneNumber ? props.errors.emailOrPhoneNumber : undefined}
+            onChange={props.handleChange("emailOrPhoneNumber")}
+            value={props.values.emailOrPhoneNumber}
+            placeholder="Email or Phone Number"
             autoFocus
             onSubmit={() =>
-               !props.values.email
-                  ? props.handleChange("email")
+               !props.values.emailOrPhoneNumber
+                  ? props.handleChange("emailOrPhoneNumber")
                   : props.passwordRef.current &&
                     props.passwordRef.current.focus()
             }
-            textContentType="emailAddress"
-            keyboardType="email-address"
             autoCapitalize="none"
          />
          <TextFieldSecret
@@ -82,19 +82,34 @@ const LoginScreen: React.FC = () => {
 
    const Form = withFormik<FormProps, FormValues>({
       mapPropsToValues: () => ({
-         email: "",
+         emailOrPhoneNumber: "",
          password: ""
       }),
       validationSchema: Yup.object().shape({
-         email: Yup.string().required("Email cannot be blank"),
+         emailOrPhoneNumber: Yup.string().required("Email or phone number cannot be blank"),
          password: Yup.string().required("Password cannot be blank")
       }),
       handleSubmit: async (
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
+         let email: string | undefined = undefined;
+         let phoneNumber: string | undefined = undefined;
+         const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
+         if(parsedPhoneNumber.isValid)
+            phoneNumber = parsedPhoneNumber.internationalFormat
+         else if(isValidEmail(values.emailOrPhoneNumber)) 
+            email = values.emailOrPhoneNumber;
+         else {
+            formikBag.setErrors({
+               emailOrPhoneNumber: "Email or phone number is not valid"
+            });
+            return;
+         }
+         console.log(phoneNumber)
          const loginRequest: LoginRequest = {
-            email: values.email,
+            email,
+            phoneNumber,
             password: values.password
          };
          const response = await auth.login(loginRequest);
@@ -104,7 +119,7 @@ const LoginScreen: React.FC = () => {
                return;
             }
             formikBag.setErrors({
-               email: response.emailError,
+               emailOrPhoneNumber: response.emailError,
                password: response.passwordError
             });
          }
