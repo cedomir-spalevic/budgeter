@@ -12,6 +12,7 @@ import * as LocalAuthentication from "expo-local-authentication";
 import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
 import { ChallengeRequest } from "services/external/api/models/requests/challengeRequest";
+import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
 
 interface LoginResponse {
    valid: boolean;
@@ -39,12 +40,7 @@ interface Context {
    state: AuthState;
    tryLocalAuthentication: () => Promise<boolean>;
    login: (email: string, password: string) => Promise<LoginResponse>;
-   register: (
-      firstName: string,
-      lastName: string,
-      email: string,
-      password: string
-   ) => Promise<RegisterResponse>;
+   register: (registerRequest: RegisterRequest) => Promise<RegisterResponse>;
    forgotPassword: (email: string) => Promise<boolean>;
    confirmEmailVerification: (code: number) => Promise<boolean>;
    confirmPasswordReset: (code: number) => Promise<boolean>;
@@ -116,19 +112,17 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    };
 
    const register = async (
-      firstName: string,
-      lastName: string,
-      email: string,
-      password: string
+      registerRequest: RegisterRequest
    ): Promise<RegisterResponse> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         await authenticationService.register(
-            firstName,
-            lastName,
-            email,
-            internalSecurity.btoa(password)
-         );
+         await authenticationService.register({
+            firstName: registerRequest.firstName,
+            lastName: registerRequest.lastName,
+            email: registerRequest.email,
+            phoneNumber: registerRequest.phoneNumber,
+            password: internalSecurity.btoa(registerRequest.password)
+         });
          return { valid: true };
       } catch (error) {
          if (error instanceof AlreadyExistsError)

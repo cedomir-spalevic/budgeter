@@ -16,6 +16,7 @@ import * as Yup from "yup";
 import { makeStyles, useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import RegisterRoutes from "../routes";
+import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
 
 const useStyles = makeStyles((theme) => ({
    passwordRequirement: {
@@ -256,12 +257,13 @@ const RegisterScreen: React.FC = () => {
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
-         const response = await auth.register(
-            values.firstName,
-            values.lastName,
-            values.email,
-            values.password
-         );
+         const registerRequest: RegisterRequest = {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password
+         };
+         const response = await auth.register(registerRequest);
          if (!response.valid) {
             formikBag.setErrors({
                email: response.emailError,

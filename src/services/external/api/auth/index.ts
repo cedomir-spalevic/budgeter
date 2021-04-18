@@ -13,6 +13,7 @@ import {
    UnauthorizedError
 } from "../models/errors";
 import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
+import { RegisterRequest } from "../models/requests/registerRequest";
 
 interface LoginResponse {
    isEmailVerified: boolean;
@@ -85,17 +86,14 @@ class AuthenticationService {
    }
 
    public async register(
-      firstName: string,
-      lastName: string,
-      email: string,
-      password: string
+      registerRequest: RegisterRequest
    ): Promise<ConfirmationCodeResponse> {
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ firstName, lastName, email, password })
+         body: JSON.stringify({ registerRequest })
       };
       const response = await callApi(`${this.resource}/register`, options);
       if (response.status === 400) {
