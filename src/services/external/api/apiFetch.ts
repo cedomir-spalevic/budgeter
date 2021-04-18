@@ -28,7 +28,6 @@ export const callApi = async (
    endpoint: string,
    init?: RequestInit
 ): Promise<Response> => {
-   console.log(API_URL);
    const url = `${API_URL}${endpoint}`;
    return fetch(url, init);
 };
