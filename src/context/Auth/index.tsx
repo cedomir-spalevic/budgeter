@@ -11,6 +11,7 @@ import internalSecurity from "services/internal/security";
 import * as LocalAuthentication from "expo-local-authentication";
 import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
+import { ChallengeRequest } from "services/external/api/models/requests/challengeRequest";
 
 interface LoginResponse {
    valid: boolean;
@@ -146,7 +147,11 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    const forgotPassword = async (email: string): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         await authenticationService.challenge(email, "passwordReset");
+         const challengeRequest: ChallengeRequest = {
+            email,
+            type: "passwordReset"
+         }
+         await authenticationService.challenge(challengeRequest);
          return true;
       } catch (error) {
          Alert.alert(

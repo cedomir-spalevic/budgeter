@@ -4,7 +4,7 @@ import {
    handleAuthResponse,
    handleConfirmationCodeResponse
 } from "../apiFetch";
-import { ChallengeType } from "../models/data/challenge";
+import { ChallengeRequest } from "../models/requests/challengeRequest"
 import {
    AlreadyExistsError,
    GeneralError,
@@ -119,15 +119,14 @@ class AuthenticationService {
    }
 
    public async challenge(
-      email: string,
-      type: ChallengeType
+      challengeRequest: ChallengeRequest
    ): Promise<ConfirmationCodeResponse> {
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ email, type })
+         body: JSON.stringify({ challengeRequest })
       };
       const response = await callApi(`${this.resource}/challenge`, options);
       if (response.status === 400) {

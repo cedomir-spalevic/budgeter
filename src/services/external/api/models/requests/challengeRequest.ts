@@ -1,6 +1,6 @@
 import { ChallengeType } from "../data/challenge";
 
-export interface ChallengeBody {
+export interface ChallengeRequest {
     email?: string;
     phoneNumber?: string;
     type: ChallengeType;
