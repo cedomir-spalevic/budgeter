@@ -279,17 +279,22 @@ const RegisterScreen: React.FC = () => {
       ) => {
          let email: string | undefined = undefined;
          let phoneNumber: string | undefined = undefined;
-         const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
-         if(parsedPhoneNumber.isValid)
-            phoneNumber = parsedPhoneNumber.internationalFormat
-         else if(isValidEmail(values.emailOrPhoneNumber)) 
+
+         if(isValidEmail(values.emailOrPhoneNumber)) {
             email = values.emailOrPhoneNumber;
-         else {
+         }
+         if(!email) {
+            const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
+            if(parsedPhoneNumber && parsedPhoneNumber.isValid)
+               phoneNumber = parsedPhoneNumber.internationalFormat
+         }
+         if(!email && !phoneNumber) {
             formikBag.setErrors({
                emailOrPhoneNumber: "Email or phone number is not valid"
             });
             return;
          }
+         
          const registerRequest: RegisterRequest = {
             firstName: values.firstName,
             lastName: values.lastName,
