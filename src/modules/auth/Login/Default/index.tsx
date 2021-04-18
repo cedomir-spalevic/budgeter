@@ -106,7 +106,6 @@ const LoginScreen: React.FC = () => {
             });
             return;
          }
-         console.log(phoneNumber)
          const loginRequest: LoginRequest = {
             email,
             phoneNumber,

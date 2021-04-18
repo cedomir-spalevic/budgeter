@@ -15,6 +15,10 @@ import { ChallengeRequest } from "services/external/api/models/requests/challeng
 import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
 import { LoginRequest } from "services/external/api/models/requests/loginRequest";
 
+interface ForgotPasswordRequest {
+   email?: string;
+   phoneNumber?: string;
+}
 interface LoginResponse {
    valid: boolean;
    verificationEmailSent?: boolean;
@@ -42,7 +46,7 @@ interface Context {
    tryLocalAuthentication: () => Promise<boolean>;
    login: (loginRequest: LoginRequest) => Promise<LoginResponse>;
    register: (registerRequest: RegisterRequest) => Promise<RegisterResponse>;
-   forgotPassword: (email: string) => Promise<boolean>;
+   forgotPassword: (forgotPasswordRequest: ForgotPasswordRequest) => Promise<boolean>;
    confirmEmailVerification: (code: number) => Promise<boolean>;
    confirmPasswordReset: (code: number) => Promise<boolean>;
    updatePassword: (password: string) => Promise<boolean>;
@@ -137,11 +141,12 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const forgotPassword = async (email: string): Promise<boolean> => {
+   const forgotPassword = async (forgotPasswordRequest: ForgotPasswordRequest): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
          const challengeRequest: ChallengeRequest = {
-            email,
+            email: forgotPasswordRequest.email,
+            phoneNumber: forgotPasswordRequest.phoneNumber,
             type: "passwordReset"
          };
          await authenticationService.challenge(challengeRequest);

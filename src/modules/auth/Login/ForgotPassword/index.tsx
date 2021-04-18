@@ -9,11 +9,13 @@ import {
    TextField,
    Spacer
 } from "components";
-import { FormikProps, withFormik } from "formik";
+import { FormikBag, FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import LoginRoutes from "../routes";
+import { parsePhoneNumber } from "services/external/phoneNumbers";
+import { isValidEmail } from "services/internal/emails";
 
 interface FormProps {
    allowConfirmation: () => boolean;
@@ -21,7 +23,7 @@ interface FormProps {
 }
 
 interface FormValues {
-   email: string;
+   emailOrPhoneNumber: string;
 }
 
 const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
@@ -33,20 +35,18 @@ const ForgotPasswordForm = (props: FormProps & FormikProps<FormValues>) => {
    return (
       <>
          <Container allowScroll flex title="Forgot Password">
-            <Label type="header" text="Enter your email" />
+            <Label type="header" text="Find your account" />
             <Spacer />
             <TextField
                preRenderIcon={<Icon name="email" />}
                errorMessage={
-                  props.touched.email ? props.errors.email : undefined
+                  props.touched.emailOrPhoneNumber ? props.errors.emailOrPhoneNumber : undefined
                }
-               onChange={props.handleChange("email")}
-               value={props.values.email}
-               placeholder="Email"
+               onChange={props.handleChange("emailOrPhoneNumber")}
+               value={props.values.emailOrPhoneNumber}
+               placeholder="Email or Phone Number"
                autoFocus
                onSubmit={() => props.submitForm()}
-               textContentType="emailAddress"
-               keyboardType="email-address"
                autoCapitalize="none"
             />
          </Container>
@@ -72,13 +72,27 @@ const ForgotPasswordScreen: React.FC = () => {
 
    const Form = withFormik<FormProps, FormValues>({
       mapPropsToValues: () => ({
-         email: ""
+         emailOrPhoneNumber: ""
       }),
       validationSchema: Yup.object().shape({
-         email: Yup.string().required("Email cannot be blank")
+         emailOrPhoneNumber: Yup.string().required("Email or phone number cannot be blank")
       }),
-      handleSubmit: async (values: FormValues) => {
-         const response = await auth.forgotPassword(values.email);
+      handleSubmit: async (values: FormValues, 
+         formikBag: FormikBag<FormProps, FormValues>) => {
+         let email: string | undefined = undefined;
+         let phoneNumber: string | undefined = undefined;
+         const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
+         if(parsedPhoneNumber.isValid)
+            phoneNumber = parsedPhoneNumber.internationalFormat
+         else if(isValidEmail(values.emailOrPhoneNumber)) 
+            email = values.emailOrPhoneNumber;
+         else {
+            formikBag.setErrors({
+               emailOrPhoneNumber: "Email or phone number is not valid"
+            });
+            return;
+         }
+         const response = await auth.forgotPassword({ email, phoneNumber });
          if (response) allowConfirmation.current = true;
       }
    })(ForgotPasswordForm);
