@@ -206,6 +206,7 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
 
    const logout = () => {
       deleteAllStorageItems();
+      setVerified(false);
       setState(AuthState.SignedOut);
    };
 
