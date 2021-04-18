@@ -79,7 +79,6 @@ const ForgotPasswordScreen: React.FC = () => {
       }),
       handleSubmit: async (values: FormValues, 
          formikBag: FormikBag<FormProps, FormValues>) => {
-            try {
          let email: string | undefined = undefined;
          let phoneNumber: string | undefined = undefined;
 
@@ -100,9 +99,6 @@ const ForgotPasswordScreen: React.FC = () => {
          
          const response = await auth.forgotPassword({ email, phoneNumber });
          if (response) allowConfirmation.current = true;
-      } catch(error) {
-         console.log(error);
-      }
       }
    })(ForgotPasswordForm);
 
@@ -110,9 +106,10 @@ const ForgotPasswordScreen: React.FC = () => {
       <Page>
          <Form
             allowConfirmation={() => allowConfirmation.current}
-            goToConfirmationPage={() =>
-               navigation.navigate(LoginRoutes.ConfirmationCode)
-            }
+            goToConfirmationPage={() => {
+               allowConfirmation.current = false;
+               navigation.navigate(LoginRoutes.ConfirmationCode);
+            }}
          />
       </Page>
    );
