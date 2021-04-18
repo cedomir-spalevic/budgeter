@@ -17,6 +17,7 @@ import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { TextInput } from "react-native";
 import LoginRoutes from "../routes";
+import { LoginRequest } from "services/external/api/models/requests/loginRequest";
 
 interface FormProps {
    onForgotPasswordClick: () => void;
@@ -89,7 +90,11 @@ const LoginScreen: React.FC = () => {
          values: FormValues,
          formikBag: FormikBag<FormProps, FormValues>
       ) => {
-         const response = await auth.login(values.email, values.password);
+         const loginRequest: LoginRequest = {
+            email: values.email,
+            password: values.password
+         }
+         const response = await auth.login(loginRequest);
          if (!response.valid) {
             if (response.verificationEmailSent === true) {
                navigation.navigate(LoginRoutes.ConfirmationCode);

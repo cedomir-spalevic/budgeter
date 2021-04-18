@@ -13,6 +13,7 @@ import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
 import { ChallengeRequest } from "services/external/api/models/requests/challengeRequest";
 import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
+import { LoginRequest } from "services/external/api/models/requests/loginRequest";
 
 interface LoginResponse {
    valid: boolean;
@@ -39,7 +40,7 @@ interface Props {
 interface Context {
    state: AuthState;
    tryLocalAuthentication: () => Promise<boolean>;
-   login: (email: string, password: string) => Promise<LoginResponse>;
+   login: (loginRequest: LoginRequest) => Promise<LoginResponse>;
    register: (registerRequest: RegisterRequest) => Promise<RegisterResponse>;
    forgotPassword: (email: string) => Promise<boolean>;
    confirmEmailVerification: (code: number) => Promise<boolean>;
@@ -78,16 +79,14 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       return false;
    };
 
-   const login = async (
-      email: string,
-      password: string
-   ): Promise<LoginResponse> => {
+   const login = async (loginRequest: LoginRequest): Promise<LoginResponse> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         const response = await authenticationService.login(
-            email,
-            internalSecurity.btoa(password)
-         );
+         const response = await authenticationService.login({
+            email: loginRequest.email,
+            phoneNumber: loginRequest.phoneNumber,
+            password: internalSecurity.btoa(loginRequest.password)
+         });
          let verificationEmailSent = false;
          if (response.isEmailVerified) {
             setState(AuthState.SignedIn);

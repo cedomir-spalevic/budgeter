@@ -14,6 +14,7 @@ import {
 } from "../models/errors";
 import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
 import { RegisterRequest } from "../models/requests/registerRequest";
+import { LoginRequest } from "../models/requests/loginRequest";
 
 interface LoginResponse {
    isEmailVerified: boolean;
@@ -36,13 +37,13 @@ class AuthenticationService {
       return AuthenticationService.instance;
    }
 
-   public async login(email: string, password: string): Promise<LoginResponse> {
+   public async login(loginRequest: LoginRequest): Promise<LoginResponse> {
       const options: RequestInit = {
          method: "POST",
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ email, password })
+         body: JSON.stringify(loginRequest)
       };
       const response = await callApi(`${this.resource}/login`, options);
       if (response.status === 400) {
@@ -93,7 +94,7 @@ class AuthenticationService {
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ registerRequest })
+         body: JSON.stringify(registerRequest)
       };
       const response = await callApi(`${this.resource}/register`, options);
       if (response.status === 400) {
@@ -124,7 +125,7 @@ class AuthenticationService {
          headers: {
             "Content-Type": "application/json"
          },
-         body: JSON.stringify({ challengeRequest })
+         body: JSON.stringify(challengeRequest)
       };
       const response = await callApi(`${this.resource}/challenge`, options);
       if (response.status === 400) {
