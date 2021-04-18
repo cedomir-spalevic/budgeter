@@ -38,7 +38,11 @@ const LoginForm = (props: FormProps & FormikProps<FormValues>) => (
          <Spacer />
          <TextField
             preRenderIcon={<Icon name="email" />}
-            errorMessage={props.touched.emailOrPhoneNumber ? props.errors.emailOrPhoneNumber : undefined}
+            errorMessage={
+               props.touched.emailOrPhoneNumber
+                  ? props.errors.emailOrPhoneNumber
+                  : undefined
+            }
             onChange={props.handleChange("emailOrPhoneNumber")}
             value={props.values.emailOrPhoneNumber}
             placeholder="Email or Phone Number"
@@ -86,7 +90,9 @@ const LoginScreen: React.FC = () => {
          password: ""
       }),
       validationSchema: Yup.object().shape({
-         emailOrPhoneNumber: Yup.string().required("Email or phone number cannot be blank"),
+         emailOrPhoneNumber: Yup.string().required(
+            "Email or phone number cannot be blank"
+         ),
          password: Yup.string().required("Password cannot be blank")
       }),
       handleSubmit: async (
@@ -96,21 +102,23 @@ const LoginScreen: React.FC = () => {
          let email: string | undefined = undefined;
          let phoneNumber: string | undefined = undefined;
 
-         if(isValidEmail(values.emailOrPhoneNumber)) {
+         if (isValidEmail(values.emailOrPhoneNumber)) {
             email = values.emailOrPhoneNumber;
          }
-         if(!email) {
-            const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
-            if(parsedPhoneNumber && parsedPhoneNumber.isValid)
-               phoneNumber = parsedPhoneNumber.internationalFormat
+         if (!email) {
+            const parsedPhoneNumber = parsePhoneNumber(
+               values.emailOrPhoneNumber
+            );
+            if (parsedPhoneNumber && parsedPhoneNumber.isValid)
+               phoneNumber = parsedPhoneNumber.internationalFormat;
          }
-         if(!email && !phoneNumber) {
+         if (!email && !phoneNumber) {
             formikBag.setErrors({
                emailOrPhoneNumber: "Email or phone number is not valid"
             });
             return;
          }
-         
+
          const loginRequest: LoginRequest = {
             email,
             phoneNumber,

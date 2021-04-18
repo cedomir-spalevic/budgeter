@@ -92,7 +92,8 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
                value={props.values.lastName}
                placeholder="Last Name"
                onSubmit={() =>
-                  props.emailOrPhoneNumberRef.current && props.emailOrPhoneNumberRef.current.focus()
+                  props.emailOrPhoneNumberRef.current &&
+                  props.emailOrPhoneNumberRef.current.focus()
                }
                textContentType="name"
                ref={props.lastNameRef}
@@ -100,7 +101,9 @@ const RegisterForm = (props: FormProps & FormikProps<FormValues>) => {
             <TextField
                preRenderIcon={<Icon name="email" />}
                errorMessage={
-                  props.touched.emailOrPhoneNumber ? props.errors.emailOrPhoneNumber : undefined
+                  props.touched.emailOrPhoneNumber
+                     ? props.errors.emailOrPhoneNumber
+                     : undefined
                }
                onChange={props.handleChange("emailOrPhoneNumber")}
                value={props.values.emailOrPhoneNumber}
@@ -258,7 +261,9 @@ const RegisterScreen: React.FC = () => {
       validationSchema: Yup.object().shape({
          firstName: Yup.string().required("First name cannot be blank"),
          lastName: Yup.string().required("Last name cannot be blank"),
-         emailOrPhoneNumber: Yup.string().required("Email or phone number cannot be blank"),
+         emailOrPhoneNumber: Yup.string().required(
+            "Email or phone number cannot be blank"
+         ),
          password: Yup.string()
             .required("Password cannot be blank")
             .test(
@@ -266,6 +271,7 @@ const RegisterScreen: React.FC = () => {
                "Password must meet minimum requirements",
                testForMinimumRequirements as Yup.TestFunction<
                   string | undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   Record<string, any>
                >
             ),
@@ -280,21 +286,23 @@ const RegisterScreen: React.FC = () => {
          let email: string | undefined = undefined;
          let phoneNumber: string | undefined = undefined;
 
-         if(isValidEmail(values.emailOrPhoneNumber)) {
+         if (isValidEmail(values.emailOrPhoneNumber)) {
             email = values.emailOrPhoneNumber;
          }
-         if(!email) {
-            const parsedPhoneNumber = parsePhoneNumber(values.emailOrPhoneNumber);
-            if(parsedPhoneNumber && parsedPhoneNumber.isValid)
-               phoneNumber = parsedPhoneNumber.internationalFormat
+         if (!email) {
+            const parsedPhoneNumber = parsePhoneNumber(
+               values.emailOrPhoneNumber
+            );
+            if (parsedPhoneNumber && parsedPhoneNumber.isValid)
+               phoneNumber = parsedPhoneNumber.internationalFormat;
          }
-         if(!email && !phoneNumber) {
+         if (!email && !phoneNumber) {
             formikBag.setErrors({
                emailOrPhoneNumber: "Email or phone number is not valid"
             });
             return;
          }
-         
+
          const registerRequest: RegisterRequest = {
             firstName: values.firstName,
             lastName: values.lastName,

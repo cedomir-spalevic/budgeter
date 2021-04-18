@@ -46,7 +46,9 @@ interface Context {
    tryLocalAuthentication: () => Promise<boolean>;
    login: (loginRequest: LoginRequest) => Promise<LoginResponse>;
    register: (registerRequest: RegisterRequest) => Promise<RegisterResponse>;
-   forgotPassword: (forgotPasswordRequest: ForgotPasswordRequest) => Promise<boolean>;
+   forgotPassword: (
+      forgotPasswordRequest: ForgotPasswordRequest
+   ) => Promise<boolean>;
    confirmEmailVerification: (code: number) => Promise<boolean>;
    confirmPasswordReset: (code: number) => Promise<boolean>;
    updatePassword: (password: string) => Promise<boolean>;
@@ -141,7 +143,9 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const forgotPassword = async (forgotPasswordRequest: ForgotPasswordRequest): Promise<boolean> => {
+   const forgotPassword = async (
+      forgotPasswordRequest: ForgotPasswordRequest
+   ): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
          const challengeRequest: ChallengeRequest = {

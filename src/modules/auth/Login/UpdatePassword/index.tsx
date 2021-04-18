@@ -204,6 +204,7 @@ const UpdatePasswordScreen: React.FC = () => {
                "Password must meet minimum requirements",
                testForMinimumRequirements as Yup.TestFunction<
                   string | undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   Record<string, any>
                >
             ),
