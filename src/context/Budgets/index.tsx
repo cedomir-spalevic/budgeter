@@ -26,11 +26,12 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
    const get = async () => {
       try {
          const today = moment();
-         const day = today.get("date");
+         const date = today.get("date");
          const month = today.get("month");
          const year = today.get("year");
          const budgetsService = BudgetsService.getInstance();
-         const budget = await budgetsService.getBudget(day, month, year);
+         const budget = await budgetsService.getBudget(date, month, year);
+         console.log(budget)
          setTitle(`${today.format("MMMM")} ${year}`);
          setValue({ ...budget });
       } catch (error) {
