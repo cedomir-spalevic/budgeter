@@ -18,11 +18,11 @@ class BudgetsService {
    }
 
    public async getBudget(
-      day: number,
+      date: number,
       month: number,
       year: number
    ): Promise<Budget> {
-      const url = `${this.resource}?day=${day}&month=${month}&year=${year}`;
+      const url = `${this.resource}?date=${date}&month=${month}&year=${year}`;
       const response = await callApiProtected(url);
       const responseBody = await response.json();
       console.log(responseBody);
