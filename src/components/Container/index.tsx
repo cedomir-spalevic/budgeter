@@ -52,7 +52,7 @@ interface Props {
 const Container: React.FC<Props> = (props: Props) => {
    const navigation = useNavigation();
    const scrollY = useRef<Animated.Value>(new Animated.Value(0));
-   const scrollView = useRef<ScrollView>();
+   const scrollView = useRef<ScrollView>(null);
    const styles = useStyles();
    const scroll = useScroll();
    const style: StyleProp<ViewStyle> = [];
@@ -121,7 +121,7 @@ const Container: React.FC<Props> = (props: Props) => {
    };
 
    useEffect(() => {
-      if (scrollView.current) scroll.setRef(scrollView);
+      if (scrollView.current) scroll.setRef(scrollView as React.MutableRefObject<ScrollView>);
    }, [scrollView.current]);
 
    if (props.allowScroll) {
