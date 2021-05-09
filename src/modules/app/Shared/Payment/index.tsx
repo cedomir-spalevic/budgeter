@@ -37,16 +37,16 @@ type RouteProps = RouteProp<ParamList, "Payment">;
 
 interface FormProps {
    label: string;
-   numberPadRef: React.MutableRefObject<TextInput>;
-   repeatRef: React.MutableRefObject<PickerSelectRef>;
-   initialOccurrenceRef: React.MutableRefObject<DatePickerRef>;
+   numberPadRef: React.MutableRefObject<TextInput | null>;
+   repeatRef: React.MutableRefObject<PickerSelectRef | undefined>;
+   initialOccurrenceRef: React.MutableRefObject<DatePickerRef | undefined>;
 }
 
 interface FormValues {
-   title: string;
-   amount: number;
-   repeat: string;
-   initialOccurrenceDate: string;
+   title?: string;
+   amount?: number;
+   repeat?: string;
+   initialOccurrenceDate?: string;
 }
 
 const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
@@ -56,12 +56,12 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
          <Spacer />
          <TextField
             preRenderIcon={<Icon name="title" />}
-            errorMessage={props.touched.title && props.errors.title}
+            errorMessage={props.touched.title ? props.errors.title : undefined}
             onChange={props.handleChange("title")}
             value={props.values.title}
             placeholder="Title"
             autoFocus
-            onSubmit={() => props.numberPadRef.current.focus()}
+            onSubmit={() => props.numberPadRef.current?.focus()}
          />
          <NumberPad
             preRenderIcon={<Icon name="attach-money" />}
@@ -69,8 +69,8 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
             value={props.values.amount}
             textInputRef={props.numberPadRef}
             onChange={(n) => props.setFieldValue("amount", n, true)}
-            errorMessage={props.touched.amount && props.errors.amount}
-            onSubmit={() => props.repeatRef.current.showPicker()}
+            errorMessage={props.touched.amount ? props.errors.amount : undefined}
+            onSubmit={() => props.repeatRef.current?.showPicker()}
          />
          <PickerSelect
             preRenderIcon={<Icon name="repeat" />}
@@ -79,9 +79,9 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
             value={props.values.repeat}
             onChange={(repeat) => {
                props.setFieldValue("repeat", repeat, true);
-               props.initialOccurrenceRef.current.showPicker();
+               props.initialOccurrenceRef.current?.showPicker();
             }}
-            errorMessage={props.touched.repeat && props.errors.repeat}
+            errorMessage={props.touched.repeat ? props.errors.repeat : undefined}
             pickerSelectRef={props.repeatRef}
          />
          <DatePicker
@@ -100,8 +100,8 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
                )
             }
             errorMessage={
-               props.touched.initialOccurrenceDate &&
-               props.errors.initialOccurrenceDate
+               props.touched.initialOccurrenceDate ?
+               props.errors.initialOccurrenceDate : undefined
             }
             datePickerRef={props.initialOccurrenceRef}
          />
@@ -120,7 +120,7 @@ const PaymentScreen: React.FC = () => {
    const route = useRoute<RouteProps>();
    const navigation = useNavigation();
    const payments = usePayments();
-   const numberPadRef = useRef<TextInput>();
+   const numberPadRef = useRef<TextInput>(null);
    const repeatRef = useRef<PickerSelectRef>();
    const initialOccurrenceRef = useRef<DatePickerRef>();
 
@@ -150,19 +150,23 @@ const PaymentScreen: React.FC = () => {
                `Repeat must be one of ${Object.keys(RecurrenceLabels).join(
                   ", "
                )}`,
-               testForValidRepeat
+               testForValidRepeat as Yup.TestFunction<
+               string | undefined,
+               // eslint-disable-next-line @typescript-eslint/no-explicit-any
+               Record<string, any>
+            >
             ),
          initialOccurrenceDate: Yup.string().required(
             "Initial Occurrence Date is required"
          )
       }),
       handleSubmit: async (values: FormValues) => {
-         const initialOccurenceDate = new Date(values.initialOccurrenceDate);
+         const initialOccurenceDate = new Date(values.initialOccurrenceDate!);
          const payment: Partial<Payment> = {
             title: values.title,
             amount: values.amount,
-            recurrence: RecurrenceLabels[values.repeat],
-            initialDay: initialOccurenceDate.getDate(),
+            recurrence: RecurrenceLabels[values.repeat!],
+            initialDay: initialOccurenceDate.getDay(),
             initialDate: initialOccurenceDate.getDate(),
             initialMonth: initialOccurenceDate.getMonth(),
             initialYear: initialOccurenceDate.getFullYear()
