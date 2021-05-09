@@ -166,7 +166,7 @@ const PaymentScreen: React.FC = () => {
             title: values.title,
             amount: values.amount,
             recurrence: RecurrenceLabels[values.repeat!],
-            initialDay: initialOccurenceDate.getDate(),
+            initialDay: initialOccurenceDate.getDay(),
             initialDate: initialOccurenceDate.getDate(),
             initialMonth: initialOccurenceDate.getMonth(),
             initialYear: initialOccurenceDate.getFullYear()
