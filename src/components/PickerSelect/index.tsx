@@ -56,7 +56,7 @@ interface Props {
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
-   pickerSelectRef?: React.Ref<PickerSelectRef>;
+   pickerSelectRef?: React.Ref<PickerSelectRef | undefined>;
 }
 
 const PickerSelect: React.FC<Props> = (props: Props) => {

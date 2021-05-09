@@ -70,7 +70,7 @@ interface Props {
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
-   datePickerRef?: React.Ref<DatePickerRef>;
+   datePickerRef?: React.Ref<DatePickerRef | undefined>;
 }
 
 const DatePicker: React.FC<Props> = (props: Props) => {
