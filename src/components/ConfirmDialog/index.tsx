@@ -32,9 +32,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (
             }
          }}
          negativeButton={{
-            title: props.negativeButton ? props.negativeButton.title : "",
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onPress: props.negativeButton ? props.negativeButton.onPress : () => {},
+            ...props.negativeButton,
             titleStyle: {
                color: theme.value.palette.red,
                fontFamily: theme.value.font.fontFamily
