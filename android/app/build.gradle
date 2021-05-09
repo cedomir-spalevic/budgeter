@@ -134,8 +134,8 @@ android {
         applicationId "com.budgeter"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 12
-        versionName "1.3.3"
+        versionCode 11
+        versionName "1.3.2"
     }
     splits {
         abi {

@@ -1,6 +1,6 @@
 import useMergedRef from "@react-hook/merged-ref";
 import { makeStyles, useTheme } from "context";
-import React, { useState, useEffect, forwardRef, useRef, MutableRefObject } from "react";
+import React, { useState, useEffect, forwardRef, useRef } from "react";
 import {
    View,
    TextInput,
@@ -60,7 +60,9 @@ interface Props {
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
    onSubmit?: () => void;
-   textInputRef?: MutableRefObject<TextInput | null> | ((instance: TextInput | null) => void) | null;
+   textInputRef?:
+      | React.MutableRefObject<TextInput>
+      | ((instance: TextInput) => void);
    autoCapitalize?: "none" | "sentences" | "words" | "characters";
    textContentType?: "password" | "newPassword" | "name" | "emailAddress";
    keyboardType?: "email-address" | "number-pad";
@@ -79,8 +81,8 @@ interface Props {
 
 const TextField: React.FC<Props> = (props: Props) => {
    const y = useRef<number>();
-   const textInput = useRef<TextInput | null>();
-   const mergedRefs = useMergedRef<TextInput | null | undefined>(textInput, props.textInputRef!);
+   const textInput = useRef<TextInput>();
+   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef);
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
@@ -108,12 +110,12 @@ const TextField: React.FC<Props> = (props: Props) => {
 
    const onPreRenderIconClick = () => {
       if (props.onPreRenderIconClick) props.onPreRenderIconClick();
-      textInput.current?.focus();
+      textInput.current.focus();
    };
 
    const onPostRenderIconClick = () => {
       if (props.onPostRenderIconClick) props.onPostRenderIconClick();
-      textInput.current?.focus();
+      textInput.current.focus();
    };
 
    const onFocus = () => {
@@ -187,6 +189,6 @@ const TextField: React.FC<Props> = (props: Props) => {
    );
 };
 
-export default forwardRef<TextInput, Props>((props, ref: ((instance: TextInput | null) => void) | MutableRefObject<TextInput | null> | null | undefined = undefined) => (
+export default forwardRef<TextInput, Props>((props, ref) => (
    <TextField textInputRef={ref} {...props} />
 ));

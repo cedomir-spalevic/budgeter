@@ -1,8 +1,64 @@
+import {
+   StackNavigationProp,
+   StackHeaderStyleInterpolator
+} from "@react-navigation/stack";
 import { makeStyles, useTheme } from "context";
 import React from "react";
-import { Animated, View } from "react-native";
+import { Animated, StyleProp, View, ViewStyle } from "react-native";
 import { Icon } from "components";
-import { StackHeaderProps } from "./types";
+import {
+   NavigationProp,
+   ParamListBase,
+   Route,
+   StackNavigationState
+} from "@react-navigation/native";
+import {
+   Layout,
+   StackNavigationOptions
+} from "@react-navigation/stack/lib/typescript/src/types";
+import { EdgeInsets } from "react-native-safe-area-context";
+
+interface ExtraNavigationProps {
+   containerBackground?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
+}
+
+type StackDescriptor = {
+   render(): JSX.Element;
+   options: ExtraNavigationProps & StackNavigationOptions;
+   navigation: NavigationProp<
+      Record<string, Record<string, unknown> | undefined>,
+      string,
+      StackNavigationState,
+      StackNavigationOptions,
+      Record<
+         string,
+         {
+            data?: string | number | boolean;
+            canPreventDefault?: boolean | undefined;
+         }
+      >
+   >;
+};
+
+type Scene<T> = {
+   route: T;
+   descriptor: StackDescriptor;
+   progress: {
+      current: Animated.AnimatedInterpolation;
+      next?: Animated.AnimatedInterpolation;
+      previous?: Animated.AnimatedInterpolation;
+   };
+};
+
+type StackHeaderProps = {
+   mode: "float" | "screen";
+   layout: Layout;
+   insets: EdgeInsets;
+   scene: Scene<Route<string>>;
+   previous?: Scene<Route<string>>;
+   navigation: StackNavigationProp<ParamListBase>;
+   styleInterpolator: StackHeaderStyleInterpolator;
+};
 
 const useStyles = makeStyles((theme) => ({
    container: {
