@@ -165,7 +165,7 @@ const PaymentScreen: React.FC = () => {
          const payment: Partial<Payment> = {
             title: values.title,
             amount: values.amount,
-            recurrence: RecurrenceLabels[values.repeat],
+            recurrence: RecurrenceLabels[values.repeat!],
             initialDay: initialOccurenceDate.getDay(),
             initialDate: initialOccurenceDate.getDate(),
             initialMonth: initialOccurenceDate.getMonth(),
