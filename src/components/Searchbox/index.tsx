@@ -1,6 +1,6 @@
 import { Icon, Link } from "components";
 import { makeStyles, useTheme } from "context";
-import React, { useEffect, useRef, useState } from "react";
+import React, { LegacyRef, useEffect, useRef, useState } from "react";
 import { View, TextInput, Animated, Keyboard } from "react-native";
 
 const useStyles = makeStyles((theme) => ({
@@ -93,7 +93,7 @@ const Searchbox: React.FC<Props> = (props: Props) => {
                onFocus={() => setShowCancel(true)}
                onTouchStart={() => setShowCancel(true)}
                onBlur={() => setShowCancel(false)}
-               ref={ref}
+               ref={ref as LegacyRef<TextInput>}
                keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
             />
          </View>

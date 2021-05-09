@@ -1,7 +1,7 @@
 import useMergedRef from "@react-hook/merged-ref";
 import { Label, TextField } from "components";
 import { makeStyles } from "context";
-import React, { useState, useEffect, forwardRef, useRef } from "react";
+import React, { useState, useEffect, forwardRef, useRef, MutableRefObject } from "react";
 import {
    TextInput,
    NativeSyntheticEvent,
@@ -56,9 +56,7 @@ interface Props {
    onPreRenderIconClick?: () => void;
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
-   textInputRef?:
-      | React.MutableRefObject<TextInput>
-      | ((instance: TextInput) => void);
+   textInputRef?: MutableRefObject<TextInput | null> | ((instance: TextInput | null) => void) | null;
    onSubmit?: () => void;
 }
 
@@ -66,7 +64,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
    const [num, setNum] = useState<string>(toCurrency(0));
    const styles = useStyles();
    const textInput = useRef<TextInput>();
-   const mergedRefs = useMergedRef<TextInput>(textInput, props.textInputRef);
+   const mergedRefs = useMergedRef<TextInput | undefined>(textInput, props.textInputRef!);
    const inputStyles = [styles.input];
    if (props.errorMessage) {
       inputStyles.push(styles.inputWithError);
@@ -118,6 +116,6 @@ const NumberPad: React.FC<Props> = (props: Props) => {
    );
 };
 
-export default forwardRef<TextInput, Props>((props, ref) => (
+export default forwardRef<TextInput, Props>((props, ref: ((instance: TextInput | null) => void) | MutableRefObject<TextInput | null> | null | undefined = undefined) => (
    <NumberPad textInputRef={ref} {...props} />
 ));
