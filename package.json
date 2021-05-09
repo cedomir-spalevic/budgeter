@@ -1,14 +1,15 @@
 {
    "name": "budgeter",
-   "version": "1.3.2",
+   "version": "1.3.3",
    "private": true,
    "scripts": {
       "clean": "npm-run-all clean:*",
       "clean:watchman": "watchman watch-del-all",
-      "clean:dependencies": "rm -rf node_modules",
+      "clean:dependencies": "rimraf node_modules",
       "clean:reinstall": "npm install --ignore-engines",
-      "clean:babel-cache": "sudo rm -rf node_modules/.cache/babel-loader/*",
-      "build": "npm run build:format && npm run build:lint",
+      "clean:babel-cache": "rimraf node_modules/.cache/babel-loader/*",
+      "build": "npm-run-all build:*",
+      "build:validate": "tsc --noEmit",
       "build:lint": "eslint . --ext .ts,.tsx,.js,.jsx",
       "build:format": "prettier --write .",
       "android": "react-native run-android",
@@ -83,7 +84,8 @@
       "prettier": "^2.2.1",
       "react-native-version": "^4.0.0",
       "react-test-renderer": "16.11.0",
-      "typescript": "^3.8.3"
+      "rimraf": "^3.0.2",
+      "typescript": "^4.2.3"
    },
    "jest": {
       "preset": "react-native",

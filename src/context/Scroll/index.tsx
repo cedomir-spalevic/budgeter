@@ -15,7 +15,7 @@ interface Context {
    isSwiping: boolean;
    setIsSwiping: (s: boolean) => void;
    onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-   scrollEvent: NativeSyntheticEvent<NativeScrollEvent>;
+   scrollEvent?: NativeSyntheticEvent<NativeScrollEvent>;
 }
 
 const ScrollContext = createContext<Context>(undefined!);
