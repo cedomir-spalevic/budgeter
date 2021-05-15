@@ -6,3 +6,4 @@ metro.config.js
 babel.config.js
 .eslintrc.js
 .prettierrc.js
+.jest
