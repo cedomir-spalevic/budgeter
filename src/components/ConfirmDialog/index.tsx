@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { useTheme } from "context";
 import React from "react";
 import {
@@ -33,8 +34,9 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = (
          }}
          negativeButton={{
             title: props.negativeButton ? props.negativeButton.title : "",
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onPress: props.negativeButton ? props.negativeButton.onPress : () => {},
+            onPress: props.negativeButton
+               ? props.negativeButton.onPress
+               : () => {},
             titleStyle: {
                color: theme.value.palette.red,
                fontFamily: theme.value.font.fontFamily

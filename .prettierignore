@@ -2,3 +2,4 @@ node_modules
 ios
 android
 .jest
+jest.config.js

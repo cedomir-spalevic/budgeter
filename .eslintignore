@@ -7,3 +7,5 @@ babel.config.js
 .eslintrc.js
 .prettierrc.js
 .jest
+jest.config.js
+jestSetup.js

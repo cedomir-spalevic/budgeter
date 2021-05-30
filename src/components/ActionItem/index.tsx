@@ -14,7 +14,7 @@ const useStyles = makeStyles(() => ({
 interface Props {
    title: React.ReactNode;
    action?: React.ReactNode;
-   children: React.ReactNode;
+   children?: React.ReactNode;
 }
 
 const ActionItem: React.FC<Props> = (props: Props) => {
