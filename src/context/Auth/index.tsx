@@ -67,6 +67,9 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
             setVerified(true);
             setState(AuthState.SignedOut);
          })
+         .catch(() => {
+            setVerified(false);
+         })
          .finally(() => {
             setState(AuthState.SignedOut);
          });

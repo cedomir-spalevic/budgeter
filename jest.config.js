@@ -49,6 +49,7 @@ module.exports = {
       "jsx"
    ],
    setupFiles: [
-      "./jestSetup.js"
+      "./jestSetup.js",
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
    ]
 };
