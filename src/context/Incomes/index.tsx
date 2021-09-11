@@ -69,7 +69,6 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
 
    const update = async (id: string, input: Partial<Income>) => {
       try {
-         console.log(input);
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
          const income = await updateIncome(id, input);
@@ -77,7 +76,6 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
          setValues([...values]);
          return true;
       } catch (error) {
-         console.log(error);
          if (error instanceof UnauthorizedError) {
             auth.logout();
             return false;

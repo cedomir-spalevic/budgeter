@@ -42,13 +42,13 @@ export const getIncomeById = async (id: string): Promise<Income> => {
 }
 
 export const createIncome = async (input: Partial<Income>): Promise<Income> => {
-   console.log(input);
    const client = getClient();
    const result = await client.mutate({
       mutation: createIncomeMutation,
       variables: {
          income: input
-      }
+      },
+      update: cacheModifier
    })
    const income = result.data.createIncome as Income;
    return transformResponse(income);
@@ -61,7 +61,8 @@ export const updateIncome = async (id: string, input: Partial<Income>): Promise<
       variables: {
          id,
          income: input
-      }
+      },
+      update: cacheModifier
    })
    const income = result.data.updateIncome as Income;
    return transformResponse(income);
@@ -73,6 +74,13 @@ export const deleteIncome = async (id: string): Promise<void> => {
       mutation: deleteIncomeMutation,
       variables: {
          id
-      }
+      },
+      update: cacheModifier
    })
+}
+
+const cacheModifier = (cache) => {
+   cache.evict({ fieldName: "budget" });
+   cache.evict({ fieldName: "incomes" });
+   cache.evict({ fieldName: "incomeById" });
 }

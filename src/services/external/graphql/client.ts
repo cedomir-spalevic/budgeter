@@ -24,4 +24,9 @@ const client = new ApolloClient({
    cache: new InMemoryCache()
 })
 
+export const clearCache = async (): Promise<void> => {
+   await client.clearStore();
+   client.cache.gc();
+}
+
 export const getClient = (): ApolloClient<NormalizedCacheObject> => client;

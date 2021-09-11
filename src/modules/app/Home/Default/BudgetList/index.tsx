@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
    Page,
    Label,
@@ -42,6 +42,7 @@ interface Props {
 }
 
 const BudgetList: React.FC<Props> = (props: Props) => {
+   const [loading, setLoading] = useState<boolean>(false);
    const budgets = useBudgets();
    const navigation = useNavigation();
    const theme = useTheme();
@@ -60,9 +61,15 @@ const BudgetList: React.FC<Props> = (props: Props) => {
       color = theme.value.palette.red;
    }
 
+   const refresh = async () => {
+      setLoading(true);
+      await budgets.get();
+      setLoading(false);
+   }
+
    return (
       <Page>
-         <Container title={`${budgets.title}`} allowScroll flex>
+         <Container title={`${budgets.title}`} refresh={{ refreshing: loading, onRefresh: refresh }} allowScroll flex>
             <Label
                type="header"
                text={`${budgets.title}`}

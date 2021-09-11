@@ -13,6 +13,7 @@ import { refresh } from "services/external/api/apiFetch";
 import { ChallengeRequest } from "services/models/requests/challengeRequest";
 import { RegisterRequest } from "services/models/requests/registerRequest";
 import { LoginRequest } from "services/models/requests/loginRequest";
+import { clearCache } from "services/external/graphql/client";
 
 interface ForgotPasswordRequest {
    email?: string;
@@ -210,7 +211,8 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const logout = () => {
+   const logout = async () => {
+      await clearCache();
       deleteAllStorageItems();
       setVerified(false);
       setState(AuthState.SignedOut);
