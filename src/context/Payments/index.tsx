@@ -4,7 +4,6 @@ import React, { useState, createContext, useContext } from "react";
 import { Alert } from "react-native";
 import { Payment } from "services/models/data/payment";
 import { UnauthorizedError } from "services/models/errors";
-import PaymentsService from "services/external/api/payments";
 import { createPayment, deletePayment, getPayments, updatePayment } from "services/external/graphql/payments/request";
 
 interface Props {

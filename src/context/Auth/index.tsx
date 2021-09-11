@@ -9,7 +9,6 @@ import {
 import { Alert } from "react-native";
 import internalSecurity from "services/internal/security/btoa";
 import * as LocalAuthentication from "expo-local-authentication";
-import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
 import { ChallengeRequest } from "services/models/requests/challengeRequest";
 import { RegisterRequest } from "services/models/requests/registerRequest";
@@ -197,8 +196,8 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
 
    const updatePassword = async (password: string): Promise<boolean> => {
       try {
-         const userService = UserService.getInstance();
-         await userService.updatePassword(internalSecurity.btoa(password));
+         const authenticationService = AuthenticationService.getInstance();
+         await authenticationService.updatePassword(internalSecurity.btoa(password));
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
 import { UpdateUserBody, User } from "services/models/data/user";
-import UserService from "services/external/api/me";
 import { Alert } from "react-native";
 import { useAuth } from "context";
 import { UnauthorizedError } from "services/models/errors";
