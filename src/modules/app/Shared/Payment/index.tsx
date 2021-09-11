@@ -21,7 +21,7 @@ import {
    RecurrenceLabels,
    RecurrenceMap
 } from "services/models/data/recurrence";
-import { usePayments } from "context";
+import { usePayments } from "context/Payments";
 import { PickerSelectRef } from "components/PickerSelect";
 import { DatePickerRef } from "components/DatePicker";
 

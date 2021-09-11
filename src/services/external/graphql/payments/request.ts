@@ -19,6 +19,7 @@ const transformResponse = (payment: Payment) => ({
 export const getPayments = async (limit: number, skip: number, search?: string): Promise<Payment[]> => {
    const client = getClient();
    const result = await client.query({
+      fetchPolicy: "network-only",
       query: paymentsQuery,
       variables: {
          limit,
@@ -47,7 +48,7 @@ export const createPayment = async (input: Partial<Payment>): Promise<Payment> =
    const result = await client.mutate({
       mutation: createPaymentMutation,
       variables: {
-         Payment: input
+         payment: input
       }
    })
    const payment = result.data.createPayment as Payment;
@@ -60,7 +61,7 @@ export const updatePayment = async (id: string, input: Partial<Payment>): Promis
       mutation: updatePaymentMutation,
       variables: {
          id,
-         Payment: input
+         payment: input
       }
    })
    const payment = result.data.updatePayment as Payment;
@@ -68,6 +69,7 @@ export const updatePayment = async (id: string, input: Partial<Payment>): Promis
 }
 
 export const deletePayment = async (id: string): Promise<void> => {
+   console.log(id);
    const client = getClient();
    await client.mutate({
       mutation: deletePaymentMutation,

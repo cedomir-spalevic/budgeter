@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React from "react";
 import { Notifications, Registered } from "react-native-notifications";
 import AuthenticationService from "services/external/api/auth";
 
@@ -10,7 +10,7 @@ interface Context {
    askForPermissions: () => Promise<unknown>;
 }
 
-const NotificationsContext = createContext<Context>(undefined!);
+const NotificationsContext = React.createContext<Context>(undefined!);
 
 const NotificationsProvider: React.FC<Props> = (props: Props) => {
    const askForPermissions = () =>
@@ -44,6 +44,6 @@ const NotificationsProvider: React.FC<Props> = (props: Props) => {
 };
 
 export const useNotifications = (): Context =>
-   useContext<Context>(NotificationsContext);
+   React.useContext<Context>(NotificationsContext);
 
 export default NotificationsProvider;

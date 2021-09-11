@@ -12,7 +12,6 @@ const Home: React.FC = () => {
    const navigation = useNavigation();
    const theme = useTheme();
    const budgets = useBudgets();
-   console.log(budgets.value);
    const incomes = budgets.value.incomes.slice(0, 3);
    const payments = budgets.value.payments.slice(0, 3);
    const dueToday = [

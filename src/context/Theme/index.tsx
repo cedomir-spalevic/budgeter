@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 import { getItem, setItem, StorageKeys } from "services/internal/storage";
 import { Theme, lightTheme, darkTheme } from "styles";
@@ -16,7 +16,7 @@ interface Context {
    setKind: (kind: Kind) => void;
 }
 
-const ThemeContext = createContext<Context>(undefined!);
+const ThemeContext = React.createContext<Context>(undefined!);
 
 const ThemeProvider: React.FC<Props> = (props: Props) => {
    const [kind, setKind] = useState<Kind>("auto");
@@ -47,7 +47,7 @@ const ThemeProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useTheme = (): Context => useContext<Context>(ThemeContext);
+export const useTheme = (): Context => React.useContext<Context>(ThemeContext);
 
 type MakeStylesHook<T> = () => StyleSheet.NamedStyles<T>;
 type MakeStylesFuncParam<T> = (theme: Theme) => T | StyleSheet.NamedStyles<T>;

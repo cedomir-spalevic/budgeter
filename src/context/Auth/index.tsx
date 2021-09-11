@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import { deleteAllStorageItems } from "services/internal/storage";
 import {
@@ -54,7 +54,7 @@ interface Context {
    logout: () => void;
 }
 
-const AuthContext = createContext<Context>(undefined!);
+const AuthContext = React.createContext<Context>(undefined!);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
    const [verified, setVerified] = useState<boolean>(false);
@@ -239,6 +239,6 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useAuth = (): Context => useContext<Context>(AuthContext);
+export const useAuth = (): Context => React.useContext<Context>(AuthContext);
 
 export default AuthProvider;

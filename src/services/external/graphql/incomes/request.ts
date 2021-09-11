@@ -42,6 +42,7 @@ export const getIncomeById = async (id: string): Promise<Income> => {
 }
 
 export const createIncome = async (input: Partial<Income>): Promise<Income> => {
+   console.log(input);
    const client = getClient();
    const result = await client.mutate({
       mutation: createIncomeMutation,

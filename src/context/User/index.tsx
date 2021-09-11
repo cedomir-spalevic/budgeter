@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import { UpdateUserBody, User } from "services/models/data/user";
+import React, { useState } from "react";
+import { NotificationPreferences, UpdateUserBody, User } from "services/models/data/user";
 import { Alert } from "react-native";
 import { useAuth } from "context";
 import { UnauthorizedError } from "services/models/errors";
@@ -25,7 +25,7 @@ interface Context {
    updateSwipeOptions: (swipeOptions: UserSwipeOptions) => Promise<void>;
 }
 
-const UserContext = createContext<Context>(undefined!);
+const UserContext = React.createContext<Context>(undefined!);
 
 const UserProvider: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<User>(undefined!);
@@ -36,8 +36,6 @@ const UserProvider: React.FC<Props> = (props: Props) => {
 
    const getUser = async () => {
       try {
-         //const userService = UserService.getInstance();
-         //const user = await userService.get();
          const user = await getMe();
          setValue(user);
       } catch (error) {
@@ -67,11 +65,12 @@ const UserProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const update = async (user: Partial<User>) => {
+   const update = async (preferences: Partial<NotificationPreferences>) => {
       try {
-         //const userService = UserService.getInstance();
-         //const updatedUser = await userService.update(user);
-         const updatedUser = await updateMe(user);
+         const input: Partial<User> = {
+            notificationPreferences: preferences
+         }
+         const updatedUser = await updateMe(input);
          setValue({ ...updatedUser });
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -98,6 +97,6 @@ const UserProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useUser = (): Context => useContext<Context>(UserContext);
+export const useUser = (): Context => React.useContext<Context>(UserContext);
 
 export default UserProvider;

@@ -14,10 +14,10 @@ const Notifications: React.FC = () => {
    const notifications = useNotifications();
    const setPreferences = useCallback(() => {
       setPaymentNotifications(
-         user.value.notificationPreferences.paymentNotifications
+         user.value.notificationPreferences.paymentNotifications!
       );
       setIncomeNotifications(
-         user.value.notificationPreferences.incomeNotifications
+         user.value.notificationPreferences.incomeNotifications!
       );
    }, [
       user.value.notificationPreferences.incomeNotifications,
