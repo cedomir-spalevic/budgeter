@@ -8,7 +8,8 @@ import {
    Text,
    NativeSyntheticEvent,
    TextInputSubmitEditingEventData,
-   TextInputKeyPressEventData
+   TextInputKeyPressEventData,
+   ViewStyle
 } from "react-native";
 
 const useStyles = makeStyles((theme) => ({
@@ -75,6 +76,7 @@ interface Props {
    controlled?: boolean;
    renderInput?: () => React.ReactNode;
    blurOnSubmit?: boolean;
+   inputStyles?: ViewStyle;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -84,7 +86,7 @@ const TextField: React.FC<Props> = (props: Props) => {
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
-   const inputStyles = [styles.input];
+   const inputStyles = [styles.input, props.inputStyles];
    if (props.errorMessage) {
       inputStyles.push(styles.inputWithError);
    }
