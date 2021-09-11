@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import fs from "fs";
+import * as fs from "fs";
 
 const env = process.argv[2];
 const config = require(`../config/${env}.json`);

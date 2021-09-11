@@ -4,6 +4,8 @@ import { Alert } from "react-native";
 import { Budget } from "services/external/api/models/data/budget";
 import { UnauthorizedError } from "services/external/api/models/errors";
 import BudgetsService from "services/external/api/budgets";
+import { getClient } from "services/external/graphql/client";
+import { getBudgetsQuery } from "services/external/graphql/queries/budgets";
 import moment from "moment";
 
 interface Props {
@@ -29,9 +31,25 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
          const date = today.get("date");
          const month = today.get("month");
          const year = today.get("year");
+         const client = getClient();
+         try {
+         const result = await client.query<Budget>({
+            query: getBudgetsQuery,
+            variables: {
+               date,
+               month,
+               year
+            }
+         });
+         console.log("GRAPHQL RESULT")
+         console.log(result);
+      } catch(error) {
+         console.log("GRAPHQL ERROR")
+         console.log(error);
+      }
          const budgetsService = BudgetsService.getInstance();
          const budget = await budgetsService.getBudget(date, month, year);
-         console.log(budget)
+         //console.log(budget)
          setTitle(`${today.format("MMMM")} ${year}`);
          setValue({ ...budget });
       } catch (error) {
