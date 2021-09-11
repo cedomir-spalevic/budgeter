@@ -4,17 +4,17 @@ import {
    handleAuthResponse,
    handleConfirmationCodeResponse
 } from "../apiFetch";
-import { ChallengeRequest } from "../models/requests/challengeRequest";
+import { ChallengeRequest } from "../../../models/requests/challengeRequest";
 import {
    AlreadyExistsError,
    GeneralError,
    InternalServerError,
    NotFoundError,
    UnauthorizedError
-} from "../models/errors";
-import { AuthResponse, ConfirmationCodeResponse } from "../models/responses";
-import { RegisterRequest } from "../models/requests/registerRequest";
-import { LoginRequest } from "../models/requests/loginRequest";
+} from "../../../models/errors";
+import { AuthResponse, ConfirmationCodeResponse } from "../../../models/responses";
+import { RegisterRequest } from "../../../models/requests/registerRequest";
+import { LoginRequest } from "../../../models/requests/loginRequest";
 
 interface LoginResponse {
    isEmailVerified: boolean;

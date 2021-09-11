@@ -14,7 +14,7 @@ import { useIncomes } from "context/Incomes";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { Income } from "services/external/api/models/data/income";
+import { Income } from "services/models/data/income";
 import IncomesRoutes from "../../routes";
 
 const useStyles = makeStyles(() => ({

@@ -2,16 +2,20 @@ import { ApolloClient, createHttpLink, InMemoryCache, NormalizedCacheObject } fr
 import { setContext } from "@apollo/client/link/context";
 import { API_URL } from "react-native-dotenv";
 import { getItem, StorageKeys } from "services/internal/storage";
+import { isAccessTokenValid } from "../utils";
 
 const httpLink = createHttpLink({
    uri: `${API_URL}/graphql`,
 })
 
 const authLink = setContext(async (_, { headers }) => {
+   await isAccessTokenValid();
    const token = await getItem(StorageKeys.AccessToken);
    return {
-      ...headers,
-      Authorization: token ? `Bearer ${token}` : ""
+      headers: {
+         ...headers,
+         Authorization: token ? `Bearer ${token}` : ""
+      }
    }
 })
 

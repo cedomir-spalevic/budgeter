@@ -5,15 +5,15 @@ import {
    AlreadyExistsError,
    NotFoundError,
    UnauthorizedError
-} from "services/external/api/models/errors";
+} from "services/models/errors";
 import { Alert } from "react-native";
-import internalSecurity from "services/internal/security";
+import internalSecurity from "services/internal/security/btoa";
 import * as LocalAuthentication from "expo-local-authentication";
 import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
-import { ChallengeRequest } from "services/external/api/models/requests/challengeRequest";
-import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
-import { LoginRequest } from "services/external/api/models/requests/loginRequest";
+import { ChallengeRequest } from "services/models/requests/challengeRequest";
+import { RegisterRequest } from "services/models/requests/registerRequest";
+import { LoginRequest } from "services/models/requests/loginRequest";
 
 interface ForgotPasswordRequest {
    email?: string;

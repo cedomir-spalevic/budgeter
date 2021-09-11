@@ -1,12 +1,12 @@
-import { Income } from "../models/data/income";
+import { Income } from "../../../models/data/income";
 import { callApiProtected } from "../apiFetch";
-import { ListResponse } from "../models/responses";
+import { ListResponse } from "../../../models/responses";
 import {
    GeneralError,
    InternalServerError,
    NotFoundError,
    UnauthorizedError
-} from "../models/errors";
+} from "../../../models/errors";
 
 class IncomesService {
    private resource: string;

@@ -12,7 +12,7 @@ import {
 import { makeStyles, usePayments, useTheme, useUser } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { toCurrency } from "services/internal/currency";
-import { Payment } from "services/external/api/models/data/payment";
+import { Payment } from "services/models/data/payment";
 import { View } from "react-native";
 import PaymentsRoutes from "../../routes";
 

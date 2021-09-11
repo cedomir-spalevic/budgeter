@@ -12,9 +12,9 @@ import {
    Icon
 } from "components";
 import { useBudgets } from "context/Budgets";
-import { BudgetIncome } from "services/external/api/models/data/income";
-import { BudgetPayment } from "services/external/api/models/data/payment";
-import { DueTodayItem } from "services/external/api/models/data/budget";
+import { BudgetIncome } from "services/models/data/income";
+import { BudgetPayment } from "services/models/data/payment";
+import { DueTodayItem } from "services/models/data/budget";
 import { useNavigation } from "@react-navigation/native";
 import { toCurrency } from "services/internal/currency";
 import { makeStyles, useTheme } from "context";

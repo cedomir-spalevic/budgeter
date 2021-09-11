@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 
-export const getIncomesQuery = gql`
+export const incomesQuery = gql`
    query getIncomes($skip: Int, $limit: Int, $search: String) {
       incomes(skip: $skip, limit: $limit, search: $search) {
          id
@@ -17,7 +17,7 @@ export const getIncomesQuery = gql`
    }
 `
 
-export const getIncomesByIdQuery = gql`
+export const incomeByIdQuery = gql`
    query getIncomesById($id: ObjectID!) {
       incomesById(id: $id) {
          id
@@ -34,7 +34,7 @@ export const getIncomesByIdQuery = gql`
    }
 `
 
-export const getCreateIncomesMutation = gql`
+export const createIncomeMutation = gql`
    mutation createIncomes($income: IncomesInput) {
       createIncomes(income: $income) {
          id
@@ -51,7 +51,7 @@ export const getCreateIncomesMutation = gql`
    }
 `
 
-export const getUpdateIncomesMutation = gql`
+export const updateIncomeMutation = gql`
    mutation updateIncomes($id: ObjectID!, $income: IncomesInput) {
       updateIncome(id: $id, income: $income) {
          id
@@ -68,7 +68,7 @@ export const getUpdateIncomesMutation = gql`
    }
 `
 
-export const getDeleteIncomesMutation = gql`
+export const deleteIncomeMutation = gql`
    mutation deleteIncomes($id: ObjectID!) {
       deleteIncome(id: $id)
    }

@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
-import { UpdateUserBody, User } from "services/external/api/models/data/user";
+import { UpdateUserBody, User } from "services/models/data/user";
 import UserService from "services/external/api/me";
 import { Alert } from "react-native";
 import { useAuth } from "context";
-import { UnauthorizedError } from "services/external/api/models/errors";
+import { UnauthorizedError } from "services/models/errors";
 import { getItem, setItem, StorageKeys } from "services/internal/storage";
+import { getMe, updateMe } from "services/external/graphql/me/request";
 
 export type SwipeOption = "left" | "right";
 
@@ -36,8 +37,9 @@ const UserProvider: React.FC<Props> = (props: Props) => {
 
    const getUser = async () => {
       try {
-         const userService = UserService.getInstance();
-         const user = await userService.get();
+         //const userService = UserService.getInstance();
+         //const user = await userService.get();
+         const user = await getMe();
          setValue(user);
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -68,8 +70,9 @@ const UserProvider: React.FC<Props> = (props: Props) => {
 
    const update = async (user: Partial<User>) => {
       try {
-         const userService = UserService.getInstance();
-         const updatedUser = await userService.update(user);
+         //const userService = UserService.getInstance();
+         //const updatedUser = await userService.update(user);
+         const updatedUser = await updateMe(user);
          setValue({ ...updatedUser });
       } catch (error) {
          if (error instanceof UnauthorizedError) {

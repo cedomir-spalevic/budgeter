@@ -1,12 +1,12 @@
 import { callApiProtected } from "../apiFetch";
-import { ListResponse } from "../models/responses";
+import { ListResponse } from "../../../models/responses";
 import {
    GeneralError,
    InternalServerError,
    NotFoundError,
    UnauthorizedError
-} from "../models/errors";
-import { Payment } from "../models/data/payment";
+} from "../../../models/errors";
+import { Payment } from "../../../models/data/payment";
 
 class PaymentsService {
    private resource: string;

@@ -14,7 +14,7 @@ import { usePayments } from "context/Payments";
 import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { toCurrency } from "services/internal/currency";
-import { DueTodayItem } from "services/external/api/models/data/budget";
+import { DueTodayItem } from "services/models/data/budget";
 import HomeRoutes from "../routes";
 
 const BudgetDueTodayList: React.FC = () => {

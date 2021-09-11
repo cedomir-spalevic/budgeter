@@ -3,7 +3,7 @@ import { Icon, Menu } from "components";
 import { useTheme } from "context";
 import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
-import { DueTodayItem } from "services/external/api/models/data/budget";
+import { DueTodayItem } from "services/models/data/budget";
 import EmptyBudget from "./EmptyBudget";
 import BudgetList from "./BudgetList";
 import HomeRoutes from "../routes";
@@ -12,6 +12,7 @@ const Home: React.FC = () => {
    const navigation = useNavigation();
    const theme = useTheme();
    const budgets = useBudgets();
+   console.log(budgets.value);
    const incomes = budgets.value.incomes.slice(0, 3);
    const payments = budgets.value.payments.slice(0, 3);
    const dueToday = [

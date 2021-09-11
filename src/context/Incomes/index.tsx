@@ -1,10 +1,10 @@
 import { useAuth } from "context";
 import React, { useState, createContext, useContext } from "react";
 import { Alert } from "react-native";
-import { Income } from "services/external/api/models/data/income";
-import { UnauthorizedError } from "services/external/api/models/errors";
-import IncomesService from "services/external/api/incomes";
+import { Income } from "services/models/data/income";
+import { UnauthorizedError } from "services/models/errors";
 import { useBudgets } from "context/Budgets";
+import { createIncome, deleteIncome, getIncomes, updateIncome } from "services/external/graphql/incomes/request";
 
 interface Props {
    children: React.ReactNode;
@@ -32,11 +32,13 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
       try {
          if (getNext && values.length === count) return;
          const skip = getNext ? values.length : 0;
-         const incomesService = IncomesService.getInstance();
-         const incomes = await incomesService.get(10, skip, search);
-         setCount(incomes.count);
-         if (getNext) setValues([...values, ...incomes.values]);
-         else setValues([...incomes.values]);
+         const incomes = await getIncomes(10, skip, search);
+         setValues([...incomes]);
+         // const incomesService = IncomesService.getInstance();
+         // const incomes = await incomesService.get(10, skip, search);
+         // setCount(incomes.count);
+         // if (getNext) setValues([...values, ...incomes.values]);
+         // else setValues([...incomes.values]);
          setEmpty(!search && incomes.values.length === 0);
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -50,12 +52,13 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const create = async (income: Partial<Income>) => {
+   const create = async (input: Partial<Income>) => {
       try {
-         const incomesService = IncomesService.getInstance();
-         const i = await incomesService.create(income);
+         const income = await createIncome(input);
+         //const incomesService = IncomesService.getInstance();
+         //const i = await incomesService.create(income);
          const isEmpty = values.length === 0;
-         values.push(i);
+         values.push(income);
          setCount(count + 1);
          setValues([...values]);
          if (isEmpty) setEmpty(false);
@@ -75,13 +78,14 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const update = async (id: string, income: Partial<Income>) => {
+   const update = async (id: string, input: Partial<Income>) => {
       try {
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
-         const incomesService = IncomesService.getInstance();
-         const i = await incomesService.update(id, income);
-         values[index] = i;
+         const income = await updateIncome(id, input);
+         //const incomesService = IncomesService.getInstance();
+         //const i = await incomesService.update(id, income);
+         values[index] = income;
          setValues([...values]);
          budgets.get();
          return true;
@@ -98,12 +102,13 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const deleteIncome = async (id: string) => {
+   const remove = async (id: string) => {
       try {
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
-         const incomesService = IncomesService.getInstance();
-         await incomesService.delete(id);
+         await deleteIncome(id);
+         //const incomesService = IncomesService.getInstance();
+         //await incomesService.delete(id);
          const willBeEmpty = values.length === 1;
          values.splice(index, 1);
          setCount(count - 1);
@@ -127,7 +132,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
 
    return (
       <IncomesContext.Provider
-         value={{ empty, values, get, create, update, delete: deleteIncome }}
+         value={{ empty, values, get, create, update, delete: remove }}
       >
          {props.children}
       </IncomesContext.Provider>

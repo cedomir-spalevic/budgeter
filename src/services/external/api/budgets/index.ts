@@ -1,6 +1,6 @@
-import { Budget } from "../models/data/budget";
+import { Budget } from "../../../models/data/budget";
 import { callApiProtected } from "../apiFetch";
-import { GeneralError, InternalServerError } from "../models/errors";
+import { GeneralError, InternalServerError } from "../../../models/errors";
 
 class BudgetsService {
    private resource: string;

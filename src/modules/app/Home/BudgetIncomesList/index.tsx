@@ -15,7 +15,7 @@ import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { BudgetIncome } from "services/external/api/models/data/income";
+import { BudgetIncome } from "services/models/data/income";
 import HomeRoutes from "../routes";
 
 const useStyles = makeStyles(() => ({

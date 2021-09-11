@@ -5,9 +5,9 @@ import {
    GeneralError,
    InternalServerError,
    UnauthorizedError
-} from "../models/errors";
-import { UpdateUserBody, User } from "../models/data/user";
-import { AuthResponse } from "../models/responses";
+} from "../../../models/errors";
+import { UpdateUserBody, User } from "../../../models/data/user";
+import { AuthResponse } from "../../../models/responses";
 
 class UserService {
    private resource: string;
