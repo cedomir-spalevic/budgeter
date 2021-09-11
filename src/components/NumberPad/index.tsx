@@ -5,7 +5,8 @@ import React, { useState, useEffect, forwardRef, useRef, MutableRefObject } from
 import {
    TextInput,
    NativeSyntheticEvent,
-   TextInputKeyPressEventData
+   TextInputKeyPressEventData,
+   TextStyle
 } from "react-native";
 import { toCurrency } from "services/internal/currency";
 
@@ -58,6 +59,7 @@ interface Props {
    onPostRenderIconClick?: () => void;
    textInputRef?: MutableRefObject<TextInput | null> | ((instance: TextInput | null) => void) | null;
    onSubmit?: () => void;
+   inputStyles?: TextStyle;
 }
 
 const NumberPad: React.FC<Props> = (props: Props) => {
@@ -112,6 +114,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
          controlled
          renderInput={() => <Label type="regular" text={num} />}
          blurOnSubmit={true}
+         inputStyles={props.inputStyles}
       />
    );
 };
