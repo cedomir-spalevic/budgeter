@@ -14,14 +14,14 @@ import {
 } from "components";
 import { FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
-import { Income } from "services/external/api/models/data/income";
+import { Income } from "services/models/data/income";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useIncomes } from "context/Incomes";
 import { TextInput } from "react-native";
 import {
    RecurrenceLabels,
    RecurrenceMap
-} from "services/external/api/models/data/recurrence";
+} from "services/models/data/recurrence";
 import { PickerSelectRef } from "components/PickerSelect";
 import { DatePickerRef } from "components/DatePicker";
 

@@ -1,11 +1,12 @@
 import { getItem, setItem, StorageKeys } from "services/internal/storage";
 import { API_URL } from "react-native-dotenv";
-import { AuthResponse, ConfirmationCodeResponse } from "./models/responses";
+import { AuthResponse, ConfirmationCodeResponse } from "../../models/responses";
 import {
    GeneralError,
    InternalServerError,
    UnauthorizedError
-} from "./models/errors";
+} from "../../models/errors";
+import { isAccessTokenValid } from "../utils";
 
 export const handleAuthResponse = async (
    authResponse: AuthResponse
@@ -61,14 +62,7 @@ export const refresh = async (retries?: number): Promise<AuthResponse> => {
    return authResponse;
 };
 
-export const isAccessTokenValid = async (): Promise<void> => {
-   const accessTokenExpiration = (await getItem(
-      StorageKeys.AccessTokenExpiration
-   )) as string;
-   if (Date.now() - 500 > Number(accessTokenExpiration)) {
-      refresh();
-   }
-};
+
 
 export const callApiProtected = async (
    endpoint: string,

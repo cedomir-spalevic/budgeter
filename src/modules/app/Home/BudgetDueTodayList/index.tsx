@@ -4,7 +4,6 @@ import {
    Container,
    ActionList,
    Label,
-   ConfirmDialog,
    Searchbox,
    ActionItem
 } from "components";
@@ -14,12 +13,14 @@ import { usePayments } from "context/Payments";
 import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { toCurrency } from "services/internal/currency";
-import { DueTodayItem } from "services/external/api/models/data/budget";
+import { DueTodayItem } from "services/models/data/budget";
 import HomeRoutes from "../routes";
+import DeleteDialog from "modules/app/Shared/DeleteDialog";
 
 const BudgetDueTodayList: React.FC = () => {
    const [list, setList] = useState<DueTodayItem[]>([]);
    const [itemToDelete, setItemToDelete] = useState<DueTodayItem>();
+   const [deletingItem, setDeletingItem] = useState<boolean>(false);
    const budgets = useBudgets();
    const incomes = useIncomes();
    const payments = usePayments();
@@ -61,6 +62,7 @@ const BudgetDueTodayList: React.FC = () => {
    };
 
    const deleteItem = async () => {
+      setDeletingItem(true);
       if (itemToDelete!.type === "payment") {
          await payments.delete(itemToDelete!.item.id);
          setItemToDelete(undefined);
@@ -68,6 +70,7 @@ const BudgetDueTodayList: React.FC = () => {
          await incomes.delete(itemToDelete!.item.id);
          setItemToDelete(undefined);
       }
+      setDeletingItem(false);
    };
 
    useEffect(() => {
@@ -123,22 +126,15 @@ const BudgetDueTodayList: React.FC = () => {
                />
             </Container>
          </Container>
-
-         <ConfirmDialog
+         <DeleteDialog 
+            loading={deletingItem}
             visible={itemToDelete !== undefined}
-            title={`Delete ${itemToDelete?.item.title}?`}
-            onTouchOutside={() => setItemToDelete(undefined)}
-            message={`Are you sure want to delete this ${
-               itemToDelete?.type === "payment" ? "Payment" : "Income"
-            }? This will be removed from all of your budgets.`}
-            positiveButton={{
-               title: "Yes",
-               onPress: () => deleteItem()
+            title={itemToDelete ? itemToDelete.item.title : ""}
+            type={itemToDelete?.type === "payment" ? "payment" : "income"}
+            close={() => {
+               setItemToDelete(undefined);
             }}
-            negativeButton={{
-               title: "No",
-               onPress: () => setItemToDelete(undefined)
-            }}
+            delete={deleteItem}
          />
       </Page>
    );

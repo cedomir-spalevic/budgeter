@@ -1,6 +1,6 @@
-import React, { createContext, useContext } from "react";
+import React from "react";
 import { Notifications, Registered } from "react-native-notifications";
-import UserService from "services/external/api/me";
+import AuthenticationService from "services/external/api/auth";
 
 interface Props {
    children: React.ReactNode;
@@ -10,7 +10,7 @@ interface Context {
    askForPermissions: () => Promise<unknown>;
 }
 
-const NotificationsContext = createContext<Context>(undefined!);
+const NotificationsContext = React.createContext<Context>(undefined!);
 
 const NotificationsProvider: React.FC<Props> = (props: Props) => {
    const askForPermissions = () =>
@@ -18,8 +18,8 @@ const NotificationsProvider: React.FC<Props> = (props: Props) => {
          Notifications.events().registerRemoteNotificationsRegistered(
             async (event: Registered) => {
                try {
-                  const userService = UserService.getInstance();
-                  await userService.registerDevice(event.deviceToken);
+                  const authenticationService = AuthenticationService.getInstance();
+                  await authenticationService.registerDevice(event.deviceToken);
                   resolve();
                } catch (error) {
                   reject();
@@ -44,6 +44,6 @@ const NotificationsProvider: React.FC<Props> = (props: Props) => {
 };
 
 export const useNotifications = (): Context =>
-   useContext<Context>(NotificationsContext);
+   React.useContext<Context>(NotificationsContext);
 
 export default NotificationsProvider;

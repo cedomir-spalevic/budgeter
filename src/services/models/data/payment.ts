@@ -1,3 +1,4 @@
+import { PaymentTag } from "./paymentTag";
 import { Recurrence } from "./recurrence";
 
 export interface Payment {
@@ -11,6 +12,7 @@ export interface Payment {
    recurrence: Recurrence;
    createdOn: Date;
    modifiedOn: Date;
+   tags: PaymentTag[];
 }
 
 export interface BudgetPayment extends Payment {

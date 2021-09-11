@@ -17,7 +17,7 @@ import { useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import { TextInput } from "react-native";
 import LoginRoutes from "../routes";
-import { LoginRequest } from "services/external/api/models/requests/loginRequest";
+import { LoginRequest } from "services/models/requests/loginRequest";
 import { isValidEmail } from "services/internal/emails";
 import { parsePhoneNumber } from "services/external/phoneNumbers";
 

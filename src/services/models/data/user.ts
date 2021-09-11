@@ -8,10 +8,12 @@ export interface User {
    device: {
       os: string | null;
    };
-   notificationPreferences: {
-      incomeNotifications: boolean;
-      paymentNotifications: boolean;
-   };
+   notificationPreferences: NotificationPreferences;
+}
+
+export interface NotificationPreferences {
+   incomeNotifications?: boolean;
+   paymentNotifications?: boolean;
 }
 
 export interface UpdateUserBody {

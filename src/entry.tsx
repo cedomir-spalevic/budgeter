@@ -4,12 +4,12 @@ import AppLoader from "modules/app";
 import {
    AuthState,
    useAuth,
-   PaymentsProvider,
-   IncomesProvider,
    UserProvider,
    BudgetsProvider,
    NotificationsProvider
 } from "context";
+import PaymentsProvider from "context/Payments";
+import IncomesProvider from "context/Incomes";
 
 const Entry: React.FC = () => {
    const auth = useAuth();

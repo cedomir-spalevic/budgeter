@@ -16,7 +16,7 @@ import * as Yup from "yup";
 import { makeStyles, useAuth } from "context";
 import { useNavigation } from "@react-navigation/native";
 import RegisterRoutes from "../routes";
-import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
+import { RegisterRequest } from "services/models/requests/registerRequest";
 import { parsePhoneNumber } from "services/external/phoneNumbers";
 import { isValidEmail } from "services/internal/emails";
 

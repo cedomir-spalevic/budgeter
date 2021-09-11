@@ -15,13 +15,13 @@ import {
 import { FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Payment } from "services/external/api/models/data/payment";
+import { Payment } from "services/models/data/payment";
 import { TextInput } from "react-native";
 import {
    RecurrenceLabels,
    RecurrenceMap
-} from "services/external/api/models/data/recurrence";
-import { usePayments } from "context";
+} from "services/models/data/recurrence";
+import { usePayments } from "context/Payments";
 import { PickerSelectRef } from "components/PickerSelect";
 import { DatePickerRef } from "components/DatePicker";
 

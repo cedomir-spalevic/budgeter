@@ -6,16 +6,17 @@ import {
    ActionItem,
    Searchbox,
    Label,
-   ConfirmDialog,
    Progress
 } from "components";
-import { makeStyles, useTheme, useUser } from "context";
+import { makeStyles, useTheme } from "context";
+import { useUser } from "context/User";
 import { useIncomes } from "context/Incomes";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { Income } from "services/external/api/models/data/income";
+import { Income } from "services/models/data/income";
 import IncomesRoutes from "../../routes";
+import DeleteDialog from "../../../Shared/DeleteDialog";
 
 const useStyles = makeStyles(() => ({
    loading: {
@@ -27,6 +28,7 @@ const IncomesList: React.FC = () => {
    const [searchValue, setSearchValue] = useState<string>();
    const [loading, setLoading] = useState<boolean>(false);
    const [incomeToDelete, setIncomeToDelete] = useState<Income>();
+   const [deletingIncome, setDeletingIncome] = useState<boolean>(false);
    const incomes = useIncomes();
    const navigation = useNavigation();
    const theme = useTheme();
@@ -47,8 +49,10 @@ const IncomesList: React.FC = () => {
 
    const deleteIncome = async () => {
       if (!incomeToDelete) return;
+      setDeletingIncome(true);
       await incomes.delete(incomeToDelete.id);
       setIncomeToDelete(undefined);
+      setDeletingIncome(false);
    };
 
    return (
@@ -97,19 +101,15 @@ const IncomesList: React.FC = () => {
                </View>
             )}
          </Container>
-         <ConfirmDialog
+         <DeleteDialog 
+            loading={deletingIncome}
             visible={incomeToDelete !== undefined}
-            title={`Delete ${incomeToDelete?.title}?`}
-            onTouchOutside={() => setIncomeToDelete(undefined)}
-            message="Are you sure want to delete this income? This will be removed from all of your budgets."
-            positiveButton={{
-               title: "Yes",
-               onPress: () => deleteIncome()
+            title={incomeToDelete ? incomeToDelete.title : ""}
+            type="income"
+            close={() => {
+               setIncomeToDelete(undefined);
             }}
-            negativeButton={{
-               title: "No",
-               onPress: () => setIncomeToDelete(undefined)
-            }}
+            delete={deleteIncome}
          />
       </Page>
    );
