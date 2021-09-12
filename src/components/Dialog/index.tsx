@@ -25,6 +25,17 @@ const Dialog: React.FC<Props> = (
    if(props.loading) {
       return (
          <ProgressDialog
+            dialogStyle={{
+               backgroundColor: theme.value.palette.secondaryBackground
+            }}
+            titleStyle={{
+               fontFamily: theme.value.font.fontFamily,
+               color: theme.value.palette.textColor
+            }}
+            messageStyle={{
+               fontFamily: theme.value.font.fontFamily,
+               color: theme.value.palette.systemGray
+            }}
             visible={props.visible}
             title={props.title}
             message={props.message}
