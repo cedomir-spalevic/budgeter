@@ -103,7 +103,7 @@ const Playground: React.FC = () => {
 
    return (
       <Page>
-         <Container title="Playground" allowScroll fullWith>
+         <Container title="Playground" marginBottom={300} flex allowScroll fullWith>
             <PlaygroundList
                title="Incomes"
                items={incomes}

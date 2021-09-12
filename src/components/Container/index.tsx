@@ -42,6 +42,7 @@ interface Props {
       | "space-evenly";
    alignItems?: "baseline" | "center" | "flex-end" | "flex-start" | "stretch";
    flex?: boolean;
+   marginBottom?: number;
    fullWith?: boolean;
    allowScroll?: boolean;
    title?: string;
@@ -143,7 +144,7 @@ const Container: React.FC<Props> = (props: Props) => {
             ref={scrollView}
             contentContainerStyle={[
                ...style,
-               { paddingBottom: props.preventBottomMargin ? 0 : 100 }
+               { paddingBottom: props.preventBottomMargin ? 0 : props.marginBottom !== undefined ? props.marginBottom : 100 }
             ]}
             scrollEnabled={!scroll.isSwiping}
             keyboardShouldPersistTaps="handled"

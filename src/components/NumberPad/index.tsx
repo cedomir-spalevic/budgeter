@@ -60,6 +60,7 @@ interface Props {
    textInputRef?: MutableRefObject<TextInput | null> | ((instance: TextInput | null) => void) | null;
    onSubmit?: () => void;
    inputStyles?: TextStyle;
+   useLongPress?: boolean;
 }
 
 const NumberPad: React.FC<Props> = (props: Props) => {
@@ -115,6 +116,7 @@ const NumberPad: React.FC<Props> = (props: Props) => {
          renderInput={() => <Label type="regular" text={num} />}
          blurOnSubmit={true}
          inputStyles={props.inputStyles}
+         useLongPress={props.useLongPress}
       />
    );
 };

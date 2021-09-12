@@ -9,7 +9,8 @@ import {
    NativeSyntheticEvent,
    TextInputSubmitEditingEventData,
    TextInputKeyPressEventData,
-   ViewStyle
+   ViewStyle,
+   TouchableHighlight
 } from "react-native";
 
 const useStyles = makeStyles((theme) => ({
@@ -77,6 +78,7 @@ interface Props {
    renderInput?: () => React.ReactNode;
    blurOnSubmit?: boolean;
    inputStyles?: ViewStyle;
+   useLongPress?: boolean;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
@@ -132,60 +134,67 @@ const TextField: React.FC<Props> = (props: Props) => {
       }
    }, [setValue, props.controlled, props.value]);
 
+   const focusPropKey = props.useLongPress ? "onLongPress" : "onPressIn"
+   const focusProp = {
+      [focusPropKey]: () => onContainerPress()
+   }
+
    return (
-      <View
+      <TouchableHighlight
          style={styles.container}
-         onTouchStart={() => onContainerPress()}
          onLayout={(e) => (y.current = e.nativeEvent.layout.y)}
+         {...focusProp}
       >
-         <View style={inputStyles}>
-            <View style={styles.inputContainer}>
-               {props.preRenderIcon && (
-                  <TouchableOpacity onPress={onPreRenderIconClick}>
-                     {React.cloneElement(props.preRenderIcon, {
+         <React.Fragment>
+            <View style={inputStyles}>
+               <View style={styles.inputContainer}>
+                  {props.preRenderIcon && (
+                     <TouchableOpacity onPress={onPreRenderIconClick}>
+                        {React.cloneElement(props.preRenderIcon, {
+                           style: styles.icon
+                        })}
+                     </TouchableOpacity>
+                  )}
+                  <TextInput
+                     editable={props.editable}
+                     contextMenuHidden={props.contextMenuHidden}
+                     value={value}
+                     placeholder={props.placeholder}
+                     placeholderTextColor={theme.value.palette.systemGray}
+                     autoFocus={props.autoFocus}
+                     onChangeText={props.preventOnChange ? undefined : onChange}
+                     secureTextEntry={props.hidden}
+                     onSubmitEditing={onSubmitEditing}
+                     ref={mergedRefs}
+                     style={
+                        !props.renderInput ? styles.textInput : { display: "none" }
+                     }
+                     blurOnSubmit={props.blurOnSubmit}
+                     keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
+                     autoCapitalize={props.autoCapitalize}
+                     textContentType={props.textContentType}
+                     keyboardType={props.keyboardType}
+                     onFocus={() => onFocus()}
+                     onBlur={() => onBlur()}
+                     onKeyPress={props.onKeyPress}
+                     returnKeyType={props.returnKeyType}
+                     onTouchStart={props.onTouchStart}
+                  />
+                  {props.renderInput && props.renderInput()}
+               </View>
+               {props.postRenderIcon && (
+                  <TouchableOpacity onPress={onPostRenderIconClick}>
+                     {React.cloneElement(props.postRenderIcon, {
                         style: styles.icon
                      })}
                   </TouchableOpacity>
                )}
-               <TextInput
-                  editable={props.editable}
-                  contextMenuHidden={props.contextMenuHidden}
-                  value={value}
-                  placeholder={props.placeholder}
-                  placeholderTextColor={theme.value.palette.systemGray}
-                  autoFocus={props.autoFocus}
-                  onChangeText={props.preventOnChange ? undefined : onChange}
-                  secureTextEntry={props.hidden}
-                  onSubmitEditing={onSubmitEditing}
-                  ref={mergedRefs}
-                  style={
-                     !props.renderInput ? styles.textInput : { display: "none" }
-                  }
-                  blurOnSubmit={props.blurOnSubmit}
-                  keyboardAppearance={theme.isDarkTheme ? "dark" : "light"}
-                  autoCapitalize={props.autoCapitalize}
-                  textContentType={props.textContentType}
-                  keyboardType={props.keyboardType}
-                  onFocus={() => onFocus()}
-                  onBlur={() => onBlur()}
-                  onKeyPress={props.onKeyPress}
-                  returnKeyType={props.returnKeyType}
-                  onTouchStart={props.onTouchStart}
-               />
-               {props.renderInput && props.renderInput()}
             </View>
-            {props.postRenderIcon && (
-               <TouchableOpacity onPress={onPostRenderIconClick}>
-                  {React.cloneElement(props.postRenderIcon, {
-                     style: styles.icon
-                  })}
-               </TouchableOpacity>
+            {props.errorMessage && (
+               <Text style={styles.errorText}>{props.errorMessage}</Text>
             )}
-         </View>
-         {props.errorMessage && (
-            <Text style={styles.errorText}>{props.errorMessage}</Text>
-         )}
-      </View>
+         </React.Fragment>
+      </TouchableHighlight>
    );
 };
 

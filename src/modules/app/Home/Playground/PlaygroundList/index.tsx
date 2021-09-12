@@ -1,7 +1,7 @@
 import { makeStyles, useTheme } from "context/Theme";
 import { ActionItem, Container, Icon, Label, NumberPad, TextField } from "components";
 import React from "react";
-import { View } from "react-native";
+import { TouchableHighlight, View } from "react-native";
 import { PlaygroundItem } from "../item";
 
 interface Props {
@@ -58,19 +58,23 @@ const PlaygroundList: React.FC<Props> = (props: Props) => {
                   return (
                      <View key={item.id} style={[containerStyles]}>
                         <View style={{ width: "60%" }}>
-                           <TextField inputStyles={{ borderBottomWidth: 0 }} value={item.title} onChange={(title) => props.updateItem(item.id, { title })} />
+                           <TextField useLongPress inputStyles={{ borderBottomWidth: 0 }} value={item.title} onChange={(title) => props.updateItem(item.id, { title })} />
                         </View>
                         <View style={{ width: "25%" }}>
-                           <NumberPad inputStyles={{ borderBottomWidth: 0}} value={item.amount} onChange={(amount) => props.updateItem(item.id, { amount })} />
+                           <NumberPad useLongPress inputStyles={{ borderBottomWidth: 0}} value={item.amount} onChange={(amount) => props.updateItem(item.id, { amount })} />
                         </View>
-                        <View style={{ width: "10%" }}>
+                        <TouchableHighlight 
+                           onPress={() => props.removeItem(item.id)} 
+                           style={{ width: "10%", borderRadius: 10, justifyContent: "center", alignItems: "center" }} 
+                           activeOpacity={0.6}
+                           underlayColor={theme.value.palette.systemGray4}
+                        >
                            <Icon
                               name="close"
                               size={24}
                               color={theme.value.palette.red}
-                              onPress={() => props.removeItem(item.id)}
                            />
-                        </View>
+                        </TouchableHighlight>
                      </View>
                   )
                })}
