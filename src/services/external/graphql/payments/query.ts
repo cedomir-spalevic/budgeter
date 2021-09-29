@@ -17,13 +17,13 @@ export const paymentsQuery = gql`
          recurrence
          createdOn
          modifiedOn
-         tags { 
+         tags {
             id
             tag
          }
       }
    }
-`
+`;
 
 export const paymentByIdQuery = gql`
    query getPaymentById($id: ObjectID!) {
@@ -42,13 +42,13 @@ export const paymentByIdQuery = gql`
          recurrence
          createdOn
          modifiedOn
-         tags { 
+         tags {
             id
             tag
          }
       }
    }
-`
+`;
 
 export const createPaymentMutation = gql`
    mutation createPayment($payment: PaymentInput) {
@@ -67,13 +67,13 @@ export const createPaymentMutation = gql`
          recurrence
          createdOn
          modifiedOn
-         tags { 
+         tags {
             id
             tag
          }
       }
    }
-`
+`;
 
 export const updatePaymentMutation = gql`
    mutation updatePayment($id: ObjectID!, $payment: PaymentInput) {
@@ -92,16 +92,16 @@ export const updatePaymentMutation = gql`
          recurrence
          createdOn
          modifiedOn
-         tags { 
+         tags {
             id
             tag
          }
       }
    }
-`
+`;
 
 export const deletePaymentMutation = gql`
    mutation deletePayment($id: ObjectID!) {
       deletePayment(id: $id)
    }
-`
+`;

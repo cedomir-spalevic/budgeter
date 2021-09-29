@@ -50,6 +50,7 @@ const ScrollProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useScroll = (): Context => React.useContext<Context>(ScrollContext);
+export const useScroll = (): Context =>
+   React.useContext<Context>(ScrollContext);
 
 export default ScrollProvider;

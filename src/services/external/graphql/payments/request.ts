@@ -1,6 +1,12 @@
 import { Payment } from "../../../models/data/payment";
 import { getClient } from "../client";
-import { createPaymentMutation, deletePaymentMutation, paymentByIdQuery, paymentsQuery, updatePaymentMutation } from "./query";
+import {
+   createPaymentMutation,
+   deletePaymentMutation,
+   paymentByIdQuery,
+   paymentsQuery,
+   updatePaymentMutation
+} from "./query";
 
 const transformResponse = (payment: Payment) => ({
    id: payment.id,
@@ -14,9 +20,13 @@ const transformResponse = (payment: Payment) => ({
    createdOn: new Date(payment.createdOn),
    modifiedOn: new Date(payment.modifiedOn),
    tags: payment.tags
-})
+});
 
-export const getPayments = async (limit: number, skip: number, search?: string): Promise<Payment[]> => {
+export const getPayments = async (
+   limit: number,
+   skip: number,
+   search?: string
+): Promise<Payment[]> => {
    const client = getClient();
    const result = await client.query({
       query: paymentsQuery,
@@ -28,7 +38,7 @@ export const getPayments = async (limit: number, skip: number, search?: string):
    });
    const payments = result.data.payments as Payment[];
    return payments.map(transformResponse);
-}
+};
 
 export const getPaymentById = async (id: string): Promise<Payment> => {
    const client = getClient();
@@ -40,9 +50,11 @@ export const getPaymentById = async (id: string): Promise<Payment> => {
    });
    const payment = result.data.paymentById as Payment;
    return transformResponse(payment);
-}
+};
 
-export const createPayment = async (input: Partial<Payment>): Promise<Payment> => {
+export const createPayment = async (
+   input: Partial<Payment>
+): Promise<Payment> => {
    const client = getClient();
    const result = await client.mutate({
       mutation: createPaymentMutation,
@@ -50,12 +62,15 @@ export const createPayment = async (input: Partial<Payment>): Promise<Payment> =
          payment: input
       },
       update: cacheModifier
-   })
+   });
    const payment = result.data.createPayment as Payment;
    return transformResponse(payment);
-}
+};
 
-export const updatePayment = async (id: string, input: Partial<Payment>): Promise<Payment> => {
+export const updatePayment = async (
+   id: string,
+   input: Partial<Payment>
+): Promise<Payment> => {
    const client = getClient();
    const result = await client.mutate({
       mutation: updatePaymentMutation,
@@ -64,10 +79,10 @@ export const updatePayment = async (id: string, input: Partial<Payment>): Promis
          payment: input
       },
       update: cacheModifier
-   })
+   });
    const payment = result.data.updatePayment as Payment;
    return transformResponse(payment);
-}
+};
 
 export const deletePayment = async (id: string): Promise<void> => {
    const client = getClient();
@@ -77,11 +92,11 @@ export const deletePayment = async (id: string): Promise<void> => {
          id
       },
       update: cacheModifier
-   })
-}
+   });
+};
 
 const cacheModifier = (cache) => {
    cache.evict({ fieldName: "budget" });
    cache.evict({ fieldName: "payments" });
    cache.evict({ fieldName: "paymentById" });
-}
+};

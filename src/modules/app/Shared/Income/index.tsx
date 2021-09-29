@@ -70,7 +70,9 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => (
             textInputRef={props.numberPadRef}
             onChange={(n) => props.setFieldValue("amount", n, true)}
             onSubmit={() => props.repeatRef.current?.showPicker()}
-            errorMessage={props.touched.amount ? props.errors.amount : undefined}
+            errorMessage={
+               props.touched.amount ? props.errors.amount : undefined
+            }
          />
          <PickerSelect
             preRenderIcon={<Icon name="repeat" />}
@@ -81,7 +83,9 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => (
                props.setFieldValue("repeat", repeat, true);
                props.initialOccurrenceRef.current?.showPicker();
             }}
-            errorMessage={props.touched.repeat ? props.errors.repeat : undefined}
+            errorMessage={
+               props.touched.repeat ? props.errors.repeat : undefined
+            }
             pickerSelectRef={props.repeatRef}
          />
          <DatePicker
@@ -100,8 +104,9 @@ const IncomeForm = (props: FormProps & FormikProps<FormValues>) => (
                )
             }
             errorMessage={
-               props.touched.initialOccurrenceDate ?
-               props.errors.initialOccurrenceDate : undefined
+               props.touched.initialOccurrenceDate
+                  ? props.errors.initialOccurrenceDate
+                  : undefined
             }
             datePickerRef={props.initialOccurrenceRef}
          />
@@ -152,9 +157,10 @@ const IncomeScreen: React.FC = () => {
                   ", "
                )}`,
                testForValidRepeat as Yup.TestFunction<
-               string | undefined,
-               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-               Record<string, any> >
+                  string | undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  Record<string, any>
+               >
             ),
          initialOccurrenceDate: Yup.string().required(
             "Initial Occurrence Date is required"

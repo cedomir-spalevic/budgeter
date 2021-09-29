@@ -1,6 +1,12 @@
 import { Income } from "../../../models/data/income";
 import { getClient } from "../client";
-import { createIncomeMutation, deleteIncomeMutation, incomeByIdQuery, incomesQuery, updateIncomeMutation } from "./query";
+import {
+   createIncomeMutation,
+   deleteIncomeMutation,
+   incomeByIdQuery,
+   incomesQuery,
+   updateIncomeMutation
+} from "./query";
 
 const transformResponse = (income: Income) => ({
    id: income.id,
@@ -13,9 +19,13 @@ const transformResponse = (income: Income) => ({
    recurrence: income.recurrence,
    createdOn: new Date(income.createdOn),
    modifiedOn: new Date(income.modifiedOn)
-})
+});
 
-export const getIncomes = async (limit: number, skip: number, search?: string): Promise<Income[]> => {
+export const getIncomes = async (
+   limit: number,
+   skip: number,
+   search?: string
+): Promise<Income[]> => {
    const client = getClient();
    const result = await client.query({
       query: incomesQuery,
@@ -27,7 +37,7 @@ export const getIncomes = async (limit: number, skip: number, search?: string): 
    });
    const incomes = result.data.incomes as Income[];
    return incomes.map(transformResponse);
-}
+};
 
 export const getIncomeById = async (id: string): Promise<Income> => {
    const client = getClient();
@@ -39,7 +49,7 @@ export const getIncomeById = async (id: string): Promise<Income> => {
    });
    const income = result.data.incomeById as Income;
    return transformResponse(income);
-}
+};
 
 export const createIncome = async (input: Partial<Income>): Promise<Income> => {
    const client = getClient();
@@ -49,12 +59,15 @@ export const createIncome = async (input: Partial<Income>): Promise<Income> => {
          income: input
       },
       update: cacheModifier
-   })
+   });
    const income = result.data.createIncome as Income;
    return transformResponse(income);
-}
+};
 
-export const updateIncome = async (id: string, input: Partial<Income>): Promise<Income> => {
+export const updateIncome = async (
+   id: string,
+   input: Partial<Income>
+): Promise<Income> => {
    const client = getClient();
    const result = await client.mutate({
       mutation: updateIncomeMutation,
@@ -63,10 +76,10 @@ export const updateIncome = async (id: string, input: Partial<Income>): Promise<
          income: input
       },
       update: cacheModifier
-   })
+   });
    const income = result.data.updateIncome as Income;
    return transformResponse(income);
-}
+};
 
 export const deleteIncome = async (id: string): Promise<void> => {
    const client = getClient();
@@ -76,11 +89,11 @@ export const deleteIncome = async (id: string): Promise<void> => {
          id
       },
       update: cacheModifier
-   })
-}
+   });
+};
 
 const cacheModifier = (cache) => {
    cache.evict({ fieldName: "budget" });
    cache.evict({ fieldName: "incomes" });
    cache.evict({ fieldName: "incomeById" });
-}
+};

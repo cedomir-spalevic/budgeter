@@ -18,11 +18,9 @@ interface Props {
    negativeButton: ButtonProps;
 }
 
-const Dialog: React.FC<Props> = (
-   props: Props
-) => {
+const Dialog: React.FC<Props> = (props: Props) => {
    const theme = useTheme();
-   if(props.loading) {
+   if (props.loading) {
       return (
          <ProgressDialog
             visible={props.visible}
@@ -34,7 +32,7 @@ const Dialog: React.FC<Props> = (
                width: "100%"
             }}
          />
-      )
+      );
    }
 
    return (
@@ -61,7 +59,9 @@ const Dialog: React.FC<Props> = (
          negativeButton={{
             title: props.negativeButton ? props.negativeButton.title : "",
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            onPress: props.negativeButton ? props.negativeButton.onPress : () => {},
+            onPress: props.negativeButton
+               ? props.negativeButton.onPress
+               : () => {},
             titleStyle: {
                color: theme.value.palette.red,
                fontFamily: theme.value.font.fontFamily

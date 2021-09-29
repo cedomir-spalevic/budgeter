@@ -15,7 +15,7 @@ export const incomesQuery = gql`
          modifiedOn
       }
    }
-`
+`;
 
 export const incomeByIdQuery = gql`
    query incomeById($id: ObjectID!) {
@@ -32,7 +32,7 @@ export const incomeByIdQuery = gql`
          modifiedOn
       }
    }
-`
+`;
 
 export const createIncomeMutation = gql`
    mutation createIncome($income: IncomeInput) {
@@ -49,27 +49,27 @@ export const createIncomeMutation = gql`
          modifiedOn
       }
    }
-`
+`;
 
 export const updateIncomeMutation = gql`
    mutation updateIncome($id: ObjectID!, $income: IncomeInput) {
       updateIncome(id: $id, income: $income) {
-            id
-            title
-            amount
-            initialDay
-            initialDate
-            initialMonth
-            initialYear
-            recurrence
-            createdOn
-            modifiedOn
+         id
+         title
+         amount
+         initialDay
+         initialDate
+         initialMonth
+         initialYear
+         recurrence
+         createdOn
+         modifiedOn
       }
    }
-`
+`;
 
 export const deleteIncomeMutation = gql`
    mutation deleteIncome($id: ObjectID!) {
       deleteIncome(id: $id)
    }
-`
+`;

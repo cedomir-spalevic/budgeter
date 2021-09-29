@@ -65,12 +65,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       try {
          await refresh();
          setVerified(true);
-      } 
-      catch(error) {
+      } catch (error) {
          console.error("Error verifying refresh token");
          console.error(error);
-      }
-      finally {
+      } finally {
          setState(AuthState.SignedOut);
       }
    };
@@ -201,7 +199,9 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    const updatePassword = async (password: string): Promise<boolean> => {
       try {
          const authenticationService = AuthenticationService.getInstance();
-         await authenticationService.updatePassword(internalSecurity.btoa(password));
+         await authenticationService.updatePassword(
+            internalSecurity.btoa(password)
+         );
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {

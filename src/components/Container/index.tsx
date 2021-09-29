@@ -51,7 +51,7 @@ interface Props {
    refresh?: {
       refreshing: boolean;
       onRefresh: () => void;
-   }
+   };
 }
 
 const Container: React.FC<Props> = (props: Props) => {
@@ -126,18 +126,21 @@ const Container: React.FC<Props> = (props: Props) => {
    };
 
    useEffect(() => {
-      if (scrollView.current) scroll.setRef(scrollView as React.MutableRefObject<ScrollView>);
+      if (scrollView.current)
+         scroll.setRef(scrollView as React.MutableRefObject<ScrollView>);
    }, [scrollView.current]);
 
    if (props.allowScroll) {
       return (
          <ScrollView
-            refreshControl={props.refresh && (
-               <RefreshControl
-                  refreshing={props.refresh.refreshing}
-                  onRefresh={props.refresh.onRefresh}
-               />
-            )}
+            refreshControl={
+               props.refresh && (
+                  <RefreshControl
+                     refreshing={props.refresh.refreshing}
+                     onRefresh={props.refresh.onRefresh}
+                  />
+               )
+            }
             onScroll={handleScroll}
             scrollEventThrottle={16}
             ref={scrollView}

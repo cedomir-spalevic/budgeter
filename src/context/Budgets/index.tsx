@@ -51,6 +51,7 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useBudgets = (): Context => React.useContext<Context>(BudgetContext);
+export const useBudgets = (): Context =>
+   React.useContext<Context>(BudgetContext);
 
 export default BudgetsProvider;
