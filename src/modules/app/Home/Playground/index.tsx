@@ -87,16 +87,16 @@ const Playground: React.FC = () => {
    }
 
    useEffect(() => {
-      const initialIncomes: PlaygroundItem[] = budgets.value.incomes.map(x => ({
+      const initialIncomes: PlaygroundItem[] = budgets.value.incomes.map(x => new Array(x.numberOfOccurrences).fill({
          id: x.id,
          title: x.title,
          amount: x.amount
-      }))
-      const initialPayments: PlaygroundItem[] = budgets.value.payments.map(x => ({
+      })).flat();
+      const initialPayments: PlaygroundItem[] = budgets.value.payments.map(x => new Array(x.numberOfOccurrences).fill({
          id: x.id,
          title: x.title,
          amount: x.amount
-      }))
+      })).flat();
       setIncomes([...initialIncomes])
       setPayments([...initialPayments])
    }, []);
