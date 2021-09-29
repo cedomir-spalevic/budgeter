@@ -47,7 +47,7 @@ export const refresh = async (retries?: number): Promise<AuthResponse> => {
    if (response.status === 401) {
       throw new UnauthorizedError();
    }
-   if (response.status >= 500) {
+   if (response.status > 400) {
       if (retries !== 3) return refresh(retries ? retries + 1 : 1);
       const body = await response.json();
       throw new InternalServerError(body.message);

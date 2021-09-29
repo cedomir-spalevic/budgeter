@@ -61,15 +61,18 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    const [verified, setVerified] = useState<boolean>(false);
    const [state, setState] = useState<AuthState>(AuthState.Verifying);
 
-   const verify = () => {
-      refresh()
-         .then(() => {
-            setVerified(true);
-            setState(AuthState.SignedOut);
-         })
-         .finally(() => {
-            setState(AuthState.SignedOut);
-         });
+   const verify = async () => {
+      try {
+         await refresh();
+         setVerified(true);
+      } 
+      catch(error) {
+         console.error("Error verifying refresh token");
+         console.error(error);
+      }
+      finally {
+         setState(AuthState.SignedOut);
+      }
    };
 
    const tryLocalAuthentication = async (): Promise<boolean> => {
