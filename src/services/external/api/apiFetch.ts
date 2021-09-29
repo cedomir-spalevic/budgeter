@@ -62,8 +62,6 @@ export const refresh = async (retries?: number): Promise<AuthResponse> => {
    return authResponse;
 };
 
-
-
 export const callApiProtected = async (
    endpoint: string,
    init?: RequestInit

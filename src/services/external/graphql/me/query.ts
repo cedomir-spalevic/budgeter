@@ -11,33 +11,33 @@ export const meQuery = gql`
          createdOn
          modifiedOn
          device {
-               os
+            os
          }
          notificationPreferences {
-               incomeNotifications
-               paymentNotifications
+            incomeNotifications
+            paymentNotifications
          }
       }
    }
-`
+`;
 
 export const updateMeMutation = gql`
    mutation updateMe($me: MeInput) {
-    updateMe(me: $me) {
-        firstName
-        lastName
-        email
-        phoneNumber
-        isMfaVerified
-        createdOn
-        modifiedOn
-        device {
+      updateMe(me: $me) {
+         firstName
+         lastName
+         email
+         phoneNumber
+         isMfaVerified
+         createdOn
+         modifiedOn
+         device {
             os
-        }
-        notificationPreferences {
+         }
+         notificationPreferences {
             incomeNotifications
             paymentNotifications
-        }
-    }
-}
-`
+         }
+      }
+   }
+`;

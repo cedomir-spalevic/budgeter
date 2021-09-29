@@ -126,7 +126,7 @@ const BudgetDueTodayList: React.FC = () => {
                />
             </Container>
          </Container>
-         <DeleteDialog 
+         <DeleteDialog
             loading={deletingItem}
             visible={itemToDelete !== undefined}
             title={itemToDelete ? itemToDelete.item.title : ""}

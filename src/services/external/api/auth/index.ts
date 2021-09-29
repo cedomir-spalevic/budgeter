@@ -13,7 +13,10 @@ import {
    NotFoundError,
    UnauthorizedError
 } from "../../../models/errors";
-import { AuthResponse, ConfirmationCodeResponse } from "../../../models/responses";
+import {
+   AuthResponse,
+   ConfirmationCodeResponse
+} from "../../../models/responses";
 import { RegisterRequest } from "../../../models/requests/registerRequest";
 import { LoginRequest } from "../../../models/requests/loginRequest";
 import { Platform } from "react-native";
@@ -152,7 +155,7 @@ class AuthenticationService {
       await handleAuthResponse(authResponse);
       return authResponse;
    }
-   
+
    public async registerDevice(deviceToken: string): Promise<void> {
       const body = {
          device: Platform.OS,

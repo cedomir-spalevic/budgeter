@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-   Page,
-   Container,
-   Spacer,
-   SummaryView,
-   Label
-} from "components";
+import { Page, Container, Spacer, SummaryView, Label } from "components";
 import { makeStyles, useTheme } from "context";
 import { useBudgets } from "context/Budgets";
 import { PlaygroundItem } from "./item";
@@ -29,76 +23,88 @@ const Playground: React.FC = () => {
    const [incomes, setIncomes] = useState<PlaygroundItem[]>([]);
    const [payments, setPayments] = useState<PlaygroundItem[]>([]);
    const total = useCallback(() => {
-      const totalIncomes = incomes.reduce((total, i) => i.amount + total, 0)
-      const totalPayments = payments.reduce((total, p) => p.amount + total, 0)
-      return totalIncomes - totalPayments
-   }, [incomes, payments])
+      const totalIncomes = incomes.reduce((total, i) => i.amount + total, 0);
+      const totalPayments = payments.reduce((total, p) => p.amount + total, 0);
+      return totalIncomes - totalPayments;
+   }, [incomes, payments]);
 
    const addIncome = () => {
       incomes.push({
          id: Math.random().toString(),
          title: "New income",
          amount: 0
-      })
-      setIncomes([...incomes])
-   }
+      });
+      setIncomes([...incomes]);
+   };
 
    const updateIncome = (id: string, input: Partial<PlaygroundItem>) => {
       const index = incomes.findIndex((x) => x.id === id);
       if (index === -1) return false;
       const item = incomes[index];
-      if(input.amount !== undefined && item.amount !== input.amount) item.amount = input.amount;
-      if(input.title !== undefined && item.title !== input.title) item.title = input.title;
+      if (input.amount !== undefined && item.amount !== input.amount)
+         item.amount = input.amount;
+      if (input.title !== undefined && item.title !== input.title)
+         item.title = input.title;
       incomes[index] = item;
       setIncomes([...incomes]);
-   }
+   };
 
    const removeIncome = (id: string) => {
       const index = incomes.findIndex((x) => x.id === id);
       if (index === -1) return;
       incomes.splice(index, 1);
       setIncomes([...incomes]);
-   }
+   };
 
    const addPayment = () => {
       payments.push({
          id: Math.random().toString(),
          title: "New payment",
          amount: 0
-      })
-      setPayments([...payments])
-   }
+      });
+      setPayments([...payments]);
+   };
 
    const updatePayment = (id: string, input: Partial<PlaygroundItem>) => {
       const index = payments.findIndex((x) => x.id === id);
       if (index === -1) return false;
       const item = payments[index];
-      if(input.amount !== undefined && item.amount !== input.amount) item.amount = input.amount;
-      if(input.title !== undefined && item.title !== input.title) item.title = input.title;
+      if (input.amount !== undefined && item.amount !== input.amount)
+         item.amount = input.amount;
+      if (input.title !== undefined && item.title !== input.title)
+         item.title = input.title;
       payments[index] = item;
       setPayments([...payments]);
-   }
+   };
 
    const removePayment = (id: string) => {
       const index = payments.findIndex((x) => x.id === id);
       if (index === -1) return;
       payments.splice(index, 1);
       setPayments([...payments]);
-   }
+   };
 
    useEffect(() => {
-      const initialIncomes: PlaygroundItem[] = budgets.value.incomes.map(x => new Array(x.numberOfOccurrences).fill({
-         id: x.id,
-         title: x.title,
-         amount: x.amount
-      })).flat();
-      const initialPayments: PlaygroundItem[] = budgets.value.payments.map(x => new Array(x.numberOfOccurrences).fill({
-         id: x.id,
-         title: x.title,
-         amount: x.amount
-      })).flat();
-      setIncomes([...initialIncomes])
-      setPayments([...initialPayments])
+      const initialIncomes: PlaygroundItem[] = budgets.value.incomes
+         .map((x) =>
+            new Array(x.numberOfOccurrences).fill({
+               id: x.id,
+               title: x.title,
+               amount: x.amount
+            })
+         )
+         .flat();
+      const initialPayments: PlaygroundItem[] = budgets.value.payments
+         .map((x) =>
+            new Array(x.numberOfOccurrences).fill({
+               id: x.id,
+               title: x.title,
+               amount: x.amount
+            })
+         )
+         .flat();
+      setIncomes([...initialIncomes]);
+      setPayments([...initialPayments]);
    }, []);
 
    return (
@@ -129,10 +135,7 @@ const Playground: React.FC = () => {
                      color={theme.value.palette.primary}
                      style={styles.summaryLabel}
                   />
-                  <Label
-                     text={toCurrency(total())}
-                     type="regular"
-                  />
+                  <Label text={toCurrency(total())} type="regular" />
                </View>
             </SummaryView>
          </Container>

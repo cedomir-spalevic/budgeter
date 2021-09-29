@@ -122,7 +122,7 @@ const BudgetIncomesList: React.FC = () => {
                </View>
             </SummaryView>
          </Container>
-         <DeleteDialog 
+         <DeleteDialog
             loading={deletingIncome}
             visible={incomeToDelete !== undefined}
             title={incomeToDelete ? incomeToDelete.title : ""}

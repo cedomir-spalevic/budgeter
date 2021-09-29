@@ -12,8 +12,8 @@ interface Props {
 
 const DeleteDialog: React.FC<Props> = (props: Props) => {
    let title = `Delete ${props.title}?`;
-   let message = `Are you sure want to delete this ${props.type}? This will be removed from all of your budgets.`
-   if(props.loading) {
+   let message = `Are you sure want to delete this ${props.type}? This will be removed from all of your budgets.`;
+   if (props.loading) {
       title = `Deleting ${props.title}`;
       message = "";
    }
@@ -33,7 +33,7 @@ const DeleteDialog: React.FC<Props> = (props: Props) => {
             onPress: props.close
          }}
       />
-   )
-}
+   );
+};
 
 export default DeleteDialog;

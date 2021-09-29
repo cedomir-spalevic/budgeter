@@ -7,4 +7,4 @@ export const paymentTagsQuery = gql`
          tag
       }
    }
-`
+`;

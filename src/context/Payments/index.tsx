@@ -3,7 +3,12 @@ import React, { useState, useRef } from "react";
 import { Alert } from "react-native";
 import { Payment } from "services/models/data/payment";
 import { UnauthorizedError } from "services/models/errors";
-import { createPayment, deletePayment, getPayments, updatePayment } from "services/external/graphql/payments/request";
+import {
+   createPayment,
+   deletePayment,
+   getPayments,
+   updatePayment
+} from "services/external/graphql/payments/request";
 
 interface Props {
    children: React.ReactNode;
@@ -31,7 +36,7 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
          if (reachedEnd.current) return;
          const payments = await getPayments(10, values.length, search);
          reachedEnd.current = !search && payments.length === 0;
-         setValues([...values,...payments]);
+         setValues([...values, ...payments]);
          setEmpty(!search && values.length === 0 && payments.length === 0);
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -121,6 +126,7 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const usePayments = (): Context => React.useContext<Context>(PaymentsContext);
+export const usePayments = (): Context =>
+   React.useContext<Context>(PaymentsContext);
 
 export default PaymentsProvider;

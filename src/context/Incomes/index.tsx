@@ -3,7 +3,12 @@ import React, { useState, useRef } from "react";
 import { Alert } from "react-native";
 import { Income } from "services/models/data/income";
 import { UnauthorizedError } from "services/models/errors";
-import { createIncome, deleteIncome, getIncomes, updateIncome } from "services/external/graphql/incomes/request";
+import {
+   createIncome,
+   deleteIncome,
+   getIncomes,
+   updateIncome
+} from "services/external/graphql/incomes/request";
 
 interface Props {
    children: React.ReactNode;
@@ -31,7 +36,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
          if (reachedEnd.current) return;
          const incomes = await getIncomes(10, values.length, search);
          reachedEnd.current = !search && incomes.length === 0;
-         setValues([...values,...incomes]);
+         setValues([...values, ...incomes]);
          setEmpty(!search && values.length === 0 && incomes.length === 0);
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -121,6 +126,7 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useIncomes = (): Context => React.useContext<Context>(IncomesContext);
+export const useIncomes = (): Context =>
+   React.useContext<Context>(IncomesContext);
 
 export default IncomesProvider;

@@ -2,7 +2,11 @@ import { PaymentTag } from "services/models/data/paymentTag";
 import { getClient } from "../client";
 import { paymentTagsQuery } from "./query";
 
-export const getPaymentTags = async (limit: number, skip: number, search?: string): Promise<PaymentTag[]> => {
+export const getPaymentTags = async (
+   limit: number,
+   skip: number,
+   search?: string
+): Promise<PaymentTag[]> => {
    const client = getClient();
    const result = await client.query({
       query: paymentTagsQuery,
@@ -14,4 +18,4 @@ export const getPaymentTags = async (limit: number, skip: number, search?: strin
    });
    const paymentTags = result.data.paymentTags as PaymentTag[];
    return paymentTags;
-}
+};

@@ -13,12 +13,10 @@ const transformResponse = (user: User) => ({
       os: user.device.os
    },
    notificationPreferences: {
-      paymentNotifications:
-         user.notificationPreferences.paymentNotifications,
-      incomeNotifications:
-         user.notificationPreferences.incomeNotifications
+      paymentNotifications: user.notificationPreferences.paymentNotifications,
+      incomeNotifications: user.notificationPreferences.incomeNotifications
    }
-})
+});
 
 export const getMe = async (): Promise<User> => {
    const client = getClient();
@@ -28,7 +26,7 @@ export const getMe = async (): Promise<User> => {
    });
    const me = result.data.me as User;
    return transformResponse(me);
-}
+};
 
 export const updateMe = async (input: Partial<User>): Promise<User> => {
    const client = getClient();
@@ -37,7 +35,7 @@ export const updateMe = async (input: Partial<User>): Promise<User> => {
       variables: {
          me: input
       }
-   })
+   });
    const me = result.data.updateMe as User;
    return transformResponse(me);
-}
+};

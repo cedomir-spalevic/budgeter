@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { NotificationPreferences, UpdateUserBody, User } from "services/models/data/user";
+import {
+   NotificationPreferences,
+   UpdateUserBody,
+   User
+} from "services/models/data/user";
 import { Alert } from "react-native";
 import { useAuth } from "context";
 import { UnauthorizedError } from "services/models/errors";
@@ -69,7 +73,7 @@ const UserProvider: React.FC<Props> = (props: Props) => {
       try {
          const input: Partial<User> = {
             notificationPreferences: preferences
-         }
+         };
          const updatedUser = await updateMe(input);
          setValue({ ...updatedUser });
       } catch (error) {

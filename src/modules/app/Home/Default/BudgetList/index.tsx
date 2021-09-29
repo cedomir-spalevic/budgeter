@@ -65,11 +65,16 @@ const BudgetList: React.FC<Props> = (props: Props) => {
       setLoading(true);
       await budgets.get();
       setLoading(false);
-   }
+   };
 
    return (
       <Page>
-         <Container title={`${budgets.title}`} refresh={{ refreshing: loading, onRefresh: refresh }} allowScroll flex>
+         <Container
+            title={`${budgets.title}`}
+            refresh={{ refreshing: loading, onRefresh: refresh }}
+            allowScroll
+            flex
+         >
             <Label
                type="header"
                text={`${budgets.title}`}

@@ -2,7 +2,11 @@ import { Budget } from "services/models/data/budget";
 import { getClient } from "../client";
 import { budgetQuery } from "./query";
 
-export const getBudget = async (date: number, month: number, year: number): Promise<Budget> => {
+export const getBudget = async (
+   date: number,
+   month: number,
+   year: number
+): Promise<Budget> => {
    const client = getClient();
    const result = await client.query({
       query: budgetQuery,
@@ -46,4 +50,4 @@ export const getBudget = async (date: number, month: number, year: number): Prom
          tags: []
       }))
    };
-}
+};
