@@ -1,10 +1,10 @@
 import { useAuth } from "context";
-import React, { useState, createContext, useContext } from "react";
+import React, { useState } from "react";
 import { Alert } from "react-native";
-import { Budget } from "services/external/api/models/data/budget";
-import { UnauthorizedError } from "services/external/api/models/errors";
-import BudgetsService from "services/external/api/budgets";
+import { Budget } from "services/models/data/budget";
+import { UnauthorizedError } from "services/models/errors";
 import moment from "moment";
+import { getBudget } from "services/external/graphql/budgets/request";
 
 interface Props {
    children: React.ReactNode;
@@ -16,7 +16,7 @@ interface Context {
    get: () => Promise<void>;
 }
 
-const BudgetContext = createContext<Context>(undefined!);
+const BudgetContext = React.createContext<Context>(undefined!);
 
 const BudgetsProvider: React.FC<Props> = (props: Props) => {
    const [title, setTitle] = useState<string>("");
@@ -29,9 +29,7 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
          const date = today.get("date");
          const month = today.get("month");
          const year = today.get("year");
-         const budgetsService = BudgetsService.getInstance();
-         const budget = await budgetsService.getBudget(date, month, year);
-         console.log(budget)
+         const budget = await getBudget(date, month, year);
          setTitle(`${today.format("MMMM")} ${year}`);
          setValue({ ...budget });
       } catch (error) {
@@ -53,6 +51,7 @@ const BudgetsProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useBudgets = (): Context => useContext<Context>(BudgetContext);
+export const useBudgets = (): Context =>
+   React.useContext<Context>(BudgetContext);
 
 export default BudgetsProvider;

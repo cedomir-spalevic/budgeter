@@ -1,10 +1,14 @@
 import { useAuth } from "context";
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, useRef } from "react";
 import { Alert } from "react-native";
-import { Income } from "services/external/api/models/data/income";
-import { UnauthorizedError } from "services/external/api/models/errors";
-import IncomesService from "services/external/api/incomes";
-import { useBudgets } from "context/Budgets";
+import { Income } from "services/models/data/income";
+import { UnauthorizedError } from "services/models/errors";
+import {
+   createIncome,
+   deleteIncome,
+   getIncomes,
+   updateIncome
+} from "services/external/graphql/incomes/request";
 
 interface Props {
    children: React.ReactNode;
@@ -19,25 +23,21 @@ interface Context {
    delete: (id: string) => Promise<boolean>;
 }
 
-const IncomesContext = createContext<Context>(undefined!);
+const IncomesContext = React.createContext<Context>(undefined!);
 
 const IncomesProvider: React.FC<Props> = (props: Props) => {
    const [empty, setEmpty] = useState<boolean>(false);
-   const [count, setCount] = useState<number>(0);
    const [values, setValues] = useState<Income[]>([]);
+   const reachedEnd = useRef<boolean>(false);
    const auth = useAuth();
-   const budgets = useBudgets();
 
-   const get = async (search?: string, getNext?: boolean) => {
+   const get = async (search?: string) => {
       try {
-         if (getNext && values.length === count) return;
-         const skip = getNext ? values.length : 0;
-         const incomesService = IncomesService.getInstance();
-         const incomes = await incomesService.get(10, skip, search);
-         setCount(incomes.count);
-         if (getNext) setValues([...values, ...incomes.values]);
-         else setValues([...incomes.values]);
-         setEmpty(!search && incomes.values.length === 0);
+         if (reachedEnd.current) return;
+         const incomes = await getIncomes(10, values.length, search);
+         reachedEnd.current = !search && incomes.length === 0;
+         setValues([...values, ...incomes]);
+         setEmpty(!search && values.length === 0 && incomes.length === 0);
       } catch (error) {
          if (error instanceof UnauthorizedError) {
             auth.logout();
@@ -50,17 +50,14 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const create = async (income: Partial<Income>) => {
+   const create = async (input: Partial<Income>) => {
       try {
-         const incomesService = IncomesService.getInstance();
-         const i = await incomesService.create(income);
+         const income = await createIncome(input);
          const isEmpty = values.length === 0;
-         values.push(i);
-         setCount(count + 1);
+         values.push(income);
          setValues([...values]);
          if (isEmpty) setEmpty(false);
-         // Update budget
-         budgets.get();
+         reachedEnd.current = false;
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -69,21 +66,19 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
          }
          Alert.alert(
             "Unable to create income",
-            "We're having trouble creating your new income at the moment."
+            "We're having trouble creating this income at the moment."
          );
          return false;
       }
    };
 
-   const update = async (id: string, income: Partial<Income>) => {
+   const update = async (id: string, input: Partial<Income>) => {
       try {
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
-         const incomesService = IncomesService.getInstance();
-         const i = await incomesService.update(id, income);
-         values[index] = i;
+         const income = await updateIncome(id, input);
+         values[index] = income;
          setValues([...values]);
-         budgets.get();
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -91,26 +86,23 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
             return false;
          }
          Alert.alert(
-            "Unable to create income",
-            "We're having trouble creating your new income at the moment."
+            "Unable to update income",
+            "We're having trouble updating this income at the moment."
          );
          return false;
       }
    };
 
-   const deleteIncome = async (id: string) => {
+   const remove = async (id: string) => {
       try {
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
-         const incomesService = IncomesService.getInstance();
-         await incomesService.delete(id);
+         await deleteIncome(id);
          const willBeEmpty = values.length === 1;
          values.splice(index, 1);
-         setCount(count - 1);
          setValues([...values]);
          if (willBeEmpty) setEmpty(true);
-         // Update budget
-         budgets.get();
+         reachedEnd.current = false;
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -118,8 +110,8 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
             return false;
          }
          Alert.alert(
-            "Unable to create income",
-            "We're having trouble creating your new income at the moment."
+            "Unable to delete income",
+            "We're having trouble deleting this income at the moment."
          );
          return false;
       }
@@ -127,13 +119,14 @@ const IncomesProvider: React.FC<Props> = (props: Props) => {
 
    return (
       <IncomesContext.Provider
-         value={{ empty, values, get, create, update, delete: deleteIncome }}
+         value={{ empty, values, get, create, update, delete: remove }}
       >
          {props.children}
       </IncomesContext.Provider>
    );
 };
 
-export const useIncomes = (): Context => useContext<Context>(IncomesContext);
+export const useIncomes = (): Context =>
+   React.useContext<Context>(IncomesContext);
 
 export default IncomesProvider;

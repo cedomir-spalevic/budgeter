@@ -1,10 +1,14 @@
 import { useAuth } from "context";
-import { useBudgets } from "context/Budgets";
-import React, { useState, createContext, useContext } from "react";
+import React, { useState, useRef } from "react";
 import { Alert } from "react-native";
-import { Payment } from "services/external/api/models/data/payment";
-import { UnauthorizedError } from "services/external/api/models/errors";
-import PaymentsService from "services/external/api/payments";
+import { Payment } from "services/models/data/payment";
+import { UnauthorizedError } from "services/models/errors";
+import {
+   createPayment,
+   deletePayment,
+   getPayments,
+   updatePayment
+} from "services/external/graphql/payments/request";
 
 interface Props {
    children: React.ReactNode;
@@ -19,25 +23,21 @@ interface Context {
    delete: (id: string) => Promise<boolean>;
 }
 
-const PaymentsContext = createContext<Context>(undefined!);
+const PaymentsContext = React.createContext<Context>(undefined!);
 
 const PaymentsProvider: React.FC<Props> = (props: Props) => {
    const [empty, setEmpty] = useState<boolean>(false);
-   const [count, setCount] = useState<number>(0);
    const [values, setValues] = useState<Payment[]>([]);
+   const reachedEnd = useRef<boolean>(false);
    const auth = useAuth();
-   const budgets = useBudgets();
 
-   const get = async (search?: string, getNext?: boolean) => {
+   const get = async (search?: string) => {
       try {
-         if (getNext && values.length === count) return;
-         const paymentsService = PaymentsService.getInstance();
-         const skip = getNext ? values.length : 0;
-         const p = await paymentsService.get(10, skip, search);
-         setCount(p.count);
-         if (getNext) setValues([...values, ...p.values]);
-         else setValues([...p.values]);
-         setEmpty(!search && p.values.length === 0);
+         if (reachedEnd.current) return;
+         const payments = await getPayments(10, values.length, search);
+         reachedEnd.current = !search && payments.length === 0;
+         setValues([...values, ...payments]);
+         setEmpty(!search && values.length === 0 && payments.length === 0);
       } catch (error) {
          if (error instanceof UnauthorizedError) {
             auth.logout();
@@ -50,16 +50,14 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const create = async (payment: Partial<Payment>) => {
+   const create = async (input: Partial<Payment>) => {
       try {
-         const paymentsService = PaymentsService.getInstance();
-         const i = await paymentsService.create(payment);
+         const payment = await createPayment(input);
          const isEmpty = values.length === 0;
-         values.push(i);
+         values.push(payment);
          setValues([...values]);
-         setCount(count + 1);
          if (isEmpty) setEmpty(false);
-         budgets.get();
+         reachedEnd.current = false;
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -68,21 +66,19 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
          }
          Alert.alert(
             "Unable to create payment",
-            "We're having trouble creating your new payment at the moment."
+            "We're having trouble creating this payment at the moment."
          );
          return false;
       }
    };
 
-   const update = async (id: string, payment: Partial<Payment>) => {
+   const update = async (id: string, input: Partial<Payment>) => {
       try {
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
-         const paymentsService = PaymentsService.getInstance();
-         const i = await paymentsService.update(id, payment);
-         values[index] = i;
+         const payment = await updatePayment(id, input);
+         values[index] = payment;
          setValues([...values]);
-         budgets.get();
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -90,26 +86,23 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             return false;
          }
          Alert.alert(
-            "Unable to create Payment",
-            "We're having trouble creating your new Payment at the moment."
+            "Unable to update payment",
+            "We're having trouble updating this payment at the moment."
          );
          return false;
       }
    };
 
-   const deletePayment = async (id: string) => {
+   const remove = async (id: string) => {
       try {
          const index = values.findIndex((x) => x.id === id);
          if (index === -1) return false;
-         const paymentsService = PaymentsService.getInstance();
-         await paymentsService.delete(id);
+         await deletePayment(id);
          const willBeEmpty = values.length === 1;
          values.splice(index, 1);
          setValues([...values]);
-         setCount(count - 1);
          if (willBeEmpty) setEmpty(true);
-         // Update budget
-         budgets.get();
+         reachedEnd.current = false;
          return true;
       } catch (error) {
          if (error instanceof UnauthorizedError) {
@@ -117,8 +110,8 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
             return false;
          }
          Alert.alert(
-            "Unable to create payment",
-            "We're having trouble creating your new payment at the moment."
+            "Unable to delete payment",
+            "We're having trouble deleting this payment at the moment."
          );
          return false;
       }
@@ -126,13 +119,14 @@ const PaymentsProvider: React.FC<Props> = (props: Props) => {
 
    return (
       <PaymentsContext.Provider
-         value={{ empty, values, get, create, update, delete: deletePayment }}
+         value={{ empty, values, get, create, update, delete: remove }}
       >
          {props.children}
       </PaymentsContext.Provider>
    );
 };
 
-export const usePayments = (): Context => useContext<Context>(PaymentsContext);
+export const usePayments = (): Context =>
+   React.useContext<Context>(PaymentsContext);
 
 export default PaymentsProvider;

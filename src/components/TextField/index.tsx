@@ -1,6 +1,12 @@
 import useMergedRef from "@react-hook/merged-ref";
 import { makeStyles, useTheme } from "context";
-import React, { useState, useEffect, forwardRef, useRef, MutableRefObject } from "react";
+import React, {
+   useState,
+   useEffect,
+   forwardRef,
+   useRef,
+   MutableRefObject
+} from "react";
 import {
    View,
    TextInput,
@@ -8,7 +14,8 @@ import {
    Text,
    NativeSyntheticEvent,
    TextInputSubmitEditingEventData,
-   TextInputKeyPressEventData
+   TextInputKeyPressEventData,
+   ViewStyle
 } from "react-native";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,8 +47,7 @@ const useStyles = makeStyles((theme) => ({
    icon: {
       fontSize: 18,
       width: 25,
-      color: theme.palette.systemGray,
-      resizeMode: "contain"
+      color: theme.palette.systemGray
    },
    errorText: {
       color: theme.palette.red
@@ -60,7 +66,10 @@ interface Props {
    postRenderIcon?: JSX.Element;
    onPostRenderIconClick?: () => void;
    onSubmit?: () => void;
-   textInputRef?: MutableRefObject<TextInput | null> | ((instance: TextInput | null) => void) | null;
+   textInputRef?:
+      | MutableRefObject<TextInput | null>
+      | ((instance: TextInput | null) => void)
+      | null;
    autoCapitalize?: "none" | "sentences" | "words" | "characters";
    textContentType?: "password" | "newPassword" | "name" | "emailAddress";
    keyboardType?: "email-address" | "number-pad";
@@ -75,16 +84,20 @@ interface Props {
    controlled?: boolean;
    renderInput?: () => React.ReactNode;
    blurOnSubmit?: boolean;
+   inputStyles?: ViewStyle;
 }
 
 const TextField: React.FC<Props> = (props: Props) => {
    const y = useRef<number>();
    const textInput = useRef<TextInput | null>();
-   const mergedRefs = useMergedRef<TextInput | null | undefined>(textInput, props.textInputRef!);
+   const mergedRefs = useMergedRef<TextInput | null | undefined>(
+      textInput,
+      props.textInputRef!
+   );
    const [value, setValue] = useState<string>();
    const styles = useStyles();
    const theme = useTheme();
-   const inputStyles = [styles.input];
+   const inputStyles = [styles.input, props.inputStyles];
    if (props.errorMessage) {
       inputStyles.push(styles.inputWithError);
    }
@@ -187,6 +200,13 @@ const TextField: React.FC<Props> = (props: Props) => {
    );
 };
 
-export default forwardRef<TextInput, Props>((props, ref: ((instance: TextInput | null) => void) | MutableRefObject<TextInput | null> | null | undefined = undefined) => (
-   <TextField textInputRef={ref} {...props} />
-));
+export default forwardRef<TextInput, Props>(
+   (
+      props,
+      ref:
+         | ((instance: TextInput | null) => void)
+         | MutableRefObject<TextInput | null>
+         | null
+         | undefined = undefined
+   ) => <TextField textInputRef={ref} {...props} />
+);

@@ -1,19 +1,19 @@
-import React, { useState, createContext, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AuthenticationService from "services/external/api/auth";
 import { deleteAllStorageItems } from "services/internal/storage";
 import {
    AlreadyExistsError,
    NotFoundError,
    UnauthorizedError
-} from "services/external/api/models/errors";
+} from "services/models/errors";
 import { Alert } from "react-native";
-import internalSecurity from "services/internal/security";
+import internalSecurity from "services/internal/security/btoa";
 import * as LocalAuthentication from "expo-local-authentication";
-import UserService from "services/external/api/me";
 import { refresh } from "services/external/api/apiFetch";
-import { ChallengeRequest } from "services/external/api/models/requests/challengeRequest";
-import { RegisterRequest } from "services/external/api/models/requests/registerRequest";
-import { LoginRequest } from "services/external/api/models/requests/loginRequest";
+import { ChallengeRequest } from "services/models/requests/challengeRequest";
+import { RegisterRequest } from "services/models/requests/registerRequest";
+import { LoginRequest } from "services/models/requests/loginRequest";
+import { clearCache } from "services/external/graphql/client";
 
 interface ForgotPasswordRequest {
    email?: string;
@@ -55,21 +55,22 @@ interface Context {
    logout: () => void;
 }
 
-const AuthContext = createContext<Context>(undefined!);
+const AuthContext = React.createContext<Context>(undefined!);
 
 const AuthProvider: React.FC<Props> = (props: Props) => {
    const [verified, setVerified] = useState<boolean>(false);
    const [state, setState] = useState<AuthState>(AuthState.Verifying);
 
-   const verify = () => {
-      refresh()
-         .then(() => {
-            setVerified(true);
-            setState(AuthState.SignedOut);
-         })
-         .finally(() => {
-            setState(AuthState.SignedOut);
-         });
+   const verify = async () => {
+      try {
+         await refresh();
+         setVerified(true);
+      } catch (error) {
+         console.error("Error verifying refresh token");
+         console.error(error);
+      } finally {
+         setState(AuthState.SignedOut);
+      }
    };
 
    const tryLocalAuthentication = async (): Promise<boolean> => {
@@ -197,8 +198,10 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
 
    const updatePassword = async (password: string): Promise<boolean> => {
       try {
-         const userService = UserService.getInstance();
-         await userService.updatePassword(internalSecurity.btoa(password));
+         const authenticationService = AuthenticationService.getInstance();
+         await authenticationService.updatePassword(
+            internalSecurity.btoa(password)
+         );
          setState(AuthState.SignedIn);
          return true;
       } catch (error) {
@@ -211,7 +214,8 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
       }
    };
 
-   const logout = () => {
+   const logout = async () => {
+      await clearCache();
       deleteAllStorageItems();
       setVerified(false);
       setState(AuthState.SignedOut);
@@ -240,6 +244,6 @@ const AuthProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useAuth = (): Context => useContext<Context>(AuthContext);
+export const useAuth = (): Context => React.useContext<Context>(AuthContext);
 
 export default AuthProvider;

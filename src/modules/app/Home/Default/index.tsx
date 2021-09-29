@@ -3,10 +3,11 @@ import { Icon, Menu } from "components";
 import { useTheme } from "context";
 import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
-import { DueTodayItem } from "services/external/api/models/data/budget";
+import { DueTodayItem } from "services/models/data/budget";
 import EmptyBudget from "./EmptyBudget";
 import BudgetList from "./BudgetList";
 import HomeRoutes from "../routes";
+import { View } from "react-native";
 
 const Home: React.FC = () => {
    const navigation = useNavigation();
@@ -26,24 +27,35 @@ const Home: React.FC = () => {
    useEffect(() => {
       navigation.setOptions({
          headerRight: () => (
-            <Menu
-               options={[
-                  {
-                     onSelect: () => navigation.navigate(HomeRoutes.Income),
-                     text: "Create Income"
-                  },
-                  {
-                     onSelect: () => navigation.navigate(HomeRoutes.Payment),
-                     text: "Create Payment"
-                  }
-               ]}
-            >
+            <View style={{ flexDirection: "row" }}>
                <Icon
-                  name="add-circle"
+                  name="toys"
                   color={theme.value.palette.primary}
                   size={32}
+                  style={{
+                     paddingRight: 10
+                  }}
+                  onPress={() => navigation.navigate(HomeRoutes.Playground)}
                />
-            </Menu>
+               <Menu
+                  options={[
+                     {
+                        onSelect: () => navigation.navigate(HomeRoutes.Income),
+                        text: "Create Income"
+                     },
+                     {
+                        onSelect: () => navigation.navigate(HomeRoutes.Payment),
+                        text: "Create Payment"
+                     }
+                  ]}
+               >
+                  <Icon
+                     name="add-circle"
+                     color={theme.value.palette.primary}
+                     size={32}
+                  />
+               </Menu>
+            </View>
          )
       });
    });

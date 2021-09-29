@@ -5,7 +5,6 @@ import {
    ActionList,
    Label,
    SummaryView,
-   ConfirmDialog,
    Searchbox,
    ActionItem
 } from "components";
@@ -15,8 +14,9 @@ import { useBudgets } from "context/Budgets";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { toCurrency } from "services/internal/currency";
-import { BudgetPayment } from "services/external/api/models/data/payment";
+import { BudgetPayment } from "services/models/data/payment";
 import HomeRoutes from "../routes";
+import DeleteDialog from "modules/app/Shared/DeleteDialog";
 
 const useStyles = makeStyles(() => ({
    summaryView: {
@@ -30,6 +30,7 @@ const useStyles = makeStyles(() => ({
 const BudgetPaymentsList: React.FC = () => {
    const [list, setList] = useState<BudgetPayment[]>([]);
    const [paymentToDelete, setPaymentToDelete] = useState<BudgetPayment>();
+   const [deletingPayment, setDeletingPayment] = useState<boolean>(false);
    const budgets = useBudgets();
    const payments = usePayments();
    const navigation = useNavigation();
@@ -51,8 +52,10 @@ const BudgetPaymentsList: React.FC = () => {
    };
 
    const deletePayment = async () => {
+      setDeletingPayment(true);
       await payments.delete(paymentToDelete!.id);
       setPaymentToDelete(undefined);
+      setDeletingPayment(false);
    };
 
    useEffect(() => {
@@ -122,19 +125,15 @@ const BudgetPaymentsList: React.FC = () => {
                </View>
             </SummaryView>
          </Container>
-         <ConfirmDialog
+         <DeleteDialog
+            loading={deletingPayment}
             visible={paymentToDelete !== undefined}
-            title={`Delete ${paymentToDelete?.title}?`}
-            onTouchOutside={() => setPaymentToDelete(undefined)}
-            message="Are you sure want to delete this payment? This will be removed from all of your budgets."
-            positiveButton={{
-               title: "Yes",
-               onPress: () => deletePayment()
+            title={paymentToDelete ? paymentToDelete.title : ""}
+            type={"payment"}
+            close={() => {
+               setPaymentToDelete(undefined);
             }}
-            negativeButton={{
-               title: "No",
-               onPress: () => setPaymentToDelete(undefined)
-            }}
+            delete={deletePayment}
          />
       </Page>
    );

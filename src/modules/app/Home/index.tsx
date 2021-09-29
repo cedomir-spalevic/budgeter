@@ -6,6 +6,7 @@ import HomeRoutes from "./routes";
 import BudgetIncomesList from "./BudgetIncomesList";
 import BudgetPaymentsList from "./BudgetPaymentsList";
 import BudgetDueTodayList from "./BudgetDueTodayList";
+import Playground from "./Playground";
 import IncomeScreen from "../Shared/Income";
 import PaymentScreen from "../Shared/Payment";
 
@@ -31,6 +32,7 @@ const IncomesNavigator: React.FC = () => (
       />
       <Stack.Screen name={HomeRoutes.Income} component={IncomeScreen} />
       <Stack.Screen name={HomeRoutes.Payment} component={PaymentScreen} />
+      <Stack.Screen name={HomeRoutes.Playground} component={Playground} />
    </Stack.Navigator>
 );
 

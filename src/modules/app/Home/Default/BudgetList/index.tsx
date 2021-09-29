@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
    Page,
    Label,
@@ -12,9 +12,9 @@ import {
    Icon
 } from "components";
 import { useBudgets } from "context/Budgets";
-import { BudgetIncome } from "services/external/api/models/data/income";
-import { BudgetPayment } from "services/external/api/models/data/payment";
-import { DueTodayItem } from "services/external/api/models/data/budget";
+import { BudgetIncome } from "services/models/data/income";
+import { BudgetPayment } from "services/models/data/payment";
+import { DueTodayItem } from "services/models/data/budget";
 import { useNavigation } from "@react-navigation/native";
 import { toCurrency } from "services/internal/currency";
 import { makeStyles, useTheme } from "context";
@@ -42,6 +42,7 @@ interface Props {
 }
 
 const BudgetList: React.FC<Props> = (props: Props) => {
+   const [loading, setLoading] = useState<boolean>(false);
    const budgets = useBudgets();
    const navigation = useNavigation();
    const theme = useTheme();
@@ -60,9 +61,20 @@ const BudgetList: React.FC<Props> = (props: Props) => {
       color = theme.value.palette.red;
    }
 
+   const refresh = async () => {
+      setLoading(true);
+      await budgets.get();
+      setLoading(false);
+   };
+
    return (
       <Page>
-         <Container title={`${budgets.title}`} allowScroll flex>
+         <Container
+            title={`${budgets.title}`}
+            refresh={{ refreshing: loading, onRefresh: refresh }}
+            allowScroll
+            flex
+         >
             <Label
                type="header"
                text={`${budgets.title}`}

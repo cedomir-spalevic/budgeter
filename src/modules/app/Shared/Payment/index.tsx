@@ -15,13 +15,13 @@ import {
 import { FormikProps, withFormik } from "formik";
 import * as Yup from "yup";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Payment } from "services/external/api/models/data/payment";
+import { Payment } from "services/models/data/payment";
 import { TextInput } from "react-native";
 import {
    RecurrenceLabels,
    RecurrenceMap
-} from "services/external/api/models/data/recurrence";
-import { usePayments } from "context";
+} from "services/models/data/recurrence";
+import { usePayments } from "context/Payments";
 import { PickerSelectRef } from "components/PickerSelect";
 import { DatePickerRef } from "components/DatePicker";
 
@@ -69,7 +69,9 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
             value={props.values.amount}
             textInputRef={props.numberPadRef}
             onChange={(n) => props.setFieldValue("amount", n, true)}
-            errorMessage={props.touched.amount ? props.errors.amount : undefined}
+            errorMessage={
+               props.touched.amount ? props.errors.amount : undefined
+            }
             onSubmit={() => props.repeatRef.current?.showPicker()}
          />
          <PickerSelect
@@ -81,7 +83,9 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
                props.setFieldValue("repeat", repeat, true);
                props.initialOccurrenceRef.current?.showPicker();
             }}
-            errorMessage={props.touched.repeat ? props.errors.repeat : undefined}
+            errorMessage={
+               props.touched.repeat ? props.errors.repeat : undefined
+            }
             pickerSelectRef={props.repeatRef}
          />
          <DatePicker
@@ -100,8 +104,9 @@ const PaymentForm = (props: FormProps & FormikProps<FormValues>) => (
                )
             }
             errorMessage={
-               props.touched.initialOccurrenceDate ?
-               props.errors.initialOccurrenceDate : undefined
+               props.touched.initialOccurrenceDate
+                  ? props.errors.initialOccurrenceDate
+                  : undefined
             }
             datePickerRef={props.initialOccurrenceRef}
          />
@@ -151,10 +156,10 @@ const PaymentScreen: React.FC = () => {
                   ", "
                )}`,
                testForValidRepeat as Yup.TestFunction<
-               string | undefined,
-               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-               Record<string, any>
-            >
+                  string | undefined,
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  Record<string, any>
+               >
             ),
          initialOccurrenceDate: Yup.string().required(
             "Initial Occurrence Date is required"

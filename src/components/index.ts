@@ -4,9 +4,9 @@ import Box from "./Box";
 import Button from "./Button";
 import Checkbox from "./Checkbox";
 import ConfirmationCodeInput from "./ConfirmationCodeInput";
-import ConfirmDialog from "./ConfirmDialog";
 import Container from "./Container";
 import DatePicker from "./DatePicker";
+import Dialog from "./Dialog";
 import Empty from "./Empty";
 import Header from "./Header";
 import Icon from "./Icon";
@@ -35,9 +35,9 @@ export {
    Button,
    Checkbox,
    ConfirmationCodeInput,
-   ConfirmDialog,
    Container,
    DatePicker,
+   Dialog,
    Empty,
    Header,
    Icon,

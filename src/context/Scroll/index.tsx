@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
    NativeScrollEvent,
    NativeSyntheticEvent,
@@ -18,7 +18,7 @@ interface Context {
    scrollEvent?: NativeSyntheticEvent<NativeScrollEvent>;
 }
 
-const ScrollContext = createContext<Context>(undefined!);
+const ScrollContext = React.createContext<Context>(undefined!);
 
 const ScrollProvider: React.FC<Props> = (props: Props) => {
    const scrollViewRef = useRef<ScrollView>();
@@ -50,6 +50,7 @@ const ScrollProvider: React.FC<Props> = (props: Props) => {
    );
 };
 
-export const useScroll = (): Context => useContext<Context>(ScrollContext);
+export const useScroll = (): Context =>
+   React.useContext<Context>(ScrollContext);
 
 export default ScrollProvider;

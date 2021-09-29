@@ -4,7 +4,8 @@ enum HomeRoutes {
    BudgetIncomesList = "BudgetIncomesList",
    BudgetDueTodayList = "BudgetDueTodayList",
    Income = "Income",
-   Payment = "Payment"
+   Payment = "Payment",
+   Playground = "Playground"
 }
 
 export default HomeRoutes;

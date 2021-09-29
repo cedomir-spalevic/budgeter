@@ -1,11 +1,12 @@
 import { getItem, setItem, StorageKeys } from "services/internal/storage";
 import { API_URL } from "react-native-dotenv";
-import { AuthResponse, ConfirmationCodeResponse } from "./models/responses";
+import { AuthResponse, ConfirmationCodeResponse } from "../../models/responses";
 import {
    GeneralError,
    InternalServerError,
    UnauthorizedError
-} from "./models/errors";
+} from "../../models/errors";
+import { isAccessTokenValid } from "../utils";
 
 export const handleAuthResponse = async (
    authResponse: AuthResponse
@@ -46,7 +47,7 @@ export const refresh = async (retries?: number): Promise<AuthResponse> => {
    if (response.status === 401) {
       throw new UnauthorizedError();
    }
-   if (response.status >= 500) {
+   if (response.status > 400) {
       if (retries !== 3) return refresh(retries ? retries + 1 : 1);
       const body = await response.json();
       throw new InternalServerError(body.message);
@@ -59,15 +60,6 @@ export const refresh = async (retries?: number): Promise<AuthResponse> => {
    };
    await handleAuthResponse(authResponse);
    return authResponse;
-};
-
-export const isAccessTokenValid = async (): Promise<void> => {
-   const accessTokenExpiration = (await getItem(
-      StorageKeys.AccessTokenExpiration
-   )) as string;
-   if (Date.now() - 500 > Number(accessTokenExpiration)) {
-      refresh();
-   }
 };
 
 export const callApiProtected = async (
